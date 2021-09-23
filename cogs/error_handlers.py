@@ -1,7 +1,7 @@
 import os
-import discord
-from discord.ext import commands
-from discord.ext.commands import MissingPermissions
+import nextcord
+from nextcord.ext import commands
+from nextcord.ext.commands import MissingPermissions
 
 class error(commands.Cog):
 

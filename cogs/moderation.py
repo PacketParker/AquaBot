@@ -1,8 +1,8 @@
 import os
-import discord
-from discord.ext import commands
-from discord.ext.commands import MissingPermissions
-from discord.utils import get
+import nextcord
+from nextcord.ext import commands
+from nextcord.ext.commands import MissingPermissions
+from nextcord.utils import get
 import datetime
 import json
 
@@ -19,7 +19,7 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason=None):
+    async def kick(self, ctx, member: nextcord.Member, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         message = ctx.message
 
@@ -27,7 +27,7 @@ class moderation(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, you must provide a reason in order to kick {member}")
         
         elif reason != None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been kicked for {reason}**",
                 colour = yellow
             )
@@ -42,7 +42,7 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def ban(self, ctx, member: discord.Member, *, reason=None):
+    async def ban(self, ctx, member: nextcord.Member, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         message = ctx.message
 
@@ -50,9 +50,9 @@ class moderation(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, you must provide a reason in order to ban {member}")
 
         elif reason != None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been banned for {reason}**",
-                colour = discord.Colour.red()
+                colour = nextcord.Colour.red()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -65,14 +65,14 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def softban(self, ctx, member: discord.Member, *, reason=None):
+    async def softban(self, ctx, member: nextcord.Member, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         message = ctx.message
 
         if reason == None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been soft-banned with no given reason**",
-                colour = discord.Colour.orange()
+                colour = nextcord.Colour.orange()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -84,9 +84,9 @@ class moderation(commands.Cog):
             await member.unban()
 
         elif reason != None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been soft-banned for {reason}**",
-                colour = discord.Colour.orange()
+                colour = nextcord.Colour.orange()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -99,7 +99,7 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def deafen(self, ctx, member: discord.Member, *, reason=None):
+    async def deafen(self, ctx, member: nextcord.Member, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         message = ctx.message
 
@@ -107,9 +107,9 @@ class moderation(commands.Cog):
             await ctx.send(f'{ctx.author.mention}, that member is not in a voice channel and therefore cannot be deafened.')
 
         elif member.voice != None and reason == None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been deafened with no given reason.**",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -120,9 +120,9 @@ class moderation(commands.Cog):
             await member.edit(deafen=True)
 
         elif member.voice != None and reason != None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been deafened for {reason}**",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -135,7 +135,7 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def undeafen(self, ctx, member: discord.Member, *, reason=None):
+    async def undeafen(self, ctx, member: nextcord.Member, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         message = ctx.message
 
@@ -143,9 +143,9 @@ class moderation(commands.Cog):
             await ctx.send(f'{ctx.author.mention}, that member is not in a voice channel and therefore cannot be undeafened.')
 
         elif member.voice != None and reason == None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been undeafened with no given reason**",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -156,9 +156,9 @@ class moderation(commands.Cog):
             await member.edit(deafen=False)
 
         elif member.voice != None and reason != None:
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**User {member} has been undeafened for {reason}**",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -171,36 +171,36 @@ class moderation(commands.Cog):
 
     #@commands.command()
     #@commands.has_permissions(kick_members=True)
-    #async def mute(self, ctx, member: discord.Member, *, reason=None):
+    #async def mute(self, ctx, member: nextcord.Member, *, reason=None):
 #Give user the muted role 
 
 
     #@commands.command()
     #@commands.has_permissions(kick_members=True)
-    #async def unmute(self, ctx, member: discord.Member, *, reason=None):
+    #async def unmute(self, ctx, member: nextcord.Member, *, reason=None):
 #Takes muted role away from user
 
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def lock(self, ctx, channel: discord.TextChannel=None, *, reason=None):
+    async def lock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         channel = channel or ctx.channel
         message = ctx.message
 
         if reason == None:
-            cuties = discord.utils.get(ctx.guild.roles, name="cuties")
+            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
             await channel.set_permissions(cuties, send_messages=False)
-            shout_ping = discord.utils.get(ctx.guild.roles, name="shout ping")
+            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
             await channel.set_permissions(shout_ping, send_messages=False)
-            nitro_ping = discord.utils.get(ctx.guild.roles, name="nitro ping")
+            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
             await channel.set_permissions(nitro_ping, send_messages=False)
-            event_ping = discord.utils.get(ctx.guild.roles, name="event ping")
+            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
             await channel.set_permissions(event_ping, send_messages=False)
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
                 description = f"No given reason",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -210,18 +210,18 @@ class moderation(commands.Cog):
             await ctx.send(embed=embed)
 
         if reason != None:
-            cuties = discord.utils.get(ctx.guild.roles, name="cuties")
+            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
             await channel.set_permissions(cuties, send_messages=False)
-            shout_ping = discord.utils.get(ctx.guild.roles, name="shout ping")
+            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
             await channel.set_permissions(shout_ping, send_messages=False)
-            nitro_ping = discord.utils.get(ctx.guild.roles, name="nitro ping")
+            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
             await channel.set_permissions(nitro_ping, send_messages=False)
-            event_ping = discord.utils.get(ctx.guild.roles, name="event ping")
+            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
             await channel.set_permissions(event_ping, send_messages=False)
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
                 description = f"Reason: {reason}",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
@@ -233,24 +233,24 @@ class moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def unlock(self, ctx, channel: discord.TextChannel=None, *, reason=None):
+    async def unlock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         channel = channel or ctx.channel
         message = ctx.message
 
         if reason == None:
-            cuties = discord.utils.get(ctx.guild.roles, name="cuties")
+            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
             await channel.set_permissions(cuties, send_messages=True)
-            shout_ping = discord.utils.get(ctx.guild.roles, name="shout ping")
+            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
             await channel.set_permissions(shout_ping, send_messages=True)
-            nitro_ping = discord.utils.get(ctx.guild.roles, name="nitro ping")
+            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
             await channel.set_permissions(nitro_ping, send_messages=True)
-            event_ping = discord.utils.get(ctx.guild.roles, name="event ping")
+            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
             await channel.set_permissions(event_ping, send_messages=True)
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
                 description = f"No given reason",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
             embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/unlocked_1f513.png")
@@ -259,18 +259,18 @@ class moderation(commands.Cog):
             await ctx.send(embed=embed)
 
         if reason != None:
-            cuties = discord.utils.get(ctx.guild.roles, name="cuties")
+            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
             await channel.set_permissions(cuties, send_messages=True)
-            shout_ping = discord.utils.get(ctx.guild.roles, name="shout ping")
+            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
             await channel.set_permissions(shout_ping, send_messages=True)
-            nitro_ping = discord.utils.get(ctx.guild.roles, name="nitro ping")
+            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
             await channel.set_permissions(nitro_ping, send_messages=True)
-            event_ping = discord.utils.get(ctx.guild.roles, name="event ping")
+            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
             await channel.set_permissions(event_ping, send_messages=True)
-            embed = discord.Embed(
+            embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
                 description = f"Reason: {reason}",
-                colour = discord.Colour.magenta()
+                colour = nextcord.Colour.magenta()
             )
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
             embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/unlocked_1f513.png")

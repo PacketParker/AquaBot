@@ -1,35 +1,16 @@
 {
     "844770916943790090": {
         "mod": [
-            455221909257453577,
             455221909257453577
         ],
         "reason": [
-            "test",
-            "test test"
+            "testtest"
         ],
         "time": [
-            "Thursday, September 23 2021 @ 13:11:43 PM",
-            "Thursday, September 23 2021 @ 13:13:16 PM"
+            "Thursday, September 23 2021 @ 16:31:22 PM"
         ],
         "warn_id": [
-            70113,
-            87316
-        ],
-        "warns": 2
-    },
-    "889027125275922462": {
-        "mod": [
-            455221909257453577
-        ],
-        "reason": [
-            "test"
-        ],
-        "time": [
-            "Thursday, September 23 2021 @ 13:13:03 PM"
-        ],
-        "warn_id": [
-            86248
+            61962
         ],
         "warns": 1
     }
