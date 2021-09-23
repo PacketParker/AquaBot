@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord.ext.commands import MissingPermissions
 from discord.utils import get
 import datetime
-import csv 
+import json
 
 timestamp=str(datetime.datetime.utcnow())
 log_channel_id = 889293946801516554
@@ -15,15 +15,6 @@ class moderation(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-
-
-    @commands.command()
-    async def test(self, ctx):
-        message = ctx.message
-        await ctx.send('Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
-
-
-
 
 
     @commands.command()
