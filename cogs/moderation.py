@@ -1,10 +1,8 @@
-import os
 import nextcord
 from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 import datetime
-import json
 
 timestamp=str(datetime.datetime.utcnow())
 log_channel_id = 889293946801516554
@@ -278,11 +276,6 @@ class moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-
-
-
-
-            ##HERE STARTS THE WARN COMMANDS
 
 
 
