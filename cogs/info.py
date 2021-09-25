@@ -3,7 +3,6 @@ import nextcord
 import psutil
 import os
 from nextcord.ext import commands
-import requests
 
 class Information(commands.Cog):
     def __init__(self, bot):

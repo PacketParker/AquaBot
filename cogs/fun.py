@@ -6,6 +6,7 @@ from aiohttp import request
 import aiohttp
 import random
 
+
 log_channel_id = 889293946801516554
 
 black = 0x000000
@@ -66,6 +67,7 @@ class fun(commands.Cog):
             async with cs.get(url) as r:
                 data = await r.json()
         await ctx.send(f'**Donald Trump:** {data["value"].capitalize()}')
+
 
 
 def setup(bot):
