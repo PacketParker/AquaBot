@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 import datetime
+import json
 
 timestamp=str(datetime.datetime.utcnow())
 log_channel_id = 889293946801516554
@@ -31,7 +32,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -54,7 +55,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -74,7 +75,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -88,7 +89,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -111,7 +112,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -124,7 +125,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -147,7 +148,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -160,7 +161,7 @@ class moderation(commands.Cog):
             )
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url = member.avatar_url)
+            embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
@@ -275,8 +276,6 @@ class moderation(commands.Cog):
             embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
 
             await ctx.send(embed=embed)
-
-
 
 
 def setup(bot):

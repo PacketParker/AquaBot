@@ -3,6 +3,8 @@ from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 from aiohttp import request
+import secrets
+from io import BytesIO
 
 log_channel_id = 889293946801516554
 
@@ -42,6 +44,35 @@ class misc(commands.Cog):
                 await ctx.send(f"API returned a {response.status} status.")
 
 
+    @commands.command()
+    async def password(self, ctx, nbytes: int = 18):
+        if nbytes not in range(3, 1401):
+            return await ctx.send("I only accept any numbers between 3-1400")
+        if hasattr(ctx, "guild") and ctx.guild is not None:
+            await ctx.send(f"Sending you a private message with your random generated password **{ctx.author.name}**")
+        await ctx.author.send(f"🎁 **Here is your password:**\n{secrets.token_urlsafe(nbytes)}")
+
+
+    @commands.command()
+    @commands.guild_only()
+    async def user(self, ctx, *, user: nextcord.Member = None):
+        """ Get user information """
+        user = user or ctx.author
+
+        show_roles = ", ".join(
+            [f"<@&{x.id}>" for x in sorted(user.roles, key=lambda x: x.position, reverse=True) if x.id != ctx.guild.default_role.id]
+        ) if len(user.roles) > 1 else "None"
+
+        embed = nextcord.Embed(colour=user.top_role.colour.value)
+        embed.set_thumbnail(url=user.avatar)
+
+        embed.add_field(name="Full name", value=user, inline=True)
+        embed.add_field(name="Nickname", value=user.nick if hasattr(user, "nick") else "None", inline=True)
+        #embed.add_field(name="Account created", value=default.date(user.created_at, ago=True), inline=True)
+        #embed.add_field(name="Joined this server", value=default.date(user.joined_at, ago=True), inline=True)
+        embed.add_field(name="Roles", value=show_roles, inline=False)
+
+        await ctx.send(content=f"ℹ About **{user.id}**", embed=embed)
 
 def setup(bot):
     bot.add_cog(misc(bot))
