@@ -3,6 +3,7 @@ import nextcord
 import psutil
 import os
 from nextcord.ext import commands
+import datetime
 
 class Information(commands.Cog):
     def __init__(self, bot):
@@ -141,6 +142,10 @@ class Information(commands.Cog):
                 description="• Please put a valid option! Example: `!whois @user`"
             )
             await ctx.send(embed=embed)
+
+
+
+
 
 
 def setup(bot):
