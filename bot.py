@@ -2,11 +2,10 @@ import nextcord
 from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 import os
-import datetime
 
 log_channel_id = 889293946801516554
 
-bot = commands.Bot(command_prefix="!")
+bot = commands.Bot(prefix = "!")
 
 @bot.event
 async def on_ready():
