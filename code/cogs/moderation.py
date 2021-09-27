@@ -10,7 +10,6 @@ yellow = 0xffc400
 color = 0xc48aff
 
 class Moderation(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -225,18 +224,6 @@ class Moderation(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
-
-    #@commands.command()
-    #@commands.has_permissions(kick_members=True)
-    #async def mute(self, ctx, member: nextcord.Member, *, reason=None):
-#Give user the muted role 
-
-
-    #@commands.command()
-    #@commands.has_permissions(kick_members=True)
-    #async def unmute(self, ctx, member: nextcord.Member, *, reason=None):
-#Takes muted role away from user
 
 
     @commands.command()
