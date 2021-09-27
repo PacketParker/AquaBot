@@ -9,24 +9,29 @@ from modules.card import Card
 from modules.economy import Economy
 from modules.helpers import *
 from PIL import Image
+from datetime import datetime
+from modules.helpers import PREFIX, InsufficientFundsException
 
+color = 0xc48aff
 
 class Blackjack(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.economy = Economy()
-    
+
+
     def check_bet(
         self,
         ctx: commands.Context,
         bet: int=DEFAULT_BET,
     ):
         bet = int(bet)
-        if bet <= 0:
+        if bet < 250:
             raise commands.errors.BadArgument()
         current = self.economy.get_entry(ctx.author.id)[1]
-        if bet > current:
+        if bet > current or DEFAULT_BET > current:
             raise InsufficientFundsException(current, bet)
+
 
     @staticmethod
     def hand_to_images(hand: List[Card]) -> List[Image.Image]:
@@ -78,128 +83,168 @@ class Blackjack(commands.Cog):
         return sum
 
 
-    @commands.command(
-        aliases=['bj'],
-        brief="Play a simple game of blackjack.\nBet must be greater than $0",
-        usage=f"blackjack [bet- default=${DEFAULT_BET}]"
-    )
+    #Play a simple game of blackjack. Net must be greater than $250
+    #Usage: $blackjack [bet - default=${DEFAULT_BET}]
+    @commands.command(aliases=['bj'])
     async def blackjack(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        self.check_bet(ctx, bet)
-        deck = [Card(suit, num) for num in range(2,15) for suit in Card.suits]
-        random.shuffle(deck) # Generate deck and shuffle it
+        color = 0xc48aff
+        bet = int(bet)
+        current = self.economy.get_entry(ctx.author.id)[1]
+        if current < 250:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "Not enough money!",
+                description = "You do not have the minimum of 250 dollars to play blackjack. Try running `$add`, and then hit the tables."
 
-        player_hand: List[Card] = []
-        dealer_hand: List[Card] = []
-
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop())
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop().flip())
-
-        player_score = self.calc_hand(player_hand)
-        dealer_score = self.calc_hand(dealer_hand)
-
-        async def out_table(**kwargs) -> nextcord.Message:
-            """Sends a picture of the current table"""
-            self.output(ctx.author.id, dealer_hand, player_hand)
-            embed = make_embed(**kwargs)
-            file = nextcord.File(
-                f"{ctx.author.id}.png", filename=f"{ctx.author.id}.png"
             )
-            embed.set_image(url=f"attachment://{ctx.author.id}.png")
-            msg: nextcord.Message = await ctx.send(file=file, embed=embed)
-            return msg
-        
-        def check(
-            reaction: nextcord.Reaction,
-            user: Union[nextcord.Member, nextcord.User]
-        ) -> bool:
-            return all((
-                str(reaction.emoji) in ("🇸", "🇭"),  # correct emoji
-                user == ctx.author,                  # correct user
-                user != self.bot.user,           # isn't the bot
-                reaction.message == msg            # correct message
-            ))
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
-        standing = False
+        if bet < 250 and current >= 250:
+            raise commands.errors.BadArgument()
+        if bet > current:
+            raise InsufficientFundsException(current, bet)
 
-        while True:
+        if bet < current and bet >= 250:
+            deck = [Card(suit, num) for num in range(2,15) for suit in Card.suits]
+            random.shuffle(deck) # Generate deck and shuffle it
+
+            player_hand: List[Card] = []
+            dealer_hand: List[Card] = []
+
+            player_hand.append(deck.pop())
+            dealer_hand.append(deck.pop())
+            player_hand.append(deck.pop())
+            dealer_hand.append(deck.pop().flip())
+
             player_score = self.calc_hand(player_hand)
             dealer_score = self.calc_hand(dealer_hand)
-            if player_score == 21:  # win condition
-                bet = int(bet*1.5)
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("Blackjack!", 'won')
-                break
-            elif player_score > 21:  # losing condition
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ("Player busts", 'lost')
-                break
-            msg = await out_table(
-                title="Your Turn",
-                description=f"Your hand: {player_score}\n" \
-                    f"Dealer's hand: {dealer_score}"
-            )
-            await msg.add_reaction("🇭")
-            await msg.add_reaction("🇸")
-            
-            try:  # reaction command
-                reaction, _ = await self.bot.wait_for(
-                    'reaction_add', timeout=60, check=check
+
+            async def out_table(**kwargs) -> nextcord.Message:
+                """Sends a picture of the current table"""
+                self.output(ctx.author.id, dealer_hand, player_hand)
+                embed = make_embed(**kwargs)
+                file = nextcord.File(
+                    f"{ctx.author.id}.png", filename=f"{ctx.author.id}.png"
                 )
-            except asyncio.TimeoutError:
-                await msg.delete()
+                embed.set_image(url=f"attachment://{ctx.author.id}.png")
+                msg: nextcord.Message = await ctx.send(file=file, embed=embed)
+                return msg
+            
+            def check(
+                reaction: nextcord.Reaction,
+                user: Union[nextcord.Member, nextcord.User]
+            ) -> bool:
+                return all((
+                    str(reaction.emoji) in ("🇸", "🇭"),  # correct emoji
+                    user == ctx.author,                  # correct user
+                    user != self.bot.user,           # isn't the bot
+                    reaction.message == msg            # correct message
+                ))
 
-            if str(reaction.emoji) == "🇭":
-                player_hand.append(deck.pop())
-                await msg.delete()
-                continue
-            elif str(reaction.emoji) == "🇸":
-                standing = True
-                break
+            standing = False
 
-        if standing:
-            dealer_hand[1].flip()
-            player_score = self.calc_hand(player_hand)
-            dealer_score = self.calc_hand(dealer_hand)
+            while True:
+                player_score = self.calc_hand(player_hand)
+                dealer_score = self.calc_hand(dealer_hand)
+                if player_score == 21:  # win condition
+                    bet = int(bet*1.5)
+                    self.economy.add_money(ctx.author.id, bet)
+                    result = ("Blackjack!", 'won')
+                    break
+                elif player_score > 21:  # losing condition
+                    self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ("Player busts", 'lost')
+                    break
+                msg = await out_table(
+                    title="Your Turn",
+                    description=f"Your hand: {player_score}\n" \
+                        f"Dealer's hand: {dealer_score}"
+                )
+                await msg.add_reaction("🇭")
+                await msg.add_reaction("🇸")
+                
+                try:  # reaction command
+                    reaction, _ = await self.bot.wait_for(
+                        'reaction_add', timeout=60, check=check
+                    )
+                except asyncio.TimeoutError:
+                    await msg.delete()
 
-            while dealer_score < 17:  # dealer draws until 17 or greater
-                dealer_hand.append(deck.pop())
+                if str(reaction.emoji) == "🇭":
+                    player_hand.append(deck.pop())
+                    await msg.delete()
+                    continue
+                elif str(reaction.emoji) == "🇸":
+                    standing = True
+                    break
+
+            if standing:
+                dealer_hand[1].flip()
+                player_score = self.calc_hand(player_hand)
                 dealer_score = self.calc_hand(dealer_hand)
 
-            if dealer_score == 21:  # winning/losing conditions
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ('Dealer blackjack', 'lost')
-            elif dealer_score > 21:
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("Dealer busts", 'won')
-            elif dealer_score == player_score:
-                result = ("Tie!", 'kept')
-            elif dealer_score > player_score:
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ("You lose!", 'lost')
-            elif dealer_score < player_score:
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("You win!", 'won')
+                while dealer_score < 17:  # dealer draws until 17 or greater
+                    dealer_hand.append(deck.pop())
+                    dealer_score = self.calc_hand(dealer_hand)
 
-        color = (
-            nextcord.Color.red() if result[1] == 'lost'
-            else nextcord.Color.green() if result[1] == 'won'
-            else nextcord.Color.blue()
-        )
-        try:
-            await msg.delete()
-        except:
-            pass
-        msg = await out_table(
-            title=result[0],
-            color=color,
-            description=(
-                f"**You {result[1]} ${bet}**\nYour hand: {player_score}\n" +
-                f"Dealer's hand: {dealer_score}"
+                if dealer_score == 21:  # winning/losing conditions
+                    self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ('Dealer blackjack', 'lost')
+                elif dealer_score > 21:
+                    self.economy.add_money(ctx.author.id, bet)
+                    result = ("Dealer busts", 'won')
+                elif dealer_score == player_score:
+                    result = ("Tie!", 'kept')
+                elif dealer_score > player_score:
+                    self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ("You lose!", 'lost')
+                elif dealer_score < player_score:
+                    self.economy.add_money(ctx.author.id, bet)
+                    result = ("You win!", 'won')
+
+            color = (
+                nextcord.Color.red() if result[1] == 'lost'
+                else nextcord.Color.green() if result[1] == 'won'
+                else nextcord.Color.blue()
             )
-        )
-        os.remove(f'./{ctx.author.id}.png')
+            try:
+                await msg.delete()
+            except:
+                pass
+            msg = await out_table(
+                title=result[0],
+                color=color,
+                description=(
+                    f"**You {result[1]} ${bet}**\nYour hand: {player_score}\n" +
+                    f"Dealer's hand: {dealer_score}"
+                )
+            )
+            os.remove(f'./{ctx.author.id}.png')
+
+
+    @blackjack.error
+    async def blackjack_error(self, ctx, error):
+        if isinstance(error, commands.errors.BadArgument):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "Bet too small!",
+                description = "Your bet must be at least $250 in order to play blackjack. Example: `$blackjack 250`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+            
+        elif isinstance(error, InsufficientFundsException):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "Not enough money!",
+                description = "You do not have the minimum of 250 dollars to play blackjack. Try running `$add`, and then hit the tables."
+
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Blackjack(bot))

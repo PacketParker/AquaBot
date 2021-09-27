@@ -10,6 +10,7 @@ from modules.economy import Economy
 from modules.helpers import *
 from PIL import Image
 
+color = 0xc48aff
 
 class Help(commands.Cog):
     def __init__(self, bot: commands.Bot):

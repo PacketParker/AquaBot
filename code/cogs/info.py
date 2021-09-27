@@ -3,7 +3,9 @@ import nextcord
 import psutil
 import os
 from nextcord.ext import commands
-import datetime
+from datetime import datetime
+
+color = 0xc48aff
 
 class Information(commands.Cog):
     def __init__(self, bot):
@@ -21,13 +23,30 @@ class Information(commands.Cog):
             title = f"🏓 WS: {before_ws}ms  |  REST: {int(ping)}ms",
             colour = nextcord.Colour.yellow()
         )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+    @ping.error
+    async def ping_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help kick` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
-    @commands.command(aliases=["joinme", "join", "botinvite"])
+    @commands.command()
     async def invite(self, ctx):
-        """ Invite me to your server """
-        await ctx.send(f"**{ctx.author.name}**, use this URL to invite me\n<{nextcord.utils.oauth_url(self.bot.user.id)}>")
+        embed = nextcord.Embed(
+            colour = nextcord.Colour.blurple(),
+            title = "Invite me to your server!",
+            description = "[Click here to add](https://nextcord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot)"
+        )
+        embed.set_thumbnail(url = self.bot.user.avatar.url)
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
 
 
     @commands.command(aliases=['server'])
@@ -76,8 +95,20 @@ class Information(commands.Cog):
         embed.add_field(name="• Guild verification: ", value=verifications[guild.verification_level.name])
         embed.add_field(name="• Member count: ", value=f"{guild.member_count}")
         embed.add_field(name="• Nitro boosters: ", value=guild.premium_subscription_count or "No Nitro Boosters!")
-
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
+
+
+    @serverinfo.error
+    async def serverinfo_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured when running that command, please try again later. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )  
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
 
 
     @commands.command(aliases=['userinfo'])
@@ -124,7 +155,7 @@ class Information(commands.Cog):
         embed.add_field(name="• Status: ", value=status[member.status.name])
         embed.add_field(name="• Top role: ", value=f"`@{member.top_role}`")
         embed.add_field(name="• Roles: ", inline=False, value=roles)
-
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
@@ -132,22 +163,36 @@ class Information(commands.Cog):
     async def whois_error(self, ctx, error):
         if isinstance(error, commands.BadArgument):
             embed = nextcord.Embed(
-                color=nextcord.Colour.magenta(),
+                color=color,
                 title="→ Invalid Member!",
                 description="• Please mention a valid member! Example: `!whois @user`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.MissingRequiredArgument):
             embed = nextcord.Embed(
-                color=nextcord.Colour.magenta(),
+                color=color,
                 title="→ Invalid Argument!",
                 description="• Please put a valid option! Example: `!whois @user`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
-
-
-
+        elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Member Not Found!",
+                description = f"• Member {error.argument} was not found."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help whois` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

@@ -5,10 +5,12 @@ from nextcord.utils import get
 from aiohttp import request
 import secrets
 from io import BytesIO
+from datetime import datetime
 
 log_channel_id = 889293946801516554
 
 black = 0x000000
+color = 0xc48aff
 
 class Misc(commands.Cog):
     def __init__(self, bot):
@@ -37,11 +39,18 @@ class Misc(commands.Cog):
                 embed.add_field(name=":syringe: Total recovered", value=f"{recovered:,}", inline=True)
                 embed.add_field(name="Total active cases", value=f"{active:,}", inline=True)
                 embed.add_field(name=":map: Total affected countries", value=f"{countries:,}", inline=True)
-
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 await ctx.send(embed=embed)
 
             else:
-                await ctx.send(f"API returned a {response.status} status.")
+                embed = nextcord.Embed(
+                    title = f"API returned a {response.status} status.",
+                    description = "Please try again later.",
+                    colour = color
+
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
 
 
     @commands.command()

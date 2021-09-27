@@ -2,9 +2,8 @@ import nextcord
 from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
-import datetime
+from datetime import datetime
 
-timestamp=str(datetime.datetime.utcnow())
 log_channel_id = 889293946801516554
 
 yellow = 0xffc400
@@ -18,14 +17,22 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: nextcord.Member, *, reason=None):
+    async def kick(self, ctx, member: nextcord.Member=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
-        message = ctx.message
 
-        if reason == None:
+        if member == None:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Please provide a member!",
+                description = f"• I can't kick anyone if a member is not provided."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        if reason == None and member != None:
             await ctx.send(f"{ctx.author.mention}, you must provide a reason in order to kick {member}")
         
-        elif reason != None:
+        elif reason != None and member!= None:
             await member.kick(reason=reason)
             embed = nextcord.Embed(
                 title = f"**User {member} has been kicked for {reason}**",
@@ -47,6 +54,7 @@ class Moderation(commands.Cog):
                 title = "→ Missing Permissions!",
                 description="• You are missing the `kick members` permission."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
@@ -54,6 +62,7 @@ class Moderation(commands.Cog):
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `kick members` permission. \nAsk an admin to fix this issue."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
             embed = nextcord.Embed(
@@ -61,27 +70,36 @@ class Moderation(commands.Cog):
                 title = "→ Member Not Found!",
                 description = f"• Member {error.argument} was not found."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
         else:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured when trying to execute that command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help kick` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
     @commands.command()
     @commands.has_permissions(kick_members=True)
-    async def ban(self, ctx, member: nextcord.Member, *, reason=None):
+    async def ban(self, ctx, member: nextcord.Member=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
-        message = ctx.message
 
-        if reason == None:
+        if member == None:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Please provide a member!",
+                description = f"• I can't kick anyone if a member is not provided."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        if reason == None and member != None:
             await ctx.send(f"{ctx.author.mention}, you must provide a reason in order to ban {member}")
 
-        elif reason != None:
+        elif reason != None and member != None:
             await member.ban(reason=reason)
             embed = nextcord.Embed(
                 title = f"**User {member} has been banned for {reason}**",
@@ -103,6 +121,7 @@ class Moderation(commands.Cog):
                 title = "→ Missing Permissions!",
                 description="• You are missing the `ban members` permission."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
@@ -110,6 +129,7 @@ class Moderation(commands.Cog):
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `ban members` permission. \nAsk an admin to fix this issue."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
             embed = nextcord.Embed(
@@ -117,24 +137,33 @@ class Moderation(commands.Cog):
                 title = "→ Member Not Found!",
                 description = f"• Member {error.argument} was not found."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
         else:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured when trying to execute that command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help ban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    async def softban(self, ctx, member: nextcord.Member, *, reason=None):
+    async def softban(self, ctx, member: nextcord.Member=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
-        message = ctx.message
 
-        if reason == None:
+        if member == None:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Please provide a member!",
+                description = f"• I can't kick anyone if a member is not provided."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        if reason == None and member != None:
             await member.ban(reason=reason)
             await member.unban()
             embed = nextcord.Embed(
@@ -144,11 +173,11 @@ class Moderation(commands.Cog):
 
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
             embed.set_thumbnail(url = member.avatar.url)
-            embed.set_footer(text='Command issued at: ' + message.created_at.strftime('%Y-%m-%d %H:%M:%S %Z%z'))
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
 
-        elif reason != None:
+        elif reason != None and member != None:
             await member.ban(reason=reason)
             await member.unban()
             embed = nextcord.Embed(
@@ -171,6 +200,7 @@ class Moderation(commands.Cog):
                 title = "→ Missing Permissions!",
                 description="• You are missing the `ban members` permission."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
@@ -178,6 +208,7 @@ class Moderation(commands.Cog):
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `ban members` permission. \nAsk an admin to fix this issue."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
             embed = nextcord.Embed(
@@ -186,13 +217,13 @@ class Moderation(commands.Cog):
                 description = f"• Member {error.argument} was not found."
             )
             await ctx.send(embed=embed)
-
         else:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured when trying to execute that command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help softban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
@@ -213,17 +244,19 @@ class Moderation(commands.Cog):
     async def lock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         channel = channel or ctx.channel
-        message = ctx.message
 
-        if reason == None:
-            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
-            await channel.set_permissions(cuties, send_messages=False)
-            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
-            await channel.set_permissions(shout_ping, send_messages=False)
-            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
-            await channel.set_permissions(nitro_ping, send_messages=False)
-            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
-            await channel.set_permissions(event_ping, send_messages=False)
+        if ctx.message.guild.id != 891743644938297395:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Not Available!",
+                description = f"• This command is only available for the admins in the official bot help server."
+            )
+
+            await ctx.send(embed=embed)
+
+        if reason == None and ctx.message.guild.id == 891743644938297395:
+            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
                 description = f"No given reason",
@@ -236,15 +269,9 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-        if reason != None:
-            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
-            await channel.set_permissions(cuties, send_messages=False)
-            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
-            await channel.set_permissions(shout_ping, send_messages=False)
-            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
-            await channel.set_permissions(nitro_ping, send_messages=False)
-            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
-            await channel.set_permissions(event_ping, send_messages=False)
+        if reason != None and ctx.message.guild.id == 891743644938297395:
+            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
                 description = f"Reason: {reason}",
@@ -266,6 +293,7 @@ class Moderation(commands.Cog):
                 title = "→ Missing Permissions!",
                 description="• You are missing the `manage channels` permission."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
@@ -273,6 +301,7 @@ class Moderation(commands.Cog):
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
             embed = nextcord.Embed(
@@ -280,14 +309,15 @@ class Moderation(commands.Cog):
                 title = "→ Member Not Found!",
                 description = f"• Member {error.argument} was not found."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
         else:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured when trying to execute that command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help lock` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
@@ -296,17 +326,19 @@ class Moderation(commands.Cog):
     async def unlock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
         channel = channel or ctx.channel
-        message = ctx.message
 
-        if reason == None:
-            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
-            await channel.set_permissions(cuties, send_messages=True)
-            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
-            await channel.set_permissions(shout_ping, send_messages=True)
-            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
-            await channel.set_permissions(nitro_ping, send_messages=True)
-            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
-            await channel.set_permissions(event_ping, send_messages=True)
+        if ctx.message.guild.id != 891743644938297395:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Not Available!",
+                description = f"• This command is only available for the admins in the official bot help server."
+            )
+
+            await ctx.send(embed=embed)
+
+        if reason == None and ctx.message.guild.id == 891743644938297395:
+            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
                 description = f"No given reason",
@@ -318,15 +350,9 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-        if reason != None:
-            cuties = nextcord.utils.get(ctx.guild.roles, name="cuties")
-            await channel.set_permissions(cuties, send_messages=True)
-            shout_ping = nextcord.utils.get(ctx.guild.roles, name="shout ping")
-            await channel.set_permissions(shout_ping, send_messages=True)
-            nitro_ping = nextcord.utils.get(ctx.guild.roles, name="nitro ping")
-            await channel.set_permissions(nitro_ping, send_messages=True)
-            event_ping = nextcord.utils.get(ctx.guild.roles, name="event ping")
-            await channel.set_permissions(event_ping, send_messages=True)
+        if reason != None and ctx.message.guild.id == 891743644938297395:
+            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
                 description = f"Reason: {reason}",
@@ -347,6 +373,7 @@ class Moderation(commands.Cog):
                 title = "→ Missing Permissions!",
                 description="• You are missing the `manage channels` permission."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
@@ -354,6 +381,7 @@ class Moderation(commands.Cog):
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
             embed = nextcord.Embed(
@@ -361,14 +389,15 @@ class Moderation(commands.Cog):
                 title = "→ Member Not Found!",
                 description = f"• Member {error.argument} was not found."
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-
         else:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured when trying to execute that command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help unlock` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
