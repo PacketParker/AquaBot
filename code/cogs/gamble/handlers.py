@@ -3,6 +3,8 @@ from nextcord.ext import commands
 from nextcord.ext.commands.errors import *
 from modules.helpers import PREFIX, InsufficientFundsException
 
+color = 0xc48aff
+
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -13,23 +15,31 @@ class Handlers(commands.Cog, name='handlers'):
         
         error = getattr(error, 'original', error)
 
-        if isinstance(error, (MissingRequiredArgument,
-                                TooManyArguments, BadArgument)):
-            await ctx.invoke(self.bot.get_command('help'), ctx.command.name)
+        if isinstance(error, (MissingRequiredArgument, TooManyArguments, BadArgument)):
+            embed = nextcord.Embed(
+                title = "→ Incorrect Syntax!",
+                description = f"• That is the incorrect way to send that command. In order to see how to use that command, use `$help {ctx.command.name}`",
+                colour = color
+            )
+            await ctx.send(embed=embed)
 
         if isinstance(error, InsufficientFundsException):
-            await ctx.invoke(self.bot.get_command('money'))
+            embed = nextcord.Embed(
+                title = "→ Insufficient Funds!",
+                description = "• You do not have enough money to use that command. You can check your current balance with `$money`",
+                colour = color
+            )
+            await ctx.send(embed=embed)
 
         if isinstance(error, CommandOnCooldown):
-            s = int(error.retry_after)
-            s = s % (24 * 3600)
-            h = s // 3600
-            s %= 3600
-            m = s // 60
-            s %= 60
-            await ctx.send(f'{h}hrs {m}min {s}sec remaining.')
+            embed = nextcord.Embed(
+                title = "→ Slots Cooldown!",
+                description = "• The slots command is on a 2 second cooldown in order to keep up with the creation of gifs. Sorry for the inconvenience.",
+                colour = color
+            )
+            await ctx.send(embed=embed)
         
-        else:
+        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument:
             raise error
 
 
