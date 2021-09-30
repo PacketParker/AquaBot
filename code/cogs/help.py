@@ -91,24 +91,22 @@ class Dropdown(nextcord.ui.Select):
 class DropdownView(nextcord.ui.View):
     def __init__(self):
         super().__init__()
+        self.value = None
         self.add_item(Dropdown())
 
-
-class Confirm(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.value = None
-
-    @nextcord.ui.button(label='Confirm', style=nextcord.ButtonStyle.green)
-    async def confirm(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @nextcord.ui.button(label='Main Page', style=nextcord.ButtonStyle.blurple, row=2)
+    async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         embed = nextcord.Embed(
             title = "Help",
             description = "For extended information on commands and categories, please choose and option from the dropdown menu below.",
             colour = nextcord.Colour.random()   
         )
 
-        view = DropdownView()
-        await interaction.response.edit_message(embed=embed, view=view)
+        await interaction.response.edit_message(embed=embed)
+
+    @nextcord.ui.button(label='Delete', style=nextcord.ButtonStyle.red, row=2)
+    async def delete(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+        await interaction.message.delete()
 
 
 class Help(commands.Cog):
@@ -125,7 +123,6 @@ class Help(commands.Cog):
         )
 
         view = DropdownView()
-        view.add_item(Confirm()) 
         await ctx.send(embed=embed, view=view)
 
 
