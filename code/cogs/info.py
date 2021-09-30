@@ -42,7 +42,7 @@ class Information(commands.Cog):
         embed = nextcord.Embed(
             colour = nextcord.Colour.blurple(),
             title = "Invite me to your server!",
-            description = "[Click here to add](https://nextcord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot)"
+            description = "[Click here to add](https://nextcord.com/api/oauth2/authorize?bot_id=889027125275922462&permissions=8&scope=bot)"
         )
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
