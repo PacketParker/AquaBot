@@ -28,6 +28,4 @@ for filename in os.listdir('./cogs/gamble'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.gamble.{filename[:-3]}')
 
-
-
 bot.run("ODg5MDI3MTI1Mjc1OTIyNDYy.YUbRBw.96QzGKIyYjyIwKNuXG-w2-i73rY")
