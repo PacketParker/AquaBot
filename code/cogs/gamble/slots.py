@@ -30,7 +30,7 @@ class Slots(commands.Cog):
     #Slot machine, bet must be 1-3
     #Usage: $slots [bet]
     @commands.command()
-    @commands.cooldown(1, 1.5, commands.BucketType.user)
+    @commands.cooldown(1, 2.7, commands.BucketType.user)
     async def slots(self, ctx: commands.Context, bet: int=1):
         self.check_bet(ctx, bet=bet)
         path = os.path.join(ABS_PATH, 'modules/')

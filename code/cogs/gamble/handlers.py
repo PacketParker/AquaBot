@@ -34,7 +34,7 @@ class Handlers(commands.Cog, name='handlers'):
         if isinstance(error, CommandOnCooldown):
             embed = nextcord.Embed(
                 title = "→ Slots Cooldown!",
-                description = "• The slots command is on a 2 second cooldown in order to keep up with the creation of gifs. Sorry for the inconvenience.",
+                description = "• The slots command is on a 3 second cooldown in order to keep up with the creation of gifs. Sorry for the inconvenience.",
                 colour = color
             )
             await ctx.send(embed=embed)

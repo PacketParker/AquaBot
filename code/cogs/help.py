@@ -17,20 +17,26 @@ class Help(commands.Cog):
         self.bot = bot
 
 
-#    @commands.group(invoke_without_command=True)
-#    async def help(self, ctx):
-#        embed = nextcord.Embed(
-#            title = "Help",
-#            description = "Use `$help <command> for extended information on that command",
-#            colour = ctx.author.colour    
-#        )
+    @commands.group(invoke_without_command=True)
+    async def help(self, ctx):
+        embed = nextcord.Embed(
+            title = "Help",
+            description = "Use `$help <command> for extended information on that command",
+            colour = ctx.author.colour    
+        )
 
-#        embed.add_field(name = "Moderation", value = "kick, ban, softban, mute, unmute")
-#        embed.add_field(name = "Fun", value = "")
-
-
+        embed.add_field(name = "Moderation", value = "kick, ban, softban, mute, unmute")
+        embed.add_field(name = "Fun", value = "")
 
 
+    @help.command()
+    async def kick(self, ctx):
+        embed = nextcord.Embed(
+            title = "Kick Help",
+            description = "Usage: `$kick @member <reason>`. \nExample: `$kick @bob testing`",
+            colour = ctx.author.colour    
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):
