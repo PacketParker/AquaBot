@@ -3,6 +3,7 @@ from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 from datetime import datetime
+import asyncio
 
 log_channel_id = 889293946801516554
 
