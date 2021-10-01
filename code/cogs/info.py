@@ -10,7 +10,6 @@ color = 0xc48aff
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
         self.process = psutil.Process(os.getpid())
 
     @commands.command()
@@ -42,14 +41,14 @@ class Information(commands.Cog):
         embed = nextcord.Embed(
             colour = nextcord.Colour.blurple(),
             title = "Invite me to your server!",
-            description = "[Click here to add](https://nextcord.com/api/oauth2/authorize?bot_id=889027125275922462&permissions=8&scope=bot)"
+            description = "[Click here to add](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot)"
         )
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
-    @commands.command(aliases=['server'])
+    @commands.command()
     async def serverinfo(self, ctx):
         guild = ctx.guild
         embed = nextcord.Embed(
@@ -193,6 +192,28 @@ class Information(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def botinfo(self, ctx):
+        embed = nextcord.Embed(
+            color=nextcord.Colour.magenta(),
+            title=f"→ Bot Information",
+            description="— "
+                        "\n➤ Shows information about the bot. "
+                        "\n —"
+        )
+        before = time.monotonic()
+        ping = (time.monotonic() - before) * 1000
+        embed.set_thumbnail(url = self.bot.user.avatar.url)
+        embed.add_field(name="• Bot Creator: ", value="Fiji#3608"),
+        embed.add_field(name="• Ping: ", value = f"{int(ping)}ms"),
+        embed.add_field(name="• Account name: ", value=str(self.bot.user.name))
+        embed.add_field(name="• Discord ID: ", value=str(self.bot.user.id))
+        embed.add_field(name="• Bot created at: ", value=self.bot.user.created_at.strftime("%A %d, %B %Y."))
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
 
 
 def setup(bot):

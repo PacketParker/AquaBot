@@ -1,6 +1,5 @@
 import nextcord
 from nextcord.ext import commands
-from nextcord.ext.commands import MissingPermissions
 import os
 from modules.helpers import *
 

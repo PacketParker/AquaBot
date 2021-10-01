@@ -9,7 +9,6 @@ class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-'''
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         
@@ -26,7 +25,7 @@ class Handlers(commands.Cog, name='handlers'):
         if isinstance(error, InsufficientFundsException):
             embed = nextcord.Embed(
                 title = "→ Insufficient Funds!",
-                description = "• You do not have enough money to use that command. You can check your current balance with `$money`",
+                description = "• You do not have enough money to use that command. You can use `$add` to add more money. You can also check your current balance with `$money`",
                 colour = color
             )
             await ctx.send(embed=embed)
@@ -41,7 +40,6 @@ class Handlers(commands.Cog, name='handlers'):
         
         elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument:
             raise error
-'''
 
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))

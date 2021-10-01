@@ -15,6 +15,49 @@ class Moderation(commands.Cog):
 
 
     @commands.command()
+    @commands.has_permissions(manage_messages=True)
+    async def purge(self, ctx, *, amount: int):
+        await ctx.channel.purge(limit=amount+1)
+
+
+    @purge.command()
+    async def purge_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `ban members` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `ban members` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Member Not Found!",
+                description = f"• Member {error.argument} was not found."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help ban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+
+
+    @commands.command()
     @commands.has_permissions(kick_members=True)
     async def kick(self, ctx, member: nextcord.Member=None, *, reason=None):
         log = self.bot.get_channel(log_channel_id)

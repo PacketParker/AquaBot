@@ -18,11 +18,15 @@ class Slots(commands.Cog):
         self.bot = bot
         self.economy = Economy()
 
-    def check_bet(self, ctx: commands.Context, bet: int=DEFAULT_BET):
+    def check_bet(
+        self,
+        ctx: commands.Context,
+        bet: int=DEFAULT_BET,
+    ):
         bet = int(bet)
         if bet <= 0:
             raise commands.errors.BadArgument()
-        current = self.economy.get_entry(ctx.author.id)[2]
+        current = self.economy.get_entry(ctx.author.id)[1]
         if bet > current:
             raise InsufficientFundsException(current, bet)
 
@@ -31,7 +35,7 @@ class Slots(commands.Cog):
     #Usage: $slots [bet]
     @commands.command()
     @commands.cooldown(1, 2.7, commands.BucketType.user)
-    async def slots(self, ctx: commands.Context, bet: int=1):
+    async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):
         self.check_bet(ctx, bet=bet)
         path = os.path.join(ABS_PATH, 'modules/')
         facade = Image.open(f'{path}slot-face.png').convert('RGBA')
@@ -79,23 +83,23 @@ class Slots(commands.Cog):
 
         # win logic
         result = ('lost', bet)
-        self.economy.add_credits(ctx.author.id, bet*-1)       
+        self.economy.add_money(ctx.author.id, bet*-1)       
         # (1+s1)%6 gets the symbol 0-5 inclusive
         if (1+s1)%6 == (1+s2)%6 == (1+s3)%6:
             symbol = (1+s1)%6
             reward = [4, 80, 40, 25, 10, 5][symbol] * bet
             result = ('won', reward)
-            self.economy.add_credits(ctx.author.id, reward)
+            self.economy.add_money(ctx.author.id, reward)
 
         embed = make_embed(
             title=(
-                f'You {result[0]} {result[1]} credits'+
+                f'You {result[0]} {result[1]:,} dollars'+
                 ('.' if result[0] == 'lost' else '!') # happy or sad based on outcome
             ),
             description=(
                 'You now have ' +
-                f'**{self.economy.get_entry(ctx.author.id)[2]}** ' +
-                'credits.'
+                f'**{self.economy.get_entry(ctx.author.id)[1]:,}** ' +
+                'dollars.'
             ),
             color=(
                 nextcord.Color.red() if result[0] == "lost"
@@ -111,87 +115,6 @@ class Slots(commands.Cog):
         )
 
         os.remove(fp)
-
-
-    @commands.command()
-    #Purchase credits. Each credit is worth ${DEFAULT_BET}.
-    #usage: 'buyc [amount of credits]'
-    async def buyc(self, ctx: commands.Context, *, amount_to_buy: int=0):
-        user_id = ctx.author.id
-        profile = self.economy.get_entry(user_id)
-        cost = amount_to_buy * DEFAULT_BET
-        if amount_to_buy == 0:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "No amount given!",
-                description = "Please provide an amount of credits that you would want to buy. \nExample: `$buyc <amount>`"
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-        elif profile[1] >= cost and amount_to_buy != 0:
-            self.economy.add_money(user_id, cost*-1)
-            self.economy.add_credits(user_id, amount_to_buy)
-            await ctx.send(f"You just purchased {amount_to_buy} credits.")
-            await ctx.invoke(self.bot.get_command('money'))
-        else:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "Not enough money!",
-                description = "It seems you don't have enough money to buy a credit. Try doing `$add`, or play some blackjack to get more money."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-
-
-    @buyc.error
-    async def buyc_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `$help buyc` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
-
-
-    @commands.command()
-    #Sell credits. Each credit is worth ${DEFAULT_BET}.
-    #usage: sellc [amount of credits]
-    async def sellc(self, ctx: commands.Context, *, amount_to_sell: int=0):
-        user_id = ctx.author.id
-        profile = self.economy.get_entry(user_id)
-        if amount_to_sell == 0:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "No amount given!",
-                description = "Please provide an amount of credits that you would want to sell. \nExample: `$sellc <amount>`"
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-        elif profile[2] >= amount_to_sell and amount_to_sell != 0:
-            self.economy.add_credits(user_id, amount_to_sell*-1)
-            self.economy.add_money(user_id, amount_to_sell*DEFAULT_BET)
-            await ctx.send(f"You just sold {amount_to_sell} credits.")
-            await ctx.invoke(self.bot.get_command('money'))
-        else:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "No credits!",
-                description = "It seems you don't have any credits to sell. Try buying some credits using `$buyc <amount>`, then play some slots and earn more."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-
-
-    @sellc.error
-    async def sellc_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `$help sellc` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):

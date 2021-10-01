@@ -57,8 +57,7 @@ class GamblingHelpers(commands.Cog, name='General'):
         embed = make_embed(
             title=user.name,
             description=(
-                '**${:,}**'.format(profile[1]) +
-                '\n**{:,}** credits'.format(profile[2])
+                '**${:,}**'.format(profile[1]) + "\nKeep working to get more money!"
             ),
             footer=nextcord.Embed.Empty
         )
@@ -103,7 +102,7 @@ class GamblingHelpers(commands.Cog, name='General'):
     @commands.command(aliases=["top"])
     async def leaderboard(self, ctx):
         entries = self.economy.top_entries(5)
-        embed = make_embed(title='Leaderboard:', color=nextcord.Color.gold())
+        embed = make_embed(title='Global Leaderboard:', color=nextcord.Color.gold())
         for i, entry in enumerate(entries):
             embed.add_field(
                 name=f"{i+1}. {self.bot.get_user(entry[0]).name}",

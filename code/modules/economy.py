@@ -72,29 +72,12 @@ class Economy:
         return self.get_entry(user_id)
 
     @_commit
-    def set_credits(self, user_id: int, credits: int) -> Entry:
-        self.cur.execute(
-            "UPDATE economy SET credits=? WHERE user_id=?",
-            (credits, user_id)
-        )
-        return self.get_entry(user_id)
-
-    @_commit
     def add_money(self, user_id: int, money_to_add: int) -> Entry:
         money = self.get_entry(user_id)[1]
         total = money + money_to_add
         if total < 0:
             total = 0
         self.set_money(user_id, total)
-        return self.get_entry(user_id)
-
-    @_commit
-    def add_credits(self, user_id: int, credits_to_add: int) -> Entry:
-        credits = self.get_entry(user_id)[2]
-        total = credits + credits_to_add
-        if total < 0:
-            total = 0
-        self.set_credits(user_id, total)
         return self.get_entry(user_id)
 
     def random_entry(self) -> Entry:
