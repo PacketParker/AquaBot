@@ -16,33 +16,42 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def purge(self, ctx, *, amount: int):
-        await ctx.channel.purge(limit=amount+1)
+    async def purge(self, ctx, amount: int=None):
+        if amount == None:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Amount Not Given!",
+                description="• Please provide an amount of messages you would like to delete. Example: `$purge 5`"
+            )
+            await ctx.send(embed=embed)
+    
+        elif amount > 100:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Amount Too Large!",
+                description="• You sent an amount larger than 100. Sorry, but you can only delete 100 messages at a time."
+            )
+            await ctx.send(embed=embed)
+
+        else:
+            await ctx.channel.purge(limit=amount+1)
 
 
-    @purge.command()
+    @purge.error
     async def purge_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
-                description="• You are missing the `ban members` permission."
+                description="• You are missing the `manage messages` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-        elif isinstance(error, commands.BotMissingPermissions):
+        if isinstance(error, commands.BotMissingPermissions):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
-                description = "• I am missing `ban members` permission. \nAsk an admin to fix this issue."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-        elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Member Not Found!",
-                description = f"• Member {error.argument} was not found."
+                description = "• I am missing `manage messages` permission. \nAsk an admin to fix this issue."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -50,7 +59,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help ban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help purge` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
