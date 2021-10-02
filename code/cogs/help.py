@@ -14,8 +14,8 @@ class HelpDropdown(nextcord.ui.Select):
     def __init__(self):
 
         options = [
-            nextcord.SelectOption(label='Gambling', description='blackjack, slots, money, leaderboard', emoji="💰"),
-            nextcord.SelectOption(label='Moderation', description='kick, ban, softban', emoji="<:moderation:893273273385754686>"),
+            nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
+            nextcord.SelectOption(label='Moderation', description='kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
             nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
@@ -31,10 +31,11 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $250 will be placed", inline=False)
-            embed.add_field(name = "**Slots**", value = "**Usage: `$slots <bet>`**\nIf no bet is given, the default bet of $250 will be placed.", inline=False)
-            embed.add_field(name = "**Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
-            embed.add_field(name = "**Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
+            embed.add_field(name = "**🃏 - Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
+            embed.add_field(name = "**🎰 - Slots**", value = "**Usage: `$slots <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**🪙 - Coinflip**", value = "**Usage: `$coinflip <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**💵 - Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
+            embed.add_field(name = "**🏅 - Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == 'Moderation':
@@ -43,7 +44,7 @@ class HelpDropdown(nextcord.ui.Select):
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
-
+      
             embed.add_field(name = "**Purge**", value = "**Usage: `$purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
             embed.add_field(name = "**Kick**", value = "**Usage: `$kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=False)
             embed.add_field(name = "**Ban**", value = "**Usage: `$slots <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=False)
@@ -117,8 +118,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
     def __init__(self):
 
         options = [
-            nextcord.SelectOption(label='Gambling', description='blackjack, slots, money, leaderboard', emoji="💰"),
-            nextcord.SelectOption(label='Moderation', description='kick, ban, softban', emoji="<:moderation:893273273385754686>"),
+            nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
+            nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
             nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
@@ -134,10 +135,11 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $250 will be placed", inline=False)
-            embed.add_field(name = "**Slots**", value = "**Usage: `$slots <bet>`**\nIf no bet is given, the default bet of $250 will be placed.", inline=False)
-            embed.add_field(name = "**Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
-            embed.add_field(name = "**Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
+            embed.add_field(name = "**🃏 - Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
+            embed.add_field(name = "**🎰 - Slots**", value = "**Usage: `$slots <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**🪙 - Coinflip**", value = "**Usage: `$coinflip <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**💵 - Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
+            embed.add_field(name = "**🏅 - Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == 'Moderation':
@@ -147,12 +149,14 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Purge**", value = "**Usage: `$purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.", inline=False)
-            embed.add_field(name = "**Kick**", value = "**Usage: `$kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=False)
-            embed.add_field(name = "**Ban**", value = "**Usage: `$slots <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=False)
-            embed.add_field(name = "**Softban**", value = "**Usage: `$softban <member> (reason)`** \nThis command will ban and then immediately unban the member in order to get rid of their message history.", inline=False)
-            embed.add_field(name = "**Lock**", value = "**Usage: `$lock (channel) (reason)`** \nThis will lock the specified channel so no members can send messages.", inline=False)
-            embed.add_field(name = "**Unlock**", value = "**Usage: `$unlock (channel) (reason)`** \nThis will unlock the specified channel so members can start sending messages again.", inline=False)
+            embed.add_field(name = "**Mute**", value = "**Usage: `$mute <member> <time>` \nExample: `$mute @bob 2d 4h 6m 8s`** \nMute a member so they can't send anymore messages for a specified amount of time.", inline=True)
+            embed.add_field(name = "**Unmute**", value = "**Usage: `$unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)      
+            embed.add_field(name = "**Purge**", value = "**Usage: `$purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.", inline=True)
+            embed.add_field(name = "**Kick**", value = "**Usage: `$kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
+            embed.add_field(name = "**Ban**", value = "**Usage: `$slots <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=True)
+            embed.add_field(name = "**Softban**", value = "**Usage: `$softban <member> (reason)`** \nThis command will ban and then immediately unban the member in order to get rid of their message history.", inline=True)
+            embed.add_field(name = "**Lock**", value = "**Usage: `$lock (channel) (reason)`** \nThis will lock the specified channel so no members can send messages.", inline=True)
+            embed.add_field(name = "**Unlock**", value = "**Usage: `$unlock (channel) (reason)`** \nThis will unlock the specified channel so members can start sending messages again.", inline=True)
             
             await interaction.response.edit_message(embed=embed) 
 

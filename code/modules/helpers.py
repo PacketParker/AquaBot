@@ -5,7 +5,6 @@ from pathlib import Path
 import yaml
 from nextcord import Color, Embed
 
-
 class InsufficientFundsException(Exception):
     def __init__(self, current, bet) -> None:
         self.needs = bet - current

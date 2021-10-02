@@ -2,13 +2,12 @@ import nextcord
 from nextcord.ext import commands
 from nextcord.ext.commands.errors import *
 from modules.helpers import PREFIX, InsufficientFundsException
-
 color = 0xc48aff
 
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
+'''
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         
@@ -40,6 +39,6 @@ class Handlers(commands.Cog, name='handlers'):
         
         elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument:
             raise error
-
+'''
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))
