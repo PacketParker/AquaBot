@@ -1,17 +1,22 @@
 import nextcord
+from nextcord.errors import InteractionResponded
 from nextcord.ext import commands
 from nextcord.ext.commands.errors import *
 from modules.helpers import PREFIX, InsufficientFundsException
+from datetime import datetime
 color = 0xc48aff
 
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-'''
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
         
         error = getattr(error, 'original', error)
+
+        if isinstance(error, InteractionResponded):
+            return
 
         if isinstance(error, (MissingRequiredArgument, TooManyArguments, BadArgument)):
             embed = nextcord.Embed(
@@ -28,17 +33,15 @@ class Handlers(commands.Cog, name='handlers'):
                 colour = color
             )
             await ctx.send(embed=embed)
-
-        if isinstance(error, CommandOnCooldown):
-            embed = nextcord.Embed(
-                title = "→ Slots Cooldown!",
-                description = "• The slots command is on a 3 second cooldown in order to keep up with the creation of gifs. Sorry for the inconvenience.",
-                colour = color
-            )
-            await ctx.send(embed=embed)
         
-        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument:
-            raise error
-'''
+        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))

@@ -17,6 +17,7 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
+            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
             nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
         ]
@@ -31,9 +32,9 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**🃏 - Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
+            embed.add_field(name = "**🃏 - Blackjack (bj)**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
             embed.add_field(name = "**🎰 - Slots**", value = "**Usage: `$slots <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
-            embed.add_field(name = "**🪙 - Coinflip**", value = "**Usage: `$coinflip <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**🪙 - Coinflip (cf)**", value = "**Usage: `$coinflip <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
             embed.add_field(name = "**💵 - Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
             embed.add_field(name = "**🏅 - Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
@@ -64,6 +65,27 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=False)
             await interaction.response.edit_message(embed=embed)  
 
+        if self.values[0] == "Music (BETA)":
+            embed = nextcord.Embed(
+                title = "🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `$contact`",
+                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
+                colour = nextcord.Colour.random()
+            )
+
+            embed.add_field(name = "**Play**", value = "**Usage: `$play <name of song / URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
+            embed.add_field(name = "**Skip**", value = "**Usage: `$skip` **\nSkips the song that is currently playing.", inline=True)
+            embed.add_field(name = "**Queue**", value = "**Usage: `$queue`** \nSends all of the songs that are in the queue.", inline=True)
+            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song number>`** \nRemoves the specified song.", inline=True)
+            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Nowplaying**", value = "**Usage: `$nowplaying` **\nSends the song that is currently playing.", inline=True)
+            embed.add_field(name = "**Volume**", value = "**Usage: `$volume <number 1 - 100>`** \nChanges the bots volume to the specified percentage.", inline=True)
+            embed.add_field(name = "**Pause**", value = "**Usage: `$pause`** \nPauses the currently playing song.", inline=True)
+            embed.add_field(name = "**Resume**", value = "**Usage: `$resume` **\nResumes the paused song.", inline=True)
+            embed.add_field(name = "**Join**", value = "**Usage: `$join` **\nJoins the voice channel that you are in.", inline=True)
+            embed.add_field(name = "**Leave**", value = "**Usage: `$leave`** \nLeaves the voice channel.", inline=True)
+
+            await interaction.response.edit_message(embed=embed)  
+
         if self.values[0] == 'Fun':
             embed = nextcord.Embed(
                 title = "🎉 - Fun Help",
@@ -87,7 +109,7 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite link for the bot.", inline=False)
             await interaction.response.edit_message(embed=embed) 
         else:
-            await interaction.response.send_message("Hmmm... something is broken. Please contact the bot developer with `$contact`")
+            return
 
 class HelpView(nextcord.ui.View):
     def __init__(self):
@@ -121,6 +143,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
+            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
             nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
         ]
@@ -135,9 +158,9 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**🃏 - Blackjack**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
+            embed.add_field(name = "**🃏 - Blackjack (bj)**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
             embed.add_field(name = "**🎰 - Slots**", value = "**Usage: `$slots <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
-            embed.add_field(name = "**🪙 - Coinflip**", value = "**Usage: `$coinflip <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**🪙 - Coinflip (cf)**", value = "**Usage: `$coinflip <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
             embed.add_field(name = "**💵 - Money**", value = "**Usage: `$money` **\nThis shows your current dollar balance", inline=False)
             embed.add_field(name = "**🏅 - Leaderboard**", value = "**Usage: `$leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
@@ -173,6 +196,27 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=False)
             await interaction.response.edit_message(embed=embed)  
 
+        if self.values[0] == "Music (BETA)":
+            embed = nextcord.Embed(
+                title = "🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `$contact`",
+                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
+                colour = nextcord.Colour.random()
+            )
+
+            embed.add_field(name = "**Play**", value = "**Usage: `$play <name of song / URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
+            embed.add_field(name = "**Skip**", value = "**Usage: `$skip` **\nSkips the song that is currently playing.", inline=True)
+            embed.add_field(name = "**Queue**", value = "**Usage: `$queue`** \nSends all of the songs that are in the queue.", inline=True)
+            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song number>`** \nRemoves the specified song.", inline=True)
+            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Nowplaying**", value = "**Usage: `$nowplaying` **\nSends the song that is currently playing.", inline=True)
+            embed.add_field(name = "**Volume**", value = "**Usage: `$volume <number 1 - 100>`** \nChanges the bots volume to the specified percentage.", inline=True)
+            embed.add_field(name = "**Pause**", value = "**Usage: `$pause`** \nPauses the currently playing song.", inline=True)
+            embed.add_field(name = "**Resume**", value = "**Usage: `$resume` **\nResumes the paused song.", inline=True)
+            embed.add_field(name = "**Join**", value = "**Usage: `$join` **\nJoins the voice channel that you are in.", inline=True)
+            embed.add_field(name = "**Leave**", value = "**Usage: `$leave`** \nLeaves the voice channel.", inline=True)
+
+            await interaction.response.edit_message(embed=embed)  
+
         if self.values[0] == 'Fun':
             embed = nextcord.Embed(
                 title = "🎉 - Fun Help",
@@ -196,7 +240,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite link for the bot.", inline=False)
             await interaction.response.edit_message(embed=embed) 
         else:
-            await interaction.response.send_message("Hmmm... something is broken. Please contact the bot developer with `$contact`")
+            return
 
 class GuildHelpView(nextcord.ui.View):
     def __init__(self):

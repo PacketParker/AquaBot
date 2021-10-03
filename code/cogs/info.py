@@ -111,7 +111,10 @@ class Information(commands.Cog):
 
 
     @commands.command(aliases=['userinfo'])
-    async def whois(self, ctx, member: nextcord.Member):
+    async def whois(self, ctx, *, member: nextcord.Member = None):
+        if member is None:
+            member = ctx.author
+
         embed = nextcord.Embed(
             color=nextcord.Colour.magenta(),
             title=f"→ User Information For {member}",
@@ -122,10 +125,10 @@ class Information(commands.Cog):
         )
 
         status = {
-            "online": ":status_online:",
-            "idle": ":status_idle:",
-            "offline": ":status_offline:",
-            "dnd": ":status_dnd:"
+            "online": ":green_circle: - Online",
+            "idle": ":yellow_circle: - Idle",
+            "offline": ":black_circle: - Offline",
+            "dnd": ":red_circle: - DND"
         }
 
         roles = [role for role in member.roles]
@@ -159,12 +162,57 @@ class Information(commands.Cog):
 
 
     @whois.error
-    async def whois_error(self, ctx, error):
-        if isinstance(error, commands.BadArgument):
+    async def whois_error(self, ctx, error, member: nextcord.Member = None):
+        if isinstance(error, commands.CommandInvokeError):
+            if member is None:
+                member = ctx.author
+
+            embed = nextcord.Embed(
+                color=nextcord.Colour.magenta(),
+                title=f"→ User Information For {member}",
+                description="— "
+                            "\n➤ You have too many roles, because of this we have removed that function. "
+                            "\n➤ The information will be listed below!"
+                            "\n —"
+            )
+
+            status = {
+                "online": ":green_circle: - Online",
+                "idle": ":yellow_circle: - Idle",
+                "offline": ":black_circle: - Offline",
+                "dnd": ":red_circle: - DND"
+            }
+
+            embed.set_thumbnail(url = member.avatar.url)
+            embed.add_field(name="• Account name: ", value=str(member))
+            embed.add_field(name="• Discord ID: ", value=str(member.id))
+            embed.add_field(name="• Nickname: ", value=member.nick or "No nickname!")
+            embed.add_field(name="• Account created at: ", value=member.created_at.strftime("%A %d, %B %Y."))
+            embed.add_field(name="• Account joined at: ", value=member.joined_at.strftime("%A %d, %B %Y"))
+
+            if member.activity is None:
+                embed.add_field(name="• Activity: ", value="No activity!")
+            else:
+                embed.add_field(name="• Activity: ", value=member.activity.name)
+            if member.bot is True:
+                embed.add_field(name="• Discord bot? ", value=":robot: = :white_check_mark:")
+            else:
+                embed.add_field(name="• Discord bot?", value=":robot: = :x:")
+            if member.is_on_mobile() is True:
+                embed.add_field(name="• On mobile? ", value=":iphone: = Yes")
+            else:
+                embed.add_field(name="• On mobile? ", value=":no_mobile_phones: = No")
+
+            embed.add_field(name="• Status: ", value=status[member.status.name])
+            embed.add_field(name="• Top role: ", value=f"`@{member.top_role}`")
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BadArgument):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Member!",
-                description="• Please mention a valid member! Example: `!whois @user`"
+                description="• Please mention a valid member! Example: `$whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -172,7 +220,7 @@ class Information(commands.Cog):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Argument!",
-                description="• Please put a valid option! Example: `!whois @user`"
+                description="• Please put a valid option! Example: `$whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)

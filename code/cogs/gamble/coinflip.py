@@ -27,8 +27,8 @@ class Coinflip(commands.Cog):
             raise InsufficientFundsException(current, bet)
 
 
-    @commands.command()
-    @commands.cooldown(1, 3, commands.BucketType.user)
+    @commands.command(aliases = ["cf"])
+    @commands.cooldown(1, 1.5, commands.BucketType.user)
     async def coinflip(self, ctx: commands.Context, bet: int=DEFAULT_BET):
         self.check_bet(ctx, bet)
         coinsides = ["heads", "tails"]
@@ -38,46 +38,31 @@ class Coinflip(commands.Cog):
 
         if outcome == "heads":
             self.economy.add_money(ctx.author.id, bet)
-            embed = nextcord.Embed(
-                colour = nextcord.Colour.green(),
+            embed = make_embed(
                 title = "→ You win!",
-                description = f"• You won {bet:,} dollars. \nYou now have " + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1])
+                description = f"• You won {bet:,} dollars. \nYou now have " + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1]),
+                color = nextcord.Color.green()
             )
-            embed.set_image(url = "attachment://coins/heads.gif")
+            fp = f'heads.gif'
+            file = nextcord.File(fp, filename = fp)
+            embed.set_image(url = f"attachment://{fp}")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(file=file, embed=embed)
 
 
         elif outcome == "tails":
             self.economy.add_money(ctx.author.id, bet*-1)
-            embed = nextcord.Embed(
-                colour = nextcord.Colour.red(),
+            embed = make_embed(
                 title = "→ You Lose!",
-                description = f"• You lost {bet:,} dollars. \nYou now have" + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1])
+                description = f"• You lost {bet:,} dollars. \nYou now have " + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1]),
+                color = nextcord.Color.red()
             )
-            embed.set_image(url = "attachment://coins/tails.gif")
+
+            fp = f'tails.gif'
+            file = nextcord.File(fp, filename = fp)
+            embed.set_image(url = f"attachment://{fp}")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-
-
-    @coinflip.error
-    async def coinflip_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = nextcord.Embed(
-                title = "→ Coinflip Cooldown!",
-                description = "• To prevent spamming, the coinflip command in on a 2 second cooldown. Sorry for the inconvenience.",
-                colour = color
-            )
-            await ctx.send(embed=embed)
-
-        else: 
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Error!",
-                description = f"• An error occured, try running `$help coinflip` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(file=file, embed=embed)
 
 
 def setup(bot: commands.Bot):

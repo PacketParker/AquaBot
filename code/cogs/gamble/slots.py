@@ -34,7 +34,7 @@ class Slots(commands.Cog):
     #Slot machine, bet must be 1-3
     #Usage: $slots [bet]
     @commands.command()
-    @commands.cooldown(1, 2.7, commands.BucketType.user)
+    @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):
         self.check_bet(ctx, bet=bet)
         path = os.path.join(ABS_PATH, 'modules/')
@@ -115,6 +115,17 @@ class Slots(commands.Cog):
         )
 
         os.remove(fp)
+
+
+    @slots.error
+    async def slots_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            embed = nextcord.Embed(
+                title = "→ Slots Cooldown!",
+                description = "• To prevent spamming, the slots command in on a 3 second cooldown. Sorry for the inconvenience.",
+                colour = color
+            )
+            await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):

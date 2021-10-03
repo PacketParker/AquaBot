@@ -79,7 +79,7 @@ class Mute(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Member!",
-                description = f"• Please provide a member for me to mute. Example: `$mute @bob 3d 5h 7m 9s`."
+                description = f"• Please provide a member for me to mute. Example: `$unmute @bob`."
             )
             await ctx.send(embed=embed)
         
