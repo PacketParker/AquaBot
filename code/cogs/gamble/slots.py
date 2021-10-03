@@ -31,7 +31,6 @@ class Slots(commands.Cog):
             raise InsufficientFundsException(current, bet)
 
 
-    #Slot machine, bet must be 1-3
     #Usage: $slots [bet]
     @commands.command()
     @commands.cooldown(1, 2.5, commands.BucketType.user)

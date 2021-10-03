@@ -1,6 +1,10 @@
 import os
 from datetime import datetime
 from pathlib import Path
+import timeago as timesince
+import datetime
+import calendar
+import time
 
 import yaml
 from nextcord import Color, Embed
@@ -44,3 +48,4 @@ def make_embed(title=None, description=None, color=None, author=None,
     if footer: embed.set_footer(text=footer)
     else: embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
     return embed
+

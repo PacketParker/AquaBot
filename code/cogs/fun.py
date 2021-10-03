@@ -5,6 +5,8 @@ from nextcord.utils import get
 from aiohttp import request
 import aiohttp
 from datetime import datetime
+import requests
+import json
 
 log_channel_id = 889293946801516554
 
@@ -50,20 +52,38 @@ class Fun(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help reverse` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
-##TODO CHANGE THIS SHITTY API AND FIND SOME GOOD FUN ONES TO PUT SOME MORE COMMANDS HERE
-    @commands.command(aliases=['tronalddump', 'tronald', 'donaldtrump', 'trump'])
+
+    @commands.command(aliases=['trump'])
     async def donald(self, ctx):
-        """Collect a random stupid quote from Donald Trump"""
-        url = 'https://www.tronalddump.io/random/quote'
-        async with aiohttp.ClientSession() as cs, ctx.typing():
-            async with cs.get(url) as r:
-                data = await r.json()
-        await ctx.send(f'**Donald Trump:** {data["value"].capitalize()}')
+        response = requests.get('https://api.whatdoestrumpthink.com/api/v1/quotes/random')
+        quote = json.loads(response.text)
+
+        embed = nextcord.Embed(
+            title = "Donald Trump Quote -",
+            description = f"'{quote['message']}'",
+            colour = nextcord.Colour.random()
+        )
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def kanye(self, ctx):
+        response = requests.get('https://api.kanye.rest/')
+        quote = json.loads(response.text)
+
+        embed = nextcord.Embed(
+            title = "Kanye West Quote -",
+            description = f"'{quote['quote']}'",
+            colour = nextcord.Colour.random()
+        )
+        await ctx.send(embed=embed)
+
+
 
 
 def setup(bot):

@@ -19,7 +19,6 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
-            nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
@@ -59,11 +58,14 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
+            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
+            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=False)
             embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=False)
             embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=False)
             embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=False)
             embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=False)
             await interaction.response.edit_message(embed=embed)  
+
 
         if self.values[0] == "Music (BETA)":
             embed = nextcord.Embed(
@@ -94,20 +96,10 @@ class HelpDropdown(nextcord.ui.Select):
             )
 
             embed.add_field(name = "**Reverse**", value = "**Usage: `$reverse <text>`** \nReverses whatever text you put in.", inline=False)
-            embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a qoute from Donald Trump.", inline=False)
+            embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a quote from Donald Trump.", inline=False)
+            embed.add_field(name = "**Kanye**", value = "**Usage: `$kanye` **\nSends a quote from Kanye West.", inline=False)
             await interaction.response.edit_message(embed=embed) 
 
-        if self.values[0] == 'Misc':
-            embed = nextcord.Embed(
-                title = "❓ - Misc Help",
-                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
-                colour = nextcord.Colour.random()
-            )
-
-            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
-            embed.add_field(name = "**Password**", value = "**Usage: `$password` **\nWill DM you a password for you to use on sites. These passwords are never stored and are entirely random.", inline=False)
-            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite link for the bot.", inline=False)
-            await interaction.response.edit_message(embed=embed) 
         else:
             return
 
@@ -145,7 +137,6 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Info', description='ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
-            nextcord.SelectOption(label='Misc', description='invite, covid, password', emoji="❓"),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
@@ -190,6 +181,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
+            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
+            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=False)
             embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=False)
             embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=False)
             embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=False)
@@ -225,20 +218,10 @@ class GuildHelpDropdown(nextcord.ui.Select):
             )
 
             embed.add_field(name = "**Reverse**", value = "**Usage: `$reverse <text>`** \nReverses whatever text you put in.", inline=False)
-            embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a qoute from Donald Trump.", inline=False)
+            embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a quote from Donald Trump.", inline=False)
+            embed.add_field(name = "**Kanye**", value = "**Usage: `$kanye` **\nSends a quote from Kanye West.", inline=False)
             await interaction.response.edit_message(embed=embed) 
 
-        if self.values[0] == 'Misc':
-            embed = nextcord.Embed(
-                title = "❓ - Misc Help",
-                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
-                colour = nextcord.Colour.random()
-            )
-
-            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
-            embed.add_field(name = "**Password**", value = "**Usage: `$password` **\nWill DM you a password for you to use on sites. These passwords are never stored and are entirely random.", inline=False)
-            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite link for the bot.", inline=False)
-            await interaction.response.edit_message(embed=embed) 
         else:
             return
 

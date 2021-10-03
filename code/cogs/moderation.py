@@ -60,7 +60,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help purge` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -128,7 +128,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help kick` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -195,7 +195,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help ban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -273,7 +273,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help softban` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -355,7 +355,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help lock` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -435,7 +435,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help unlock` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
