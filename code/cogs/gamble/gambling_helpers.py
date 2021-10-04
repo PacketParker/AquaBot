@@ -19,7 +19,11 @@ class GamblingHelpers(commands.Cog, name='General'):
     async def add(self, ctx: commands.Context):
         amount = DEFAULT_BET*B_MULT
         self.economy.add_money(ctx.author.id, amount)
-        await ctx.send(f"Added ${amount:,} come back in {B_COOLDOWN}hrs")
+        embed = nextcord.Embed(
+            title = "I've added $2,500 to you balance",
+            description = f"Come back again in {B_COOLDOWN}"
+        )
+        await ctx.send(embed=embed)
 
 
     @add.error
@@ -47,8 +51,7 @@ class GamblingHelpers(commands.Cog, name='General'):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
-    #Shows how much money you or someone else has
-    #Usage: $money *[@member]*
+
     @commands.command(aliases=['profile'])
     async def money(self, ctx: commands.Context, user: nextcord.Member=None):
         user = user.id if user else ctx.author.id
@@ -93,7 +96,6 @@ class GamblingHelpers(commands.Cog, name='General'):
                 title = "→ Error!",
                 description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
             )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 

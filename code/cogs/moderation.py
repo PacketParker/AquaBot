@@ -18,6 +18,7 @@ class Moderation(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_messages=True)
     async def purge(self, ctx, amount: int=None):
+        log = self.bot.get_channel(log_channel_id)
         if amount == None:
             embed = nextcord.Embed(
                 colour = color,
@@ -37,6 +38,15 @@ class Moderation(commands.Cog):
         else:
             await ctx.channel.purge(limit=amount+1)
 
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**{ctx.author} has run the purge command in {ctx.channel.name}**",
+                    colour = yellow
+                )
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await log.send(embed=embed)
 
     @purge.error
     async def purge_error(self, ctx, error):
@@ -96,6 +106,19 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
+
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been kicked for {reason}**",
+                    colour = yellow
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
 
     
     @kick.error
@@ -164,6 +187,19 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been banned for {reason}**",
+                    colour = nextcord.Colour.red()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
+
 
     @ban.error
     async def ban_error(self, ctx, error):
@@ -229,6 +265,19 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been soft-banned with no given reason**",
+                    colour = nextcord.Colour.orange()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
+
         elif reason != None and member != None:
             await member.ban(reason=reason)
             await member.unban()
@@ -242,6 +291,19 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
+
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been soft-banned for {reason}**",
+                    colour = nextcord.Colour.orange()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
 
 
     @softban.error
@@ -295,7 +357,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
         if reason == None and ctx.message.guild.id == 891743644938297395:
-            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
@@ -309,8 +371,22 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**Channel `{channel.name}` has been locked**",
+                    description = f"No given reason",
+                    colour = nextcord.Colour.magenta()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
+
         if reason != None and ctx.message.guild.id == 891743644938297395:
-            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been locked**",
@@ -323,6 +399,20 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
+
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**Channel `{channel.name}` has been locked**",
+                    description = f"Reason: {reason}",
+                    colour = nextcord.Colour.magenta()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
 
 
     @lock.error
@@ -377,7 +467,7 @@ class Moderation(commands.Cog):
             await ctx.send(embed=embed)
 
         if reason == None and ctx.message.guild.id == 891743644938297395:
-            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
@@ -390,8 +480,21 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**Channel `{channel.name}` has been unlocked**",
+                    description = f"No given reason",
+                    colour = nextcord.Colour.magenta()
+                )
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url=ctx.author.url.avatar)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
+
         if reason != None and ctx.message.guild.id == 891743644938297395:
-            role = nextcord.utils.get(ctx.guild.roles, name="Members")
+            role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
                 title = f"**Channel `{channel.name}` has been unlocked**",
@@ -403,6 +506,19 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
+
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                embed = nextcord.Embed(
+                    title = f"**Channel `{channel.name}` has been unlocked**",
+                    description = f"Reason: {reason}",
+                    colour = nextcord.Colour.magenta()
+                )
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
 
 
     @unlock.error

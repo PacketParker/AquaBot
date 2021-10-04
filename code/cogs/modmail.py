@@ -4,6 +4,7 @@ import nextcord
 import asyncio
 from datetime import datetime
 
+log_channel_id = 889293946801516554
 color = 0xc48aff
 
 class ContactView(nextcord.ui.View):
@@ -80,7 +81,7 @@ class ModMail(commands.Cog):
             title = "Please choose from one of the options below",
             colour = nextcord.Colour.random()
         )            
-        await ctx.message.author.send(embed=embed, view=view)
+        await ctx.message.author.send(embed=embed, view=view)   
 
 
     @contact.error
@@ -107,9 +108,15 @@ class ModMail(commands.Cog):
     @commands.command()
     async def close(self, ctx):
         if ctx.channel.category.name == "Tickets":
+            log = self.bot.get_channel(log_channel_id)
             await ctx.send("Deleting the channel in 5 seconds!")
             await asyncio.sleep(5)
             await ctx.channel.delete()
+            embed = nextcord.Embed(
+                title = f"{ctx.author} has just closed a ticket",
+                colour = nextcord.Colour.magenta()
+            )
+            await log.send(embed=embed)
 
 
 def setup(bot):

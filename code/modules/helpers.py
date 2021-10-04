@@ -2,7 +2,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 import timeago as timesince
-import datetime
 import calendar
 import time
 
@@ -28,7 +27,7 @@ with open(os.path.join(ABS_PATH.parent, 'config.yml'),  # type:ignore
 TOKEN = config.get('token')
 PREFIX = config.get('prefix', '$')
 OWNER_IDS = config.get('owner_ids')
-DEFAULT_BET = config.get('default_bet', 250)
+DEFAULT_BET = config.get('default_bet', 125)
 B_MULT = config.get('bonus_multiplier', 20)
 B_COOLDOWN = config.get('bonus_cooldown', 2)
 

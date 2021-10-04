@@ -15,7 +15,6 @@ class Mute(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def mute(self, ctx, member:nextcord.Member=None, *, argument=None):
@@ -54,6 +53,27 @@ class Mute(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
+
+            if ctx.guild.id == 889027208964874240:
+                log = self.bot.get_channel(log_channel_id)
+                args = argument.lower()
+                matches = re.findall(time_regex, args)
+                time = 0
+                for v, k in matches:
+                    time += time_dict[k]*float(v)
+                role = nextcord.utils.get(ctx.guild.roles, name="Muted")
+                await member.add_roles(role)
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been muted for {argument}.**",
+                    colour = nextcord.Colour.red()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
+
             if time:
                 await asyncio.sleep(time)
                 await member.remove_roles(role)
@@ -73,8 +93,6 @@ class Mute(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: nextcord.Member=None):
-        log = self.bot.get_channel(log_channel_id)
-
         if member == None:
             embed = nextcord.Embed(
                 colour = color,
@@ -84,18 +102,30 @@ class Mute(commands.Cog):
             await ctx.send(embed=embed)
         
         elif member != None:
+            log = self.bot.get_channel(log_channel_id)
             role = nextcord.utils.get(ctx.guild.roles, name="Muted")
             embed = nextcord.Embed(
                 title = f"**User {member} has been unmuted.**",
                 colour = nextcord.Colour.green()
             )
-
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
             embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
             await member.remove_roles(role)
+
+            if ctx.guild.id == 889027208964874240:
+                embed = nextcord.Embed(
+                    title = f"**User {member} has been unmuted.**",
+                    colour = nextcord.Colour.green()
+                )
+
+                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+                embed.set_thumbnail(url = ctx.author.avatar.url)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
+                await log.send(embed=embed)
 
 
     @unmute.error
