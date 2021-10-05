@@ -16,7 +16,7 @@ class HelpDropdown(nextcord.ui.Select):
         options = [
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
-            nextcord.SelectOption(label='Info', description='contact, covid, invite, ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
+            nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
         ]
@@ -58,13 +58,15 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Contact**", value = "**UsageL `$contact`** \nWill DM you and help you get in contact with staff members to resolve your issue, bug.", inline=False)
-            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
-            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=False)
-            embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=False)
-            embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=False)
-            embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=False)
-            embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=False)
+            embed.add_field(name = "**Contact**", value = "**Usage: `$contact`** \nWill DM you and help you get in contact with staff members to resolve your issue, bug.", inline=True)
+            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=True)
+            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=True)
+            embed.add_field(name = "**Track**", value = "**Usage: `track`** \nSends the amount of servers that the bot is in, as well as the cumulative amount of members.", inline=True)
+            embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=True)
+            embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=True)
+            embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=True)
+            embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=True)
+            embed.add_field(name = "**Vote**", value = "**Usage: `$vote`** \nSends the link for you to vote for our bot on top.gg", inline=True)
             await interaction.response.edit_message(embed=embed)  
 
 
@@ -135,7 +137,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
         options = [
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
-            nextcord.SelectOption(label='Info', description='contact, ping, serverinfo, botinfo, wohis', emoji="ℹ️"),
+            nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
         ]
@@ -182,13 +184,15 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Contact**", value = "**UsageL `$contact`** \nWill DM you and help you get in contact with staff members to resolve your issue, bug.", inline=False)
-            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=False)
-            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=False)
-            embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=False)
-            embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=False)
-            embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=False)
-            embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=False)
+            embed.add_field(name = "**Contact**", value = "**Usage: `$contact`** \nWill DM you and help you get in contact with staff members to resolve your issue, bug.", inline=True)
+            embed.add_field(name = "**Covid**", value = "**Usage: `$covid` **\nSends the current global COVID-19 data.", inline=True)
+            embed.add_field(name = "**Invite**", value = "**Usage: `$invite` **\nSends the invite for the bot.", inline=True)
+            embed.add_field(name = "**Track**", value = "**Usage: `track`** \nSends the amount of servers that the bot is in, as well as the cumulative amount of members.", inline=True)
+            embed.add_field(name = "**Ping**", value = "**Usage: `$ping` **\nGives the current ping of the bot.", inline=True)
+            embed.add_field(name = "**Server Info**", value = "**Usage: `$serverinfo` **\nGives lots of information on your server, inlcuding: region, boosters, roles, etc.", inline=True)
+            embed.add_field(name = "**Whois**", value = "**Usage: `$whois <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and much more.", inline=True)
+            embed.add_field(name = "**Bot Info**", value = "**Usage: `$botinfo`** \nGives information on the bot.", inline=True)
+            embed.add_field(name = "**Vote**", value = "**Usage: `$vote`** \nSends the link for you to vote for our bot on top.gg", inline=True)
             await interaction.response.edit_message(embed=embed)  
 
         if self.values[0] == "Music (BETA)":

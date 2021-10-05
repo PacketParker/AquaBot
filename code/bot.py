@@ -4,11 +4,13 @@ import os
 from modules.helpers import *
 
 log_channel_id = 889293946801516554
+intents = nextcord.Intents.default()
+intents.members = True
 
 bot = commands.Bot(
     command_prefix=PREFIX,
     owner_ids=OWNER_IDS,
-    intents=nextcord.Intents.all()
+    intents=intents
 )
 
 @bot.event
@@ -27,4 +29,4 @@ for filename in os.listdir('./cogs/gamble'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.gamble.{filename[:-3]}')
 
-bot.run("ODg5MDI3MTI1Mjc1OTIyNDYy.YUbRBw.96QzGKIyYjyIwKNuXG-w2-i73rY")
+bot.run("ODg5MDI3MTI1Mjc1OTIyNDYy.YUbRBw.nevr90Fl-spt10q72mj6Q185iFc")

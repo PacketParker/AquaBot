@@ -302,6 +302,34 @@ class Information(commands.Cog):
                 await ctx.send(embed=embed)
 
 
+    @commands.command()
+    async def track(self, ctx):
+        guilds = len(self.bot.guilds)
+        members = len(self.bot.users)
+        embed = nextcord.Embed(
+            title = "→ Here are my stats!",
+            description="— "
+                        "\n➤ Information below "
+                        "\n —",
+            colour = nextcord.Colour.random()
+        )
+        embed.add_field(name="• Amount of Servers: ", value=f"{guilds}", inline=False),
+        embed.add_field(name="• Amount of Members: ", value=f"{members}", inline=False),
+        embed.set_thumbnail(url = self.bot.user.avatar.url)
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def vote(self, ctx):
+        embed = nextcord.Embed(
+            title = "→ Vote for me on top.gg!",
+            description = "[Click here to vote](https://top.gg/bot/889027125275922462)",
+            colour = nextcord.Colour.blurple()
+        )
+        embed.set_thumbnail(url = self.bot.user.avatar.url)
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
