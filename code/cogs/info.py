@@ -1,6 +1,5 @@
 import time
 import nextcord
-import psutil
 import os
 from nextcord.ext import commands
 from datetime import datetime
@@ -12,7 +11,7 @@ color = 0xc48aff
 class Information(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.process = psutil.Process(os.getpid())
+
 
     @commands.command()
     async def ping(self, ctx):
