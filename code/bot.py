@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import nextcord
 from nextcord.ext import commands
 import os
