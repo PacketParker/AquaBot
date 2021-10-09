@@ -17,7 +17,7 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
-            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
+            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
         ]
 
@@ -80,14 +80,13 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Play**", value = "**Usage: `$play <name of song / URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
             embed.add_field(name = "**Skip**", value = "**Usage: `$skip` **\nSkips the song that is currently playing.", inline=True)
             embed.add_field(name = "**Queue**", value = "**Usage: `$queue`** \nSends all of the songs that are in the queue.", inline=True)
-            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song number>`** \nRemoves the specified song.", inline=True)
-            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
+            embed.add_field(name = "**Stop**", value = "**Usage: `$stop`** \nStops music, clears queue, and leaves VC.", inline=True),            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Repeat**", value = "**Usage: `$remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
+            embed.add_field(name = "**Shuffle**", value = "**Usage: `$shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
             embed.add_field(name = "**Nowplaying**", value = "**Usage: `$nowplaying` **\nSends the song that is currently playing.", inline=True)
-            embed.add_field(name = "**Volume**", value = "**Usage: `$volume <number 1 - 100>`** \nChanges the bots volume to the specified percentage.", inline=True)
             embed.add_field(name = "**Pause**", value = "**Usage: `$pause`** \nPauses the currently playing song.", inline=True)
             embed.add_field(name = "**Resume**", value = "**Usage: `$resume` **\nResumes the paused song.", inline=True)
-            embed.add_field(name = "**Join**", value = "**Usage: `$join` **\nJoins the voice channel that you are in.", inline=True)
-            embed.add_field(name = "**Leave**", value = "**Usage: `$leave`** \nLeaves the voice channel.", inline=True)
 
             await interaction.response.edit_message(embed=embed)  
 
@@ -138,7 +137,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
-            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, clear, nowplaying, volume, pause, remove, join, leave', emoji='🎵'),
+            nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
             nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
         ]
 
@@ -205,14 +204,13 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Play**", value = "**Usage: `$play <name of song / URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
             embed.add_field(name = "**Skip**", value = "**Usage: `$skip` **\nSkips the song that is currently playing.", inline=True)
             embed.add_field(name = "**Queue**", value = "**Usage: `$queue`** \nSends all of the songs that are in the queue.", inline=True)
-            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song number>`** \nRemoves the specified song.", inline=True)
-            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
+            embed.add_field(name = "**Stop**", value = "**Usage: `$stop`** \nStops music, clears queue, and leaves VC.", inline=True),            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Repeat**", value = "**Usage: `$remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
+            embed.add_field(name = "**Shuffle**", value = "**Usage: `$shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
             embed.add_field(name = "**Nowplaying**", value = "**Usage: `$nowplaying` **\nSends the song that is currently playing.", inline=True)
-            embed.add_field(name = "**Volume**", value = "**Usage: `$volume <number 1 - 100>`** \nChanges the bots volume to the specified percentage.", inline=True)
             embed.add_field(name = "**Pause**", value = "**Usage: `$pause`** \nPauses the currently playing song.", inline=True)
             embed.add_field(name = "**Resume**", value = "**Usage: `$resume` **\nResumes the paused song.", inline=True)
-            embed.add_field(name = "**Join**", value = "**Usage: `$join` **\nJoins the voice channel that you are in.", inline=True)
-            embed.add_field(name = "**Leave**", value = "**Usage: `$leave`** \nLeaves the voice channel.", inline=True)
 
             await interaction.response.edit_message(embed=embed)  
 
