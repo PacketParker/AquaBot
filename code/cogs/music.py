@@ -160,6 +160,8 @@ class Music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
+        await ctx.guild.change_voice_state(channel = ctx.author.voice.channel, self_deaf=True)
+
 
     @commands.command()
     async def stop(self, ctx):

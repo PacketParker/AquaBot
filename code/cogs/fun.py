@@ -3,7 +3,6 @@ from nextcord.ext import commands
 from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 from aiohttp import request
-import aiohttp
 from datetime import datetime
 import requests
 import json
@@ -82,8 +81,6 @@ class Fun(commands.Cog):
             colour = nextcord.Colour.random()
         )
         await ctx.send(embed=embed)
-
-
 
 
 def setup(bot):
