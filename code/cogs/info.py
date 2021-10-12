@@ -1,6 +1,5 @@
 import time
 import nextcord
-import os
 from nextcord.ext import commands
 from datetime import datetime
 from aiohttp import request
@@ -108,7 +107,6 @@ class Information(commands.Cog):
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
-
 
 
     @commands.command(aliases=['userinfo'])

@@ -4,11 +4,9 @@ import random
 
 import nextcord
 from nextcord.ext import commands
-from nextcord.ext.commands.errors import BadArgument
 from modules.economy import Economy
 from modules.helpers import *
 from PIL import Image
-from datetime import datetime
 from modules.helpers import PREFIX, InsufficientFundsException
 
 color = 0xc48aff

@@ -1,6 +1,5 @@
 import nextcord
 from nextcord.ext import commands
-from nextcord.ext.commands import MissingPermissions
 from nextcord.utils import get
 from aiohttp import request
 from datetime import datetime

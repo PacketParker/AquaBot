@@ -19,6 +19,7 @@ class Mute_(commands.Cog):
         self.bot = bot
         self.mute = Mute()
 
+
     @commands.command()
     async def setmute(self, ctx: commands.Context, *, role_name: nextcord.Role):
         mute_guild_id = ctx.author.guild.id
@@ -159,6 +160,27 @@ class Mute_(commands.Cog):
             if time:
                 await asyncio.sleep(time)
                 await member.remove_roles(role)
+
+    
+    @mutecommand.error
+    async def mutecommand_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
 
     @commands.command()

@@ -1,12 +1,9 @@
-from typing import List, Optional
+from typing import List
 from urllib.parse import quote_plus
 
 import nextcord
 from nextcord.ext import commands
-from modules.card import Card
-from modules.economy import Economy
 from modules.helpers import *
-from PIL import Image
 
 color = 0xc48aff
 
@@ -44,7 +41,8 @@ class HelpDropdown(nextcord.ui.Select):
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
-      
+            embed.add_field(name = "**Mute**", value = "**Usage: `$mute <member> <time>` \nExample: `$mute @bob 2d 4h 6m 8s`** \nMute a member so they can't send anymore messages for a specified amount of time.", inline=False)
+            embed.add_field(name = "**Unmute**", value = "**Usage: `$unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=False)      
             embed.add_field(name = "**Purge**", value = "**Usage: `$purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
             embed.add_field(name = "**Kick**", value = "**Usage: `$kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=False)
             embed.add_field(name = "**Ban**", value = "**Usage: `$slots <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=False)
