@@ -6,6 +6,9 @@ import sys
 import traceback
 from datetime import datetime
 
+from modules.mute import Mute
+from modules.helpers import *
+
 log_channel_id = 889293946801516554
 color = 0xc48aff
 time_regex = re.compile("(?:(\d{1,5})(h|s|m|d))+?")
@@ -14,11 +17,83 @@ time_dict = {"h":3600, "s":1, "m":60, "d":86400}
 class Mute_(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.mute = Mute()
+
+    @commands.command()
+    async def setmute(self, ctx: commands.Context, *, role_name: nextcord.Role):
+        mute_guild_id = ctx.author.guild.id
+        role = role_name
+        role_id = role.id
+        self.mute.set_role(mute_guild_id, role_id)
+        embed = nextcord.Embed(
+            title = "Mute Role Changed -",
+            description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
+        )
+        await ctx.send(embed=embed)
+
+
+    @setmute.error
+    async def setmute_error(self, ctx, error):
+        if isinstance(error, commands.RoleNotFound):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Role Not Found!",
+                description = f"• That role wasn't found. Check your spelling, or simply just ping the role you want to assign as the muted role. Example: `$setmute @Muted`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        elif isinstance(error, commands.MissingRequiredArgument):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ No Role Given!",
+                description = f"• It seems you didn't provide a role for me. Heres an example on how to use the command: `$setmute @Muted`, or do `$help` for help."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def whatmute(self, ctx: commands.Context):
+        mute_guild_id = ctx.author.guild.id
+        profile = self.mute.get_entry_for_whatmute(mute_guild_id)
+        embed = nextcord.Embed(
+            title = f"Mute role for {ctx.author.guild.name}",
+            description= '<@&{}>'.format(profile[1])
+        )
+        await ctx.send(embed=embed)
+
+
+    @whatmute.error
+    async def whatmute_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
 
     @commands.command(aliases = ["mute"])
     @commands.has_permissions(manage_roles=True)
-    async def mute_(self, ctx, member:nextcord.Member=None, *, argument=None): 
+    async def mutecommand(self, ctx: commands.Context, member:nextcord.Member=None, *, argument=None): 
         log = self.bot.get_channel(log_channel_id)
         if member == None:
             embed = nextcord.Embed(
@@ -42,7 +117,10 @@ class Mute_(commands.Cog):
             time = 0
             for v, k in matches:
                 time += time_dict[k]*float(v)
-            role = nextcord.utils.get(ctx.guild.roles, name=f"Muted")
+            guild_id = ctx.author.guild.id
+            profile = self.mute.get_entry_for_whatmute(guild_id)
+            role_name = ctx.guild.get_role(profile[1])
+            role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
             embed = nextcord.Embed(
                 title = f"**User {member} has been muted for {argument}.**",
@@ -62,7 +140,10 @@ class Mute_(commands.Cog):
                 time = 0
                 for v, k in matches:
                     time += time_dict[k]*float(v)
-                role = nextcord.utils.get(ctx.guild.roles, name=f"Muted")
+                guild_id = ctx.author.guild.id
+                profile = self.mute.get_entry_for_whatmute(guild_id)
+                role_name = ctx.guild.get_role(profile[1])
+                role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
                 await member.add_roles(role)
                 embed = nextcord.Embed(
                     title = f"**User {member} has been muted for {argument}.**",
@@ -79,7 +160,7 @@ class Mute_(commands.Cog):
                 await asyncio.sleep(time)
                 await member.remove_roles(role)
 
-    
+
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def unmute(self, ctx, member: nextcord.Member=None):

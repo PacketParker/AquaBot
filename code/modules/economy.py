@@ -3,7 +3,6 @@ import sqlite3
 from functools import wraps
 from typing import Tuple, List
 
-
 Entry = Tuple[int, int, int]
 
 class Economy:
