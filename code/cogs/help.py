@@ -171,8 +171,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Kick**", value = "**Usage: `$kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
             embed.add_field(name = "**Ban**", value = "**Usage: `$slots <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=True)
             embed.add_field(name = "**Softban**", value = "**Usage: `$softban <member> (reason)`** \nThis command will ban and then immediately unban the member in order to get rid of their message history.", inline=True)
-            embed.add_field(name = "**Lock**", value = "**Usage: `$lock (channel) (reason)`** \nThis will lock the specified channel so no members can send messages.", inline=True)
-            embed.add_field(name = "**Unlock**", value = "**Usage: `$unlock (channel) (reason)`** \nThis will unlock the specified channel so members can start sending messages again.", inline=True)
+            embed.add_field(name = "**Lock**", value = "**Usage: `$lock (reason)`** \nThis will lock the channel where the command was sent.", inline=True)
+            embed.add_field(name = "**Unlock**", value = "**Usage: `$unlock (reason)`** \nThis will unlock the channel where the command was sent.", inline=True)
             
             await interaction.response.edit_message(embed=embed) 
 

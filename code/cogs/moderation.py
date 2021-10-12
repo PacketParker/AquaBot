@@ -343,11 +343,11 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def lock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
+    async def lock(self, ctx, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
-        channel = channel or ctx.channel
+        channel = ctx.channel
 
-        if ctx.message.guild.id != 891743644938297395:
+        if ctx.message.guild.id != 889027208964874240:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Not Available!",
@@ -356,7 +356,7 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-        if reason == None and ctx.message.guild.id == 891743644938297395:
+        if reason == None and ctx.message.guild.id == 889027208964874240:
             role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
@@ -385,7 +385,7 @@ class Moderation(commands.Cog):
 
                 await log.send(embed=embed)
 
-        if reason != None and ctx.message.guild.id == 891743644938297395:
+        if reason != None and ctx.message.guild.id == 889027208964874240:
             role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=False)
             embed = nextcord.Embed(
@@ -453,11 +453,11 @@ class Moderation(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def unlock(self, ctx, channel: nextcord.TextChannel=None, *, reason=None):
+    async def unlock(self, ctx, *, reason=None):
         log = self.bot.get_channel(log_channel_id)
-        channel = channel or ctx.channel
+        channel = ctx.channel
 
-        if ctx.message.guild.id != 891743644938297395:
+        if ctx.message.guild.id != 889027208964874240:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Not Available!",
@@ -466,7 +466,7 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-        if reason == None and ctx.message.guild.id == 891743644938297395:
+        if reason == None and ctx.message.guild.id == 889027208964874240:
             role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
@@ -474,8 +474,9 @@ class Moderation(commands.Cog):
                 description = f"No given reason",
                 colour = nextcord.Colour.magenta()
             )
+
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/unlocked_1f513.png")
+            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/locked_1f512.png")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
@@ -487,13 +488,14 @@ class Moderation(commands.Cog):
                     description = f"No given reason",
                     colour = nextcord.Colour.magenta()
                 )
+
                 embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url=ctx.author.url.avatar)
+                embed.set_thumbnail(url=ctx.author.avatar.url)
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
                 await log.send(embed=embed)
 
-        if reason != None and ctx.message.guild.id == 891743644938297395:
+        if reason != None and ctx.message.guild.id == 889027208964874240:
             role = nextcord.utils.get(ctx.guild.roles, name="@everyone")
             await channel.set_permissions(role, send_messages=True)
             embed = nextcord.Embed(
@@ -501,8 +503,9 @@ class Moderation(commands.Cog):
                 description = f"Reason: {reason}",
                 colour = nextcord.Colour.magenta()
             )
+
             embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/unlocked_1f513.png")
+            embed.set_thumbnail(url="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/120/twitter/282/locked_1f512.png")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
@@ -514,6 +517,7 @@ class Moderation(commands.Cog):
                     description = f"Reason: {reason}",
                     colour = nextcord.Colour.magenta()
                 )
+
                 embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
                 embed.set_thumbnail(url=ctx.author.avatar.url)
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))

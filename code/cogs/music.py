@@ -120,6 +120,18 @@ class Music(commands.Cog):
             await guild.voice_client.disconnect(force=True)
 
 
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        if member.id == self.bot.user.id and after.channel is None:
+            guild = member.guild
+            try:
+                await guild.voice_client.disconnect(force=True)
+            except:
+                pass
+            player = self.bot.lavalink.player_manager.get(member.guild.id)
+            await player.stop()
+
+
     @commands.command(aliases=['p'])
     async def play(self, ctx, *, query: str):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)

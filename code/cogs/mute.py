@@ -11,13 +11,14 @@ color = 0xc48aff
 time_regex = re.compile("(?:(\d{1,5})(h|s|m|d))+?")
 time_dict = {"h":3600, "s":1, "m":60, "d":86400}
 
-class Mute(commands.Cog):
-    def __init__(self, bot):
+class Mute_(commands.Cog):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @commands.command()
+
+    @commands.command(aliases = ["mute"])
     @commands.has_permissions(manage_roles=True)
-    async def mute(self, ctx, member:nextcord.Member=None, *, argument=None):
+    async def mute_(self, ctx, member:nextcord.Member=None, *, argument=None): 
         log = self.bot.get_channel(log_channel_id)
         if member == None:
             embed = nextcord.Embed(
@@ -41,7 +42,7 @@ class Mute(commands.Cog):
             time = 0
             for v, k in matches:
                 time += time_dict[k]*float(v)
-            role = nextcord.utils.get(ctx.guild.roles, name="Muted")
+            role = nextcord.utils.get(ctx.guild.roles, name=f"Muted")
             await member.add_roles(role)
             embed = nextcord.Embed(
                 title = f"**User {member} has been muted for {argument}.**",
@@ -61,7 +62,7 @@ class Mute(commands.Cog):
                 time = 0
                 for v, k in matches:
                     time += time_dict[k]*float(v)
-                role = nextcord.utils.get(ctx.guild.roles, name="Muted")
+                role = nextcord.utils.get(ctx.guild.roles, name=f"Muted")
                 await member.add_roles(role)
                 embed = nextcord.Embed(
                     title = f"**User {member} has been muted for {argument}.**",
@@ -77,17 +78,6 @@ class Mute(commands.Cog):
             if time:
                 await asyncio.sleep(time)
                 await member.remove_roles(role)
-
-
-    @mute.error
-    async def mute_error(self, ctx):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
 
     
     @commands.command()
@@ -140,4 +130,4 @@ class Mute(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Mute(bot))
+    bot.add_cog(Mute_(bot))

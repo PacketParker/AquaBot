@@ -55,11 +55,13 @@ class ModMail(commands.Cog):
             channel = utils.get(categ.channels, topic = str(message.author.id))
             if not channel:
                 channel = await categ.create_text_channel(name = f"{message.author.name}#{message.author.discriminator}", topic = str(message.author.id))
-                await channel.send(f"New ticket created by {message.author.mention}")
+                await channel.send("@Helpers")
+                embed = nextcord.Embed(
+                    title = f"New Ticket Created By: {message.author.mention}"
+                )
+                await channel.send(embed=embed)
 
-            embed = nextcord.Embed(description = message.content, colour = 0x696969)
-            embed.set_author(name = message.author, icon_url = message.author.avatar.url)
-            await channel.send(embed = embed)
+            await channel.send(f"{message.content} - [{message.author.mention}]")
 
         elif isinstance(message.channel, nextcord.TextChannel):
             if message.content.startswith(self.bot.command_prefix):
@@ -69,9 +71,7 @@ class ModMail(commands.Cog):
                 if topic:
                     member = message.guild.get_member(int(topic))
                     if member:
-                        embed = nextcord.Embed(description = message.content, colour = 0x696969)
-                        embed.set_author(name = message.author, icon_url = message.author.avatar.url)
-                        await member.send(embed = embed)
+                        await member.send(f"{message.content} - [{message.author} ({message.author.top_role})]")
 
 
     @commands.command()
