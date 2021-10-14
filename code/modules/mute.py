@@ -43,15 +43,7 @@ class Mute:
         if result: return result
         return self.new_entry(mute_guild_id, mute_id)
 
-    def get_entry_for_whatmute(self, mute_guild_id: int) -> Entry:
-        self.cur.execute(
-            "SELECT * FROM mute WHERE mute_guild_id=:mute_guild_id",
-            {'mute_guild_id': mute_guild_id}
-        )
-        result = self.cur.fetchone()
-        if result: return result
-
-    def get_entry_for_mute(self, mute_guild_id: int) -> Entry:
+    def get_entry_for_commands(self, mute_guild_id: int) -> Entry:
         self.cur.execute(
             "SELECT * FROM mute WHERE mute_guild_id=:mute_guild_id",
             {'mute_guild_id': mute_guild_id}
