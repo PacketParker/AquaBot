@@ -2,6 +2,7 @@ import nextcord
 from nextcord.ext import commands
 import os
 from modules.helpers import *
+import asyncio
 
 log_channel_id = 889293946801516554
 intents = nextcord.Intents.default()

@@ -6,7 +6,7 @@ import sys
 import traceback
 from datetime import datetime
 
-from modules.mute import Mute
+from modules.id_db import ID
 from modules.helpers import *
 
 log_channel_id = 889293946801516554
@@ -17,16 +17,16 @@ time_dict = {"h":3600, "s":1, "m":60, "d":86400}
 class Mute_(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.mute = Mute()
+        self.mute = ID()
 
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def setmute(self, ctx: commands.Context, *, role_name: nextcord.Role):
-        mute_guild_id = ctx.author.guild.id
+        guild_id = ctx.author.guild.id
         role = role_name
         role_id = role.id
-        self.mute.set_role(mute_guild_id, role_id)
+        self.mute.set_role(guild_id, role_id)
         embed = nextcord.Embed(
             title = "Mute Role Changed -",
             description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
@@ -66,7 +66,7 @@ class Mute_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def muterole(self, ctx: commands.Context):
         mute_guild_id = ctx.author.guild.id
-        profile = self.mute.get_entry_for_commands(mute_guild_id)
+        profile = self.mute.mute_get_entry_for_commands(mute_guild_id)
         embed = nextcord.Embed(
             title = f"Mute role for {ctx.author.guild.name}",
             description= '<@&{}>'.format(profile[1])
@@ -121,7 +121,7 @@ class Mute_(commands.Cog):
             for v, k in matches:
                 time += time_dict[k]*float(v)
             guild_id = ctx.author.guild.id
-            profile = self.mute.get_entry_for_commands(guild_id)
+            profile = self.mute.mute_get_entry_for_commands(guild_id)
             role_name = ctx.guild.get_role(profile[1])
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
@@ -144,7 +144,7 @@ class Mute_(commands.Cog):
                 for v, k in matches:
                     time += time_dict[k]*float(v)
                 guild_id = ctx.author.guild.id
-                profile = self.mute.get_entry_for_commands(guild_id)
+                profile = self.mute.mute_get_entry_for_commands(guild_id)
                 role_name = ctx.guild.get_role(profile[1])
                 role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
                 await member.add_roles(role)
@@ -199,7 +199,7 @@ class Mute_(commands.Cog):
 
         elif member != None and reason != None:
             guild_id = ctx.author.guild.id
-            profile = self.mute.get_entry_for_commands(guild_id)
+            profile = self.mute.mute_get_entry_for_commands(guild_id)
             role_name = ctx.guild.get_role(profile[1])
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
@@ -229,7 +229,7 @@ class Mute_(commands.Cog):
             
         elif member != None and reason == None:
             guild_id = ctx.author.guild.id
-            profile = self.mute.get_entry_for_commands(guild_id)
+            profile = self.mute.mute_get_entry_for_commands(guild_id)
             role_name = ctx.guild.get_role(profile[1])
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
@@ -247,7 +247,7 @@ class Mute_(commands.Cog):
             if ctx.guild.id == 889027208964874240:
                 log = self.bot.get_channel(log_channel_id)
                 guild_id = ctx.author.guild.id
-                profile = self.mute.get_entry_for_commands(guild_id)
+                profile = self.mute.mute_get_entry_for_commands(guild_id)
                 role_name = ctx.guild.get_role(profile[1])
                 role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
                 await member.add_roles(role)
@@ -298,7 +298,7 @@ class Mute_(commands.Cog):
         elif member != None:
             log = self.bot.get_channel(log_channel_id)
             guild_id = ctx.author.guild.id
-            profile = self.mute.get_entry_for_commands(guild_id)
+            profile = self.mute.mute_get_entry_for_commands(guild_id)
             role_name = ctx.guild.get_role(profile[1])
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             embed = nextcord.Embed(

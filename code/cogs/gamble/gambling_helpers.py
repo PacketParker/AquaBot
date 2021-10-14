@@ -21,7 +21,7 @@ class GamblingHelpers(commands.Cog, name='General'):
         self.economy.add_money(ctx.author.id, amount)
         embed = nextcord.Embed(
             title = "I've added $2,500 to you balance",
-            description = f"Come back again in {B_COOLDOWN}"
+            description = f"Come back again in {B_COOLDOWN} hours."
         )
         await ctx.send(embed=embed)
 
