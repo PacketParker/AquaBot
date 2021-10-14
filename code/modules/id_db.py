@@ -15,9 +15,13 @@ class ID:
         self.conn = sqlite3.connect('database/id.db', isolation_level=None)
         self.conn.execute('PRAGMA journal_mode = wal2')
         self.cur = self.conn.cursor()
-        self.cur.execute("""CREATE TABLE IF NOT EXISTS id (
+        self.cur.execute("""CREATE TABLE IF NOT EXISTS mute (
             guild_id INTEGER NOT NULL PRIMARY KEY,
-            mute_id INTEGER NULL,
+            mute_id INTEGER NULL
+        )""")
+        self.cur2 = self.conn.cursor()
+        self.cur2.execute("""CREATE TABLE IF NOT EXISTS channel (
+            guild_id INTEGER NOT NULL PRIMARY KEY,
             channel_id INTEGER NULL
         )""")
 
@@ -26,6 +30,7 @@ class ID:
         if self.conn:
             self.conn.commit()
             self.cur.close()
+            self.cur2.close()
             self.conn.close()
 
     def _commit(func):
@@ -38,7 +43,7 @@ class ID:
 
     def mute_get_entry(self, guild_id: int, mute_id: int) -> Entry:
         self.cur.execute(
-            "SELECT * FROM id WHERE guild_id=:guild_id",
+            "SELECT * FROM mute WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
         result = self.cur.fetchone()
@@ -47,7 +52,7 @@ class ID:
 
     def mute_get_entry_for_commands(self, guild_id: int) -> Entry:
         self.cur.execute(
-            "SELECT * FROM id WHERE guild_id=:guild_id",
+            "SELECT * FROM mute WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
         result = self.cur.fetchone()
@@ -57,24 +62,24 @@ class ID:
     def mute_new_entry(self, guild_id: int, mute_id: int) -> Entry:
         try:
             self.cur.execute(
-                "INSERT INTO id(guild_id, mute_id) VALUES(?,?)",
+                "INSERT INTO mute(guild_id, mute_id) VALUES(?,?)",
                 (guild_id, mute_id)
             )
             return self.mute_get_entry(guild_id, mute_id)
         except sqlite3.IntegrityError:
             return self.mute_get_entry(guild_id, mute_id)
 
-    @_commit
+    @_commit 
     def mute_remove_entry(self, guild_id: int) -> None:
         self.cur.execute(
-            "DELETE FROM id WHERE guild_id=:guild_id",
+            "DELETE FROM mute WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
 
     @_commit
     def set_mute(self, guild_id: int, mute_id: int) -> Entry:
         self.cur.execute(
-            "UPDATE id SET mute_id=? WHERE guild_id=?",
+            "UPDATE mute SET mute_id=? WHERE guild_id=?",
             (mute_id, guild_id)
         )
         return self.mute_get_entry(guild_id, mute_id)
@@ -89,7 +94,7 @@ class ID:
 
     def channel_get_entry(self, guild_id: int, channel_id: int) -> Entry:
         self.cur.execute(
-            "SELECT * FROM id WHERE guild_id=:guild_id",
+            "SELECT * FROM channel WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
         result = self.cur.fetchone()
@@ -98,7 +103,7 @@ class ID:
 
     def channel_get_entry_for_commands(self, guild_id: int) -> Entry:
         self.cur.execute(
-            "SELECT * FROM id WHERE guild_id=:guild_id",
+            "SELECT * FROM channel WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
         result = self.cur.fetchone()
@@ -108,7 +113,7 @@ class ID:
     def channel_new_entry(self, guild_id: int, channel_id: int) -> Entry:
         try:
             self.cur.execute(
-                "INSERT INTO id(guild_id, channel_id) VALUES(?,?)",
+                "INSERT INTO channel(guild_id, channel_id) VALUES(?,?)",
                 (guild_id, channel_id)
             )
             return self.channel_get_entry(guild_id, channel_id)
@@ -118,14 +123,14 @@ class ID:
     @_commit
     def channel_remove_entry(self, guild_id: int) -> None:
         self.cur.execute(
-            "DELETE FROM id WHERE guild_id=:guild_id",
+            "DELETE FROM channel WHERE guild_id=:guild_id",
             {'guild_id': guild_id}
         )
 
     @_commit
     def set_channel_for_channel(self, guild_id: int, channel_id: int) -> Entry:
         self.cur.execute(
-            "UPDATE id SET channel_id=? WHERE guild_id=?",
+            "UPDATE channel SET channel_id=? WHERE guild_id=?",
             (channel_id, guild_id)
         )
         return self.channel_get_entry(guild_id, channel_id)
@@ -134,3 +139,7 @@ class ID:
     def set_channel(self, guild_id: int, channel_id: int) -> Entry:
         self.set_channel_for_channel(guild_id, channel_id)
         return self.channel_get_entry(guild_id, channel_id)
+
+
+##BEGIN TO COVID CHANNEL CODE
+  

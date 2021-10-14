@@ -28,6 +28,7 @@ class Join_(commands.Cog):
             title = "Join Channel Changed -",
             description = f"<#{join_id}> has been assigned as the channel for new member message in {ctx.author.guild.name}",
         )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
@@ -66,8 +67,9 @@ class Join_(commands.Cog):
         profile = self.join.channel_get_entry_for_commands(guild_id)
         embed = nextcord.Embed(
             title = f"New member message channel for {ctx.author.guild.name}",
-            description= '<#{}>'.format(profile[2])
+            description= '<#{}>'.format(profile[1])
         )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
@@ -102,6 +104,7 @@ class Join_(commands.Cog):
             description = f"Welcome {member.mention} to `{member.guild}`. Thank you for joining our server!",
             colour = nextcord.Colour.random()
         )
+        embed.set_footer(text="User joined at: " + datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         embed.set_thumbnail(url=member.avatar.url)
 
         await channel.send(embed=embed)

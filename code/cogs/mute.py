@@ -31,6 +31,7 @@ class Mute_(commands.Cog):
             title = "Mute Role Changed -",
             description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
         )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
@@ -71,6 +72,7 @@ class Mute_(commands.Cog):
             title = f"Mute role for {ctx.author.guild.name}",
             description= '<@&{}>'.format(profile[1])
         )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
 
