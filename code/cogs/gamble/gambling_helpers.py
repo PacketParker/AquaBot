@@ -26,32 +26,6 @@ class GamblingHelpers(commands.Cog, name='General'):
         await ctx.send(embed=embed)
 
 
-    @add.error
-    async def add_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            s = int(error.retry_after)
-            s = s % (24 * 3600)
-            h = s // 3600
-            s %= 3600
-            m = s // 60
-            s %= 60
-            embed = nextcord.Embed(
-                title = "Command currently on cooldown",
-                description = f"**{h}hrs {m}min {s}sec remaining.**",
-                colour = nextcord.Colour.blue()
-            )  
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-        else:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
-
-
     @commands.command(aliases=['profile'])
     async def money(self, ctx: commands.Context, user: nextcord.Member=None):
         user = user.id if user else ctx.author.id
