@@ -89,6 +89,22 @@ class Join_(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
+
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        guild_id = member.guild.id
+        profile = self.join.channel_get_entry_for_commands(guild_id)
+        channel = self.bot.get_channel(profile[2])
+
+        embed = nextcord.Embed(
+            title = f"New Member",
+            description = f"Welcome {member.mention} to `{member.guild}`. Thank you for joining our server!",
+            colour = nextcord.Colour.random()
+        )
+        embed.set_thumbnail(url=member.avatar.url)
+
+        await channel.send(embed=embed)
             
 
 def setup(bot):

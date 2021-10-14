@@ -12,10 +12,10 @@ class HelpDropdown(nextcord.ui.Select):
 
         options = [
             nextcord.SelectOption(label='Gambling', description='blackjack, slots, coinflip, money, leaderboard', emoji="💰"),
-            nextcord.SelectOption(label='Moderation', description='kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
+            nextcord.SelectOption(label='Moderation', description='mute, unmute, kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
-            nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
+            nextcord.SelectOption(label='Fun', description='reverse, donald, kanye', emoji='🎉'),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
@@ -136,7 +136,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
-            nextcord.SelectOption(label='Fun', description='reverse, donald', emoji='🎉'),
+            nextcord.SelectOption(label='Fun', description='reverse, donald, kanye', emoji='🎉'),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
