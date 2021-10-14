@@ -6,7 +6,7 @@ import sys
 import traceback
 from datetime import datetime
 
-from modules.id_db import ID
+from modules.database import Database
 from modules.helpers import *
 
 log_channel_id = 889293946801516554
@@ -17,7 +17,7 @@ time_dict = {"h":3600, "s":1, "m":60, "d":86400}
 class Mute_(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.mute = ID()
+        self.mute = Database()
 
 
     @commands.command()

@@ -6,7 +6,7 @@ from typing import List, Tuple, Union
 import nextcord
 from nextcord.ext import commands
 from modules.card import Card
-from modules.economy import Economy
+from modules.database import Database
 from modules.helpers import *
 from PIL import Image
 from datetime import datetime
@@ -17,7 +17,7 @@ color = 0xc48aff
 class Blackjack(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Economy()
+        self.economy = Database()
     
     def check_bet(
         self,

@@ -1,6 +1,6 @@
 import nextcord
 from nextcord.ext import commands
-from modules.economy import Economy
+from modules.database import Database
 from modules.helpers import *
 from datetime import datetime
 
@@ -9,7 +9,7 @@ color = 0xc48aff
 class GamblingHelpers(commands.Cog, name='General'):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.economy = Economy()
+        self.economy = Database()
 
 
     #Give you ${DEFAULT_BET * B_MULT} once every {B_COOLDOWN}hrs

@@ -4,7 +4,7 @@ import random
 
 import nextcord
 from nextcord.ext import commands
-from modules.economy import Economy
+from modules.database import Database
 from modules.helpers import *
 from PIL import Image
 from modules.helpers import PREFIX, InsufficientFundsException
@@ -14,7 +14,7 @@ color = 0xc48aff
 class Slots(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Economy()
+        self.economy = Database()
 
     def check_bet(
         self,
