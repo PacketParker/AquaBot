@@ -12,7 +12,8 @@ class Mute:
 
     def open(self):
         """Initializes the database"""
-        self.conn = sqlite3.connect('mute.db')
+        self.conn = sqlite3.connect('database/mute.db', isolation_level=None)
+        self.conn.execute('PRAGMA journal_mode = wal2')
         self.cur = self.conn.cursor()
         self.cur.execute("""CREATE TABLE IF NOT EXISTS mute (
             mute_guild_id INTEGER NOT NULL PRIMARY KEY,
