@@ -1,6 +1,5 @@
 import os
 
-
 class Card:
     suits = ["clubs", "diamonds", "hearts", "spades"]
     def __init__(self, suit: str, value: int, down=False):

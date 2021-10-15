@@ -4,10 +4,10 @@ import random
 
 import nextcord
 from nextcord.ext import commands
-from modules.database import Database
-from modules.helpers import *
+from database.database import Database
+from utils.helpers import *
 from PIL import Image
-from modules.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 
@@ -34,7 +34,7 @@ class Slots(commands.Cog):
     @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):
         self.check_bet(ctx, bet=bet)
-        path = os.path.join(ABS_PATH, 'modules/')
+        path = os.path.join(ABS_PATH, 'utils/')
         facade = Image.open(f'{path}slot-face.png').convert('RGBA')
         reel = Image.open(f'{path}slot-reel.png').convert('RGBA')
 

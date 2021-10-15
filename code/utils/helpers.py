@@ -1,10 +1,6 @@
 import os
 from datetime import datetime
 from pathlib import Path
-import timeago as timesince
-import calendar
-import time
-
 import yaml
 from nextcord import Color, Embed
 

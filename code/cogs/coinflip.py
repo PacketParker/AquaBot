@@ -1,11 +1,10 @@
 import random
-
 import nextcord
 from nextcord.ext import commands
-from modules.database import Database
-from modules.helpers import *
+from database.database import Database
+from utils.helpers import *
 from datetime import datetime
-from modules.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 
