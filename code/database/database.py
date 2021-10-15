@@ -6,7 +6,6 @@ from typing import Tuple, List
 Entry = Tuple[int, int]
 
 class Database:
-    """A wrapper for the economy database"""
     def __init__(self):
         self.open()
 

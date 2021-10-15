@@ -15,6 +15,7 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Moderation', description='mute, unmute, kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
+            nextcord.SelectOption(label='Admin', description='setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
             nextcord.SelectOption(label='Fun', description='reverse, donald, kanye', emoji='🎉'),
         ]
 
@@ -67,7 +68,6 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Vote**", value = "**Usage: `$vote`** \nSends the link for you to vote for our bot on top.gg", inline=True)
             await interaction.response.edit_message(embed=embed)  
 
-
         if self.values[0] == "Music (BETA)":
             embed = nextcord.Embed(
                 title = "🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `$contact`",
@@ -79,12 +79,29 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Skip**", value = "**Usage: `$skip` **\nSkips the song that is currently playing.", inline=True)
             embed.add_field(name = "**Queue**", value = "**Usage: `$queue`** \nSends all of the songs that are in the queue.", inline=True)
             embed.add_field(name = "**Remove**", value = "**Usage: `$remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
-            embed.add_field(name = "**Stop**", value = "**Usage: `$stop`** \nStops music, clears queue, and leaves VC.", inline=True),            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Stop**", value = "**Usage: `$stop`** \nStops music, clears queue, and leaves VC.", inline=True),            
+            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
             embed.add_field(name = "**Repeat**", value = "**Usage: `$remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
             embed.add_field(name = "**Shuffle**", value = "**Usage: `$shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
             embed.add_field(name = "**Nowplaying**", value = "**Usage: `$nowplaying` **\nSends the song that is currently playing.", inline=True)
             embed.add_field(name = "**Pause**", value = "**Usage: `$pause`** \nPauses the currently playing song.", inline=True)
             embed.add_field(name = "**Resume**", value = "**Usage: `$resume` **\nResumes the paused song.", inline=True)
+
+            await interaction.response.edit_message(embed=embed)  
+
+        if self.values[0] == "Admin":
+            embed = nextcord.Embed(
+                title = "⚙️ - Admin Help",
+                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
+                colour = nextcord.Colour.random()
+            )
+
+            embed.add_field(name = "**Setmute**", value = "**Usage: `$setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=False)
+            embed.add_field(name = "**Delmute**", value = "**Usage: `$delmute` **\nDeletes the muted role from our database.", inline=False)
+            embed.add_field(name = "**Muterole**", value = "**Usage: `$muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=False)
+            embed.add_field(name = "**Setjoin**", value = "**Usage: `$setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=False)
+            embed.add_field(name = "**Deljoin**", value = "**Usage: `$deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=False),
+            embed.add_field(name = "**Joinchannel**", value = "**Usage: `$joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=False)
 
             await interaction.response.edit_message(embed=embed)  
 
@@ -136,6 +153,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
+            nextcord.SelectOption(label='Admin', description='setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
             nextcord.SelectOption(label='Fun', description='reverse, donald, kanye', emoji='🎉'),
         ]
 
@@ -212,6 +230,22 @@ class GuildHelpDropdown(nextcord.ui.Select):
 
             await interaction.response.edit_message(embed=embed)  
 
+        if self.values[0] == "Admin":
+            embed = nextcord.Embed(
+                title = "⚙️ - Admin Help",
+                description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
+                colour = nextcord.Colour.random()
+            )
+
+            embed.add_field(name = "**Setmute**", value = "**Usage: `$setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=False)
+            embed.add_field(name = "**Delmute**", value = "**Usage: `$delmute` **\nDeletes the muted role from our database.", inline=False)
+            embed.add_field(name = "**Muterole**", value = "**Usage: `$muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=False)
+            embed.add_field(name = "**Setjoin**", value = "**Usage: `$setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=False)
+            embed.add_field(name = "**Deljoin**", value = "**Usage: `$deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=False),
+            embed.add_field(name = "**Joinchannel**", value = "**Usage: `$joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=False)
+
+            await interaction.response.edit_message(embed=embed)  
+
         if self.values[0] == 'Fun':
             embed = nextcord.Embed(
                 title = "🎉 - Fun Help",
@@ -262,7 +296,7 @@ class Help(commands.Cog):
         if ctx.message.guild.id != 889027208964874240:
             embed = nextcord.Embed(
                 title = "Help",
-                description = "For extended information on commands and categories, please choose and option from the dropdown menu below.",
+                description = "For extended information on commands and categories, please choose an option from the dropdown menu below.",
                 colour = nextcord.Colour.random()    
             )
 
@@ -272,7 +306,7 @@ class Help(commands.Cog):
         if ctx.message.guild.id == 889027208964874240:
             embed = nextcord.Embed(
                 title = "Help",
-                description = "For extended information on commands and categories, please choose and option from the dropdown menu below.",
+                description = "For extended information on commands and categories, please choose an option from the dropdown menu below.",
                 colour = nextcord.Colour.random()    
             )
 
