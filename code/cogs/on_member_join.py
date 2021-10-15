@@ -1,12 +1,8 @@
 import nextcord
-import asyncio
-import re
 from nextcord.ext import commands
-import sys
-import traceback
 from datetime import datetime
 
-from modules.database import Database
+from database.database import Database
 
 log_channel_id = 889293946801516554
 color = 0xc48aff
@@ -38,7 +34,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Channel Not Found!",
-                description = f"• That role wasn't found. Check your spelling, or simply just tag the channel you want to assign for new member messages. Example: `$setjoin #channel`"
+                description = f"• That channel wasn't found. Check your spelling, or simply just tag the channel you want to assign for new member messages. Example: `$setjoin #channel`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -62,6 +58,30 @@ class Join_(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
+    async def deljoin(self, ctx: commands.Context):
+        guild_id = ctx.author.guild.id
+        self.join.channel_remove_entry(guild_id)
+        embed = nextcord.Embed(
+            title = "New Member Message Channel Deleted -",
+            description = f"The new member message channel for {ctx.author.guild.name} has been deleted.",
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @deljoin.error
+    async def deljoin_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.has_permissions(manage_roles=True)
     async def joinchannel(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
         profile = self.join.channel_get_entry_for_commands(guild_id)
@@ -78,8 +98,8 @@ class Join_(commands.Cog):
         if isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
-                title = "→ No Role Set!",
-                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+                title = "→ No Channel Set!",
+                description = f"• It seems you haven't set a new member message channel yet. Please go do that with `$setjoin` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -97,7 +117,7 @@ class Join_(commands.Cog):
     async def on_member_join(self, member):
         guild_id = member.guild.id
         profile = self.join.channel_get_entry_for_commands(guild_id)
-        channel = self.bot.get_channel(profile[2])
+        channel = self.bot.get_channel(profile[1])
 
         embed = nextcord.Embed(
             title = f"New Member",

@@ -24,11 +24,6 @@ class Database:
             guild_id INTEGER NOT NULL PRIMARY KEY,
             channel_id INTEGER NULL
         )""")
-        self.curCovid = self.conn.cursor()
-        self.curCovid.execute("""CREATE TABLE IF NOT EXISTS covid (
-            guild_id INTEGER NOT NULL PRIMARY KEY,
-            covid_id INTEGER NULL
-        )""")
         self.curEconomy = self.conn.cursor()
         self.curEconomy.execute("""CREATE TABLE IF NOT EXISTS economy (
             user_id INTEGER NOT NULL PRIMARY KEY,
@@ -41,7 +36,6 @@ class Database:
             self.conn.commit()
             self.curMute.close()
             self.curJoin.close()
-            self.curCovid.close()
             self.curEconomy.close()
             self.conn.close()
 
@@ -104,6 +98,7 @@ class Database:
 
 ##BEGIN THE ON_MEMBER_JOIN CODE
 
+
     def channel_get_entry(self, guild_id: int, channel_id: int) -> Entry:
         self.curJoin.execute(
             "SELECT * FROM channel WHERE guild_id=:guild_id",
@@ -151,62 +146,6 @@ class Database:
     def set_channel(self, guild_id: int, channel_id: int) -> Entry:
         self.set_channel_for_channel(guild_id, channel_id)
         return self.channel_get_entry(guild_id, channel_id)
-
-
-##BEGIN TO COVID CHANNEL CODE
-
-
-    def covid_get_entry(self, guild_id: int, covid_id: int) -> Entry:
-        self.curCovid.execute(
-            "SELECT * FROM covid WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curCovid.fetchone()
-        if result: return result
-        return self.covid_new_entry(guild_id, covid_id)
-
-    def covid_get_entry_for_commands(self, guild_id: int) -> Entry:
-        self.curCovid.execute(
-            "SELECT * FROM covid WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curCovid.fetchone()
-        if result: return result
-
-    @_commit
-    def covid_new_entry(self, guild_id: int, covid_id: int) -> Entry:
-        try:
-            self.curCovid.execute(
-                "INSERT INTO covid(guild_id, covid_id) VALUES(?,?)",
-                (guild_id, covid_id)
-            )
-            return self.covid_get_entry(guild_id, covid_id)
-        except sqlite3.IntegrityError:
-            return self.covid_get_entry(guild_id, covid_id)
-
-    @_commit
-    def covid_remove_entry(self, guild_id: int) -> None:
-        self.curCovid.execute(
-            "DELETE FROM covid WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-
-    @_commit
-    def set_channel_for_covid(self, guild_id: int, covid_id: int) -> Entry:
-        self.curCovid.execute(
-            "UPDATE covid SET channel_id=? WHERE guild_id=?",
-            (covid_id, guild_id)
-        )
-        return self.covid_get_entry(guild_id, covid_id)
-
-    @_commit
-    def set_covid(self, guild_id: int, covid_id: int) -> Entry:
-        self.set_channel_for_covid(guild_id, covid_id)
-        return self.covid_get_entry(guild_id, covid_id)
-
-
-
-
 
 
 ##BEGIN ECONOMY CODE

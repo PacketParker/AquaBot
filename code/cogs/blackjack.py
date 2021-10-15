@@ -5,12 +5,12 @@ from typing import List, Tuple, Union
 
 import nextcord
 from nextcord.ext import commands
-from modules.card import Card
-from modules.database import Database
-from modules.helpers import *
+from utils.card import Card
+from database.database import Database
+from utils.helpers import *
 from PIL import Image
 from datetime import datetime
-from modules.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 
@@ -34,7 +34,7 @@ class Blackjack(commands.Cog):
     @staticmethod
     def hand_to_images(hand: List[Card]) -> List[Image.Image]:
         return ([
-            Image.open(os.path.join(ABS_PATH, 'modules/cards/', card.image))
+            Image.open(os.path.join(ABS_PATH, 'utils/cards/', card.image))
             for card in hand
         ])
 
@@ -42,7 +42,7 @@ class Blackjack(commands.Cog):
     def center(*hands: Tuple[Image.Image]) -> Image.Image:
         """Creates blackjack table with cards placed"""
         bg: Image.Image = Image.open(
-            os.path.join(ABS_PATH, 'modules/', 'table.png')
+            os.path.join(ABS_PATH, 'utils/', 'table.png')
         )
         bg_center_x = bg.size[0] // 2
         bg_center_y = bg.size[1] // 2

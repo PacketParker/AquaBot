@@ -2,12 +2,10 @@ import nextcord
 import asyncio
 import re
 from nextcord.ext import commands
-import sys
-import traceback
 from datetime import datetime
 
-from modules.database import Database
-from modules.helpers import *
+from database.database import Database
+from utils.helpers import *
 
 log_channel_id = 889293946801516554
 color = 0xc48aff
@@ -61,6 +59,30 @@ class Mute_(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.has_permissions(manage_roles=True)
+    async def delmute(self, ctx: commands.Context):
+        guild_id = ctx.author.guild.id
+        self.mute.mute_remove_entry(guild_id)
+        embed = nextcord.Embed(
+            title = "Mute Role Deleted -",
+            description = f"The mute role for {ctx.author.guild.name} has been deleted.",
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @delmute.error
+    async def delmute_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
 
 
     @commands.command()

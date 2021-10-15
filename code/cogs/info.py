@@ -263,43 +263,6 @@ class Information(commands.Cog):
 
 
     @commands.command()
-    async def covid(self, ctx):
-        URL = "https://disease.sh/v3/covid-19/all"
-
-        async with request("GET", URL, headers={}) as response:
-            if response.status == 200:
-                data = await response.json()
-                cases = data["cases"]
-                deaths = data["deaths"]
-                recovered = data["recovered"]
-                active = data["active"]
-                countries = data["affectedCountries"]
-
-                embed = nextcord.Embed(
-                    title = "World COVID-19 Data",
-                    colour = black
-                )
-
-                embed.add_field(name=":microbe: Total cases", value=f"{cases:,}", inline=True)
-                embed.add_field(name=":skull_crossbones: Total deaths", value=f"{deaths:,}", inline=True)
-                embed.add_field(name=":syringe: Total recovered", value=f"{recovered:,}", inline=True)
-                embed.add_field(name=":radioactive: Total active cases", value=f"{active:,}", inline=True)
-                embed.add_field(name=":map: Total affected countries", value=f"{countries:,}", inline=True)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await ctx.send(embed=embed)
-
-            else:
-                embed = nextcord.Embed(
-                    title = f"API returned a {response.status} status.",
-                    description = "Please try again later.",
-                    colour = color
-
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await ctx.send(embed=embed)
-
-
-    @commands.command()
     async def track(self, ctx):
         guilds = len(self.bot.guilds)
         members = len(self.bot.users)
@@ -327,6 +290,42 @@ class Information(commands.Cog):
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
+
+
+    @commands.command()
+    async def covid(self, ctx):
+        URL = "https://disease.sh/v3/covid-19/all"
+
+        async with request("GET", URL, headers={}) as response:
+            if response.status == 200:
+                data = await response.json()
+                cases = data["cases"]
+                deaths = data["deaths"]
+                recovered = data["recovered"]
+                active = data["active"]
+                countries = data["affectedCountries"]
+
+                embed = nextcord.Embed(
+                    title = "World COVID-19 Data",
+                    colour = 0x000000
+                )
+
+                embed.add_field(name=":microbe: Total cases", value=f"{cases:,}", inline=True)
+                embed.add_field(name=":skull_crossbones: Total deaths", value=f"{deaths:,}", inline=True)
+                embed.add_field(name=":syringe: Total recovered", value=f"{recovered:,}", inline=True)
+                embed.add_field(name=":radioactive: Total active cases", value=f"{active:,}", inline=True)
+                embed.add_field(name=":map: Total affected countries", value=f"{countries:,}", inline=True)
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+
+            else:
+                embed = nextcord.Embed(
+                    title = f"API returned a {response.status} status.",
+                    description = "Please try again later.",
+                    colour = color
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
 
 
 def setup(bot):

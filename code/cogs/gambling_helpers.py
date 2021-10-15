@@ -1,7 +1,7 @@
 import nextcord
 from nextcord.ext import commands
-from modules.database import Database
-from modules.helpers import *
+from database.database import Database
+from utils.helpers import *
 from datetime import datetime
 
 color = 0xc48aff

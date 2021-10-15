@@ -3,7 +3,7 @@ from urllib.parse import quote_plus
 
 import nextcord
 from nextcord.ext import commands
-from modules.helpers import *
+from utils.helpers import *
 
 color = 0xc48aff
 
