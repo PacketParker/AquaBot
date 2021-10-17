@@ -30,7 +30,6 @@ B_COOLDOWN = config.get('bonus_cooldown', 2)
 
 def make_embed(title=None, description=None, color=None, author=None,
                image=None, link=None, footer=None) -> Embed:
-    """Wrapper for making nextcord embeds"""
     arg = lambda x: x if x else Embed.Empty
     embed = Embed(
         title=arg(title),
