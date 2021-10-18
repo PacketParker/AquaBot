@@ -1,5 +1,4 @@
 import re
-import math
 import nextcord
 import lavalink
 from nextcord.ext import commands
