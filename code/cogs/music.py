@@ -2,6 +2,7 @@ import re
 import nextcord
 import lavalink
 from nextcord.ext import commands
+import math
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -65,7 +66,8 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-'''
+
+
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(self.bot.user.id)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
@@ -403,6 +405,6 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-'''
+
 def setup(bot):
     bot.add_cog(Music(bot))

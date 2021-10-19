@@ -28,6 +28,12 @@ class Database:
             user_id INTEGER NOT NULL PRIMARY KEY,
             money INTEGER NOT NULL DEFAULT 0
         )""")
+        self.curLevel = self.conn.cursor()
+        self.curLevel.execute("""CREATE TABLE IF NOT EXISTS message_count (
+            user_id INTEGER NOT NULL PRIMARY KEY,
+            messages INTEGER NOT NULL DEFAULT 0
+        )""")
+
 
     def close(self):
         """Safely closes the database"""
@@ -36,6 +42,7 @@ class Database:
             self.curMute.close()
             self.curJoin.close()
             self.curEconomy.close()
+            self.curLevel.close()
             self.conn.close()
 
     def _commit(func):
@@ -202,3 +209,64 @@ class Database:
         self.curEconomy.execute("SELECT * FROM economy ORDER BY money DESC")
         return (self.curEconomy.fetchmany(n) if n else self.curEconomy.fetchall())
 
+
+##BEGIN MESSAGE COUNT CODE
+
+
+    def message_get_entry(self, user_id: int) -> Entry:
+        self.curLevel.execute(
+            "SELECT * FROM message_count WHERE user_id=:user_id",
+            {'user_id': user_id}
+        )
+        result = self.curLevel.fetchone()
+        if result: return result
+        return self.message_new_entry(user_id)
+
+    def message_get_entry_for_commands(self, user_id: int) -> Entry:
+        self.curLevel.execute(
+            "SELECT * FROM message_count WHERE user_id=:user_id",
+            {'user_id': user_id}
+        )
+        result = self.curLevel.fetchone()
+        if result: return result
+
+    @_commit
+    def message_new_entry(self, user_id: int) -> Entry:
+        try:
+            self.curLevel.execute(
+                "INSERT INTO message_count(user_id, messages) VALUES(?,?)",
+                (user_id, 120)
+            )
+            return self.message_get_entry(user_id)
+        except sqlite3.IntegrityError:
+            return self.message_get_entry(user_id)
+
+    @_commit
+    def message_remove_entry(self, user_id: int) -> None:
+        self.curLevel.execute(
+            "DELETE FROM message_count WHERE guild_id=:guild_id",
+            {'user_id': user_id}
+        )
+
+    @_commit
+    def message_set(self, user_id: int, messages: int) -> Entry:
+        self.curLevel.execute(
+            "UPDATE message_count SET messages=? WHERE user_id=?",
+            (messages, user_id)
+        )
+        return self.message_get_entry(user_id)
+
+    @_commit
+    def add_message(self, user_id: int) -> Entry:
+        total = self.message_get_entry(user_id)[1]
+        messages = total + 1
+        self.message_set(user_id, messages)
+        return self.message_get_entry(user_id)
+
+    def message_random_entry(self) -> Entry:
+        self.curLevel.execute("SELECT * FROM message_count")
+        return random.choice(self.curLevel.fetchall())
+
+    def message_top_entries(self, n: int=0) -> List[Entry]:
+        self.curLevel.execute("SELECT * FROM message_count ORDER BY messages DESC")
+        return (self.curLevel.fetchmany(n) if n else self.curLevel.fetchall())
