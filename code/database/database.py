@@ -235,7 +235,7 @@ class Database:
         try:
             self.curLevel.execute(
                 "INSERT INTO message_count(user_id, messages) VALUES(?,?)",
-                (user_id, 120)
+                (user_id, 0)
             )
             return self.message_get_entry(user_id)
         except sqlite3.IntegrityError:

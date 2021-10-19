@@ -17,7 +17,6 @@ class messageCount(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.level = Database()
-        self.economy = Database()
 
 
     @commands.Cog.listener()
@@ -78,26 +77,29 @@ class messageCount(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    #Shows the user with the most money
-    #Usage: $leaderboard
     @commands.command()
-    async def leaderboard(self, ctx):
+    async def levelboard(self, ctx):
+        entries = self.level.message_top_entries(5)
         embed = nextcord.Embed(
-            title = "Economy and Message Count Leaderboard",
-            description = "These numbers go across all servers, and are not exclusive to just this server.",
-            color = color if color else Color.random()
+            title='Global Message Leaderboard:', 
+            color=nextcord.Color.gold()
         )
-
-        entries = self.economy.top_entries(5)
         for i, entry in enumerate(entries):
-            embed.add_field(name = "Money Leaderboard", value = f"**\n{i+1}. {self.bot.get_user(entry[0]).name}** \n ${format(entry[1])}", inline=False)
-        
-        messageentries = self.level.message_top_entries(5)
-        for i, entry in enumerate(messageentries):
-            embed.add_field(name = "Message Leaderboard", value = f"**\n{i+1}. {self.bot.get_user(entry[0]).name}** \n{format(entry[1])}", inline=False)
+            embed.add_field(name=f"{i+1}. {self.bot.get_user(entry[0]).name}", value='{:,}'.format(entry[1]), inline=False)
 
+        embed.add_field(name="NOTE -", value = "This takes into account all messages that you have sent in every server with this bot.", inline=False)
         await ctx.send(embed=embed)
 
+
+    @levelboard.error
+    async def levelboard_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
 
 
 def setup(bot):
