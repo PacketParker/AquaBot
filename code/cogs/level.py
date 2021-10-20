@@ -72,11 +72,6 @@ class messageCount(commands.Cog):
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
-    
-    @commands.command()
-    async def lvlreset(self, ctx: commands.Context):
-        await ctx.send("All levels for server members have been reset.")
-
 
     @setlvl.error
     async def setlvl_error(self, ctx, error):
