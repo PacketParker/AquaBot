@@ -18,17 +18,21 @@ color = 0xc48aff
 class messageCount(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+ 
     @commands.Cog.listener()
     async def on_message(self, message):
         self.bot.multiplier = 1
+        guild_id = message.author.guild.id
 
-        async with self.bot.dbLevelChannel.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (message.guild.id,)) as cursor:
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
-            channel = data[0]
-
-            if channel == 0 or None:
+            if data:
+                channel_id = data[0]
+            else:
                 return
+                
+        if channel_id == None or 0 and not data:
+            return
 
         if not message.author.bot:
             cursor = await self.bot.db.execute("INSERT OR IGNORE INTO guildData (guild_id, user_id, exp) VALUES (?,?,?)", (message.guild.id, message.author.id, 1)) 
@@ -52,8 +56,14 @@ class messageCount(commands.Cog):
         guild_id = ctx.author.guild.id
         channel = channel_name
         channel_id = channel.id
-        cursor = await self.bot.dbLevelChannel.execute("INSERT OR IGNORE INTO level_channel (guild_id, channel_id) VALUES (?,?)", (guild_id, channel_id))
-        await self.bot.dbLevelChannel.commit()
+
+        cursor = await self.bot.db.execute("UPDATE level_channel SET channel_id = ? WHERE guild_id = ?", (channel_id, guild_id))
+        await self.bot.db.commit()
+
+        if cursor.rowcount == 0:
+            cursor = await self.bot.db.execute("INSERT INTO level_channel (channel_id, guild_id) VALUES(?, ?)", (channel_id, guild_id))
+            await self.bot.db.commit()
+
         embed = nextcord.Embed(
             title = "Mute Role Changed -",
             description = f"<#{channel_id}> has been assigned as the mute role for {ctx.author.guild.name}",
@@ -64,19 +74,97 @@ class messageCount(commands.Cog):
 
     @setlevel.error
     async def setlevel_error(self, ctx, error):
-        if isinstance(error, commands.RoleNotFound):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.has_permissions(manage_roles=True)
+    async def dellevel(self, ctx: commands.Context, NULL:int = None):
+        guild_id = ctx.author.guild.id
+
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Leveling Not Setup!",
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
             embed = nextcord.Embed(
                 colour = color,
-                title = "→ Role Not Found!",
-                description = f"• That role wasn't found. Check your spelling, or simply just ping the role you want to assign as the muted role. Example: `$setmute @Muted`"
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
+
+        else:
+            cursor = await self.bot.db.execute("UPDATE level_channel SET channel_id = NULL WHERE guild_id = ?", (guild_id,))
+            await self.bot.db.commit()
+            embed = nextcord.Embed(
+                title = "Leveling Channel Deleted -",
+                description = f"The level channel for {ctx.author.guild.name} has been deleted.",
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-        elif isinstance(error, commands.MissingRequiredArgument):
+
+
+
+    @commands.command()
+    @commands.has_permissions(manage_roles=True)
+    async def levelchannel(self, ctx: commands.Context):
+        guild_id = ctx.author.guild.id
+
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Leveling Not Setup!",
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
             embed = nextcord.Embed(
                 colour = color,
-                title = "→ No Role Given!",
-                description = f"• It seems you didn't provide a role for me. Heres an example on how to use the command: `$setmute @Muted`, or do `$help` for help."
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
+
+        else:
+            embed = nextcord.Embed(
+                title = f"Mute role for {ctx.author.guild.name}",
+                description= f'<#{channel_id}>'
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+
+    @levelchannel.error
+    async def levelchannel_error(self, ctx, error):
+        if isinstance(error, commands.CommandInvokeError):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -93,80 +181,151 @@ class messageCount(commands.Cog):
     @commands.command()
     async def stats(self, ctx, member: nextcord.Member=None):
         self.bot.multiplier = 1
+        guild_id = ctx.guild.id
 
         if member is None: member = ctx.author
 
-        # get user exp
-        async with self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ? AND user_id = ?", (ctx.guild.id, member.id)) as cursor:
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
-            exp = data[0]
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Leveling Not Setup!",
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
 
-            # calculate rank
-        async with self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ?", (ctx.guild.id,)) as cursor:
-            rank = 1
-            async for value in cursor:
-                if exp < value[0]:
-                    rank += 1
+        else:
+            # get user exp
+            async with self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ? AND user_id = ?", (ctx.guild.id, member.id)) as cursor:
+                data = await cursor.fetchone()
+                exp = data[0]
 
-        lvl = int(math.sqrt(exp)//self.bot.multiplier)
+                # calculate rank
+            async with self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ?", (ctx.guild.id,)) as cursor:
+                rank = 1
+                async for value in cursor:
+                    if exp < value[0]:
+                        rank += 1
 
-        current_lvl_exp = (self.bot.multiplier*(lvl))**2
-        next_lvl_exp = (self.bot.multiplier*((lvl+1)))**2
+            lvl = int(math.sqrt(exp)//self.bot.multiplier)
 
-        lvl_percentage = ((exp-current_lvl_exp) / (next_lvl_exp-current_lvl_exp)) * 100
+            current_lvl_exp = (self.bot.multiplier*(lvl))**2
+            next_lvl_exp = (self.bot.multiplier*((lvl+1)))**2
 
-        embed = nextcord.Embed(title=f"Stats for {member.name}", colour=nextcord.Colour.gold())
-        embed.add_field(name="Level", value=str(lvl))
-        embed.add_field(name="Exp", value=f"{exp}/{next_lvl_exp}")
-        embed.add_field(name="Rank", value=f"{rank}/{ctx.guild.member_count}")
-        embed.add_field(name="Level Progress", value=f"{round(lvl_percentage, 2)}%")
+            lvl_percentage = ((exp-current_lvl_exp) / (next_lvl_exp-current_lvl_exp)) * 100
 
+            embed = nextcord.Embed(title=f"Stats for {member.name}", colour=nextcord.Colour.gold())
+            embed.add_field(name="Level", value=str(lvl))
+            embed.add_field(name="Exp", value=f"{exp}/{next_lvl_exp}")
+            embed.add_field(name="Rank", value=f"{rank}/{ctx.guild.member_count}")
+            embed.add_field(name="Level Progress", value=f"{round(lvl_percentage, 2)}%")
+
+            await ctx.send(embed=embed)
+
+
+    @stats.error
+    async def stats_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
+
 
     @commands.command()
     async def levelboard(self, ctx): 
-        buttons = {}
-        for i in range(1, 6):
-            buttons[f"{i}\N{COMBINING ENCLOSING KEYCAP}"] = i # only show first 5 pages
+        guild_id = ctx.guild.id
 
-        previous_page = 0
-        current = 1
-        index = 1
-        entries_per_page = 10
-
-        embed = nextcord.Embed(title=f"Leaderboard Page {current}", description="", colour=nextcord.Colour.gold())
-        msg = await ctx.send(embed=embed)
-
-        for button in buttons:
-            await msg.add_reaction(button)
-
-        while True:
-            if current != previous_page:
-                embed.title = f"Leaderboard Page {current}"
-                embed.description = ""
-
-                async with self.bot.db.execute(f"SELECT user_id, exp FROM guildData WHERE guild_id = ? ORDER BY exp DESC LIMIT ? OFFSET ? ", (ctx.guild.id, entries_per_page, entries_per_page*(current-1),)) as cursor:
-                    index = entries_per_page*(current-1)
-
-                    async for entry in cursor:
-                        index += 1
-                        member_id, exp = entry
-                        member = ctx.guild.get_member(member_id)
-                        embed.description += f"{index}) {member.mention} : {exp}\n"
-
-                    await msg.edit(embed=embed)
-
-            try:
-                reaction, user = await self.bot.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=60.0)
-
-            except asyncio.TimeoutError:
-                return await msg.clear_reactions()
-
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
             else:
-                previous_page = current
-                await msg.remove_reaction(reaction.emoji, ctx.author)
-                current = buttons[reaction.emoji]
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Leveling Not Setup!",
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
 
+        else:
+            buttons = {}
+            for i in range(1, 6):
+                buttons[f"{i}\N{COMBINING ENCLOSING KEYCAP}"] = i # only show first 5 pages
+
+            previous_page = 0
+            current = 1
+            index = 1
+            entries_per_page = 10
+
+            embed = nextcord.Embed(title=f"Leaderboard Page {current}", description="", colour=nextcord.Colour.gold())
+            msg = await ctx.send(embed=embed)
+
+            for button in buttons:
+                await msg.add_reaction(button)
+
+            while True:
+                if current != previous_page:
+                    embed.title = f"Leaderboard Page {current}"
+                    embed.description = ""
+
+                    async with self.bot.db.execute(f"SELECT user_id, exp FROM guildData WHERE guild_id = ? ORDER BY exp DESC LIMIT ? OFFSET ? ", (ctx.guild.id, entries_per_page, entries_per_page*(current-1),)) as cursor:
+                        index = entries_per_page*(current-1)
+
+                        async for entry in cursor:
+                            index += 1
+                            member_id, exp = entry
+                            member = ctx.guild.get_member(member_id)
+                            embed.description += f"{index}) {member.mention} : {exp}\n"
+
+                        await msg.edit(embed=embed)
+
+                try:
+                    reaction, user = await self.bot.wait_for("reaction_add", check=lambda reaction, user: user == ctx.author and reaction.emoji in buttons, timeout=60.0)
+
+                except asyncio.TimeoutError:
+                    return await msg.clear_reactions()
+
+                else:
+                    previous_page = current
+                    await msg.remove_reaction(reaction.emoji, ctx.author)
+                    current = buttons[reaction.emoji]
+
+
+    @levelboard.error
+    async def levelboard_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

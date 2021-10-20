@@ -29,7 +29,7 @@ async def initialise():
     bot.db = await aiosqlite.connect("database/expData.db")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS guildData (guild_id int, user_id int, exp int, PRIMARY KEY (guild_id, user_id))")
     bot.dbLevelChannel = await aiosqlite.connect("database/expData.db")
-    await bot.dbLevelChannel.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id, channel_id))")
+    await bot.dbLevelChannel.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
     bot.db2 = await aiosqlite.connect("database/mute.db")
     await bot.db2.execute("CREATE TABLE IF NOT EXISTS mute (guild_id int, role_id int, PRIMARY KEY (guild_id, role_id))")
 
