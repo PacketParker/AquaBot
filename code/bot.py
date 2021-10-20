@@ -2,6 +2,9 @@ import nextcord
 from nextcord.ext import commands, tasks
 import os
 from utils.helpers import *
+import aiosqlite
+import asyncio
+import math
 
 log_channel_id = 889293946801516554
 intents = nextcord.Intents.default()
@@ -13,7 +16,6 @@ bot = commands.Bot(
     intents=intents
 )
 
-
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to nextcord!')
@@ -22,7 +24,20 @@ async def on_ready():
         if filename.endswith('.py'):
             bot.load_extension(f'cogs.{filename[:-3]}') 
 
+async def initialise():
+    await bot.wait_until_ready()
+    bot.db = await aiosqlite.connect("database/expData.db")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS guildData (guild_id int, user_id int, exp int, PRIMARY KEY (guild_id, user_id))")
+    bot.dbLevelChannel = await aiosqlite.connect("database/expData.db")
+    await bot.dbLevelChannel.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id, channel_id))")
+    bot.db2 = await aiosqlite.connect("database/mute.db")
+    await bot.db2.execute("CREATE TABLE IF NOT EXISTS mute (guild_id int, role_id int, PRIMARY KEY (guild_id, role_id))")
+
 
 bot.remove_command('help')
-
+bot.loop.create_task(initialise())
 bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")
+asyncio.run(bot.db.close())
+asyncio.run(bot.dbLevelChannel.close())
+asyncio.run(bot.db2.close())
+

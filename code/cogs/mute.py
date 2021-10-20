@@ -24,7 +24,8 @@ class Mute_(commands.Cog):
         guild_id = ctx.author.guild.id
         role = role_name
         role_id = role.id
-        self.mute.set_role(guild_id, role_id)
+        cursor = await self.bot.db2.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, role_id))
+        await self.bot.db2.commit()
         embed = nextcord.Embed(
             title = "Mute Role Changed -",
             description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
@@ -63,9 +64,10 @@ class Mute_(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
-    async def delmute(self, ctx: commands.Context):
+    async def delmute(self, ctx: commands.Context, NULL:int = None):
         guild_id = ctx.author.guild.id
-        self.mute.mute_remove_entry(guild_id)
+        cursor = await self.bot.db2.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, NULL))
+        await self.bot.db2.commit()
         embed = nextcord.Embed(
             title = "Mute Role Deleted -",
             description = f"The mute role for {ctx.author.guild.name} has been deleted.",
@@ -88,11 +90,14 @@ class Mute_(commands.Cog):
     @commands.command()
     @commands.has_permissions(manage_roles=True)
     async def muterole(self, ctx: commands.Context):
-        mute_guild_id = ctx.author.guild.id
-        profile = self.mute.mute_get_entry_for_commands(mute_guild_id)
+        guild_id = ctx.author.guild.id
+        async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            role_id = data[0]
+
         embed = nextcord.Embed(
             title = f"Mute role for {ctx.author.guild.name}",
-            description= '<@&{}>'.format(profile[1])
+            description= f'<@&{role_id}>'
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -145,8 +150,10 @@ class Mute_(commands.Cog):
             for v, k in matches:
                 time += time_dict[k]*float(v)
             guild_id = ctx.author.guild.id
-            profile = self.mute.mute_get_entry_for_commands(guild_id)
-            role_name = ctx.guild.get_role(profile[1])
+            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                data = await cursor.fetchone()
+                role_id = data[0]
+            role_name = ctx.guild.get_role(role_id)
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
             embed = nextcord.Embed(
@@ -168,8 +175,10 @@ class Mute_(commands.Cog):
                 for v, k in matches:
                     time += time_dict[k]*float(v)
                 guild_id = ctx.author.guild.id
-                profile = self.mute.mute_get_entry_for_commands(guild_id)
-                role_name = ctx.guild.get_role(profile[1])
+                async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                    data = await cursor.fetchone()
+                    role_id = data[0]
+                role_name = ctx.guild.get_role(role_id)
                 role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
                 await member.add_roles(role)
                 embed = nextcord.Embed(
@@ -223,8 +232,10 @@ class Mute_(commands.Cog):
 
         elif member != None and reason != None:
             guild_id = ctx.author.guild.id
-            profile = self.mute.mute_get_entry_for_commands(guild_id)
-            role_name = ctx.guild.get_role(profile[1])
+            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                data = await cursor.fetchone()
+                role_id = data[0]
+            role_name = ctx.guild.get_role(role_id)
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
             embed = nextcord.Embed(
@@ -253,8 +264,10 @@ class Mute_(commands.Cog):
             
         elif member != None and reason == None:
             guild_id = ctx.author.guild.id
-            profile = self.mute.mute_get_entry_for_commands(guild_id)
-            role_name = ctx.guild.get_role(profile[1])
+            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                data = await cursor.fetchone()
+                role_id = data[0]
+            role_name = ctx.guild.get_role(role_id)
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
             embed = nextcord.Embed(
@@ -271,8 +284,10 @@ class Mute_(commands.Cog):
             if ctx.guild.id == 889027208964874240:
                 log = self.bot.get_channel(log_channel_id)
                 guild_id = ctx.author.guild.id
-                profile = self.mute.mute_get_entry_for_commands(guild_id)
-                role_name = ctx.guild.get_role(profile[1])
+                async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                    data = await cursor.fetchone()
+                    role_id = data[0]
+                role_name = ctx.guild.get_role(role_id)
                 role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
                 await member.add_roles(role)
                 embed = nextcord.Embed(
@@ -322,8 +337,10 @@ class Mute_(commands.Cog):
         elif member != None:
             log = self.bot.get_channel(log_channel_id)
             guild_id = ctx.author.guild.id
-            profile = self.mute.mute_get_entry_for_commands(guild_id)
-            role_name = ctx.guild.get_role(profile[1])
+            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                data = await cursor.fetchone()
+                role_id = data[0]
+            role_name = ctx.guild.get_role(role_id)
             role = nextcord.utils.get(ctx.guild.roles, name=f"{role_name}")
             embed = nextcord.Embed(
                 title = f"**User {member} has been unmuted.**",
