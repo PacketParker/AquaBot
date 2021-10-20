@@ -45,14 +45,15 @@ class messageCount(commands.Cog):
                 lvl = math.sqrt(exp) / self.bot.multiplier
             
                 if lvl.is_integer():
-                    await message.channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
+                    channel = self.bot.get_channel(channel_id)
+                    await channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
 
             await self.bot.db.commit()
 
 
     @commands.command()
-    @commands.has_permissions(manage_roles=True)
-    async def setlevel(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
+    @commands.has_permissions(manage_channels=True)
+    async def setlvl(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
         guild_id = ctx.author.guild.id
         channel = channel_name
         channel_id = channel.id
@@ -65,15 +66,20 @@ class messageCount(commands.Cog):
             await self.bot.db.commit()
 
         embed = nextcord.Embed(
-            title = "Mute Role Changed -",
-            description = f"<#{channel_id}> has been assigned as the mute role for {ctx.author.guild.name}",
+            title = "Level Channel Changed -",
+            description = f"<#{channel_id}> has been assigned as the level-up message channel for {ctx.author.guild.name}",
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
+    
+    @commands.command()
+    async def lvlreset(self, ctx: commands.Context):
+        await ctx.send("All levels for server members have been reset.")
 
-    @setlevel.error
-    async def setlevel_error(self, ctx, error):
+
+    @setlvl.error
+    async def setlvl_error(self, ctx, error):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -84,7 +90,7 @@ class messageCount(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_channels=True)
     async def dellevel(self, ctx: commands.Context, NULL:int = None):
         guild_id = ctx.author.guild.id
 
@@ -121,10 +127,20 @@ class messageCount(commands.Cog):
             await ctx.send(embed=embed)
 
 
+    @dellevel.error
+    async def dellevel_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
 
     @commands.command()
-    @commands.has_permissions(manage_roles=True)
-    async def levelchannel(self, ctx: commands.Context):
+    @commands.has_permissions(manage_channels=True)
+    async def lvlchannel(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -151,23 +167,23 @@ class messageCount(commands.Cog):
 
         else:
             embed = nextcord.Embed(
-                title = f"Mute role for {ctx.author.guild.name}",
+                title = f"Leveling Channel For {ctx.author.guild.name}",
                 description= f'<#{channel_id}>'
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
 
-    @levelchannel.error
-    async def levelchannel_error(self, ctx, error):
+    @lvlchannel.error
+    async def lvlchannel_error(self, ctx, error):
         if isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
-                title = "→ No Role Set!",
-                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            return await ctx.send(embed=embed)
         else:
             embed = nextcord.Embed(
                 colour = color,
@@ -178,8 +194,8 @@ class messageCount(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @commands.command()
-    async def stats(self, ctx, member: nextcord.Member=None):
+    @commands.command(aliases=["lvl"])
+    async def level(self, ctx, member: nextcord.Member=None):
         self.bot.multiplier = 1
         guild_id = ctx.guild.id
 
@@ -236,8 +252,8 @@ class messageCount(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @stats.error
-    async def stats_error(self, ctx, error):
+    @level.error
+    async def level_error(self, ctx, error):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -248,7 +264,7 @@ class messageCount(commands.Cog):
 
 
     @commands.command()
-    async def levelboard(self, ctx): 
+    async def lvlboard(self, ctx): 
         guild_id = ctx.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -317,8 +333,8 @@ class messageCount(commands.Cog):
                     current = buttons[reaction.emoji]
 
 
-    @levelboard.error
-    async def levelboard_error(self, ctx, error):
+    @lvlboard.error
+    async def lvlboard_error(self, ctx, error):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",

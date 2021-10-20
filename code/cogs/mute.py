@@ -24,8 +24,8 @@ class Mute_(commands.Cog):
         guild_id = ctx.author.guild.id
         role = role_name
         role_id = role.id
-        cursor = await self.bot.db2.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, role_id))
-        await self.bot.db2.commit()
+        cursor = await self.bot.db.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, role_id))
+        await self.bot.db.commit()
         embed = nextcord.Embed(
             title = "Mute Role Changed -",
             description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
@@ -66,8 +66,8 @@ class Mute_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def delmute(self, ctx: commands.Context, NULL:int = None):
         guild_id = ctx.author.guild.id
-        cursor = await self.bot.db2.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, NULL))
-        await self.bot.db2.commit()
+        cursor = await self.bot.db.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, NULL))
+        await self.bot.db.commit()
         embed = nextcord.Embed(
             title = "Mute Role Deleted -",
             description = f"The mute role for {ctx.author.guild.name} has been deleted.",
@@ -91,7 +91,7 @@ class Mute_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def muterole(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
-        async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+        async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
             role_id = data[0]
 
@@ -150,7 +150,7 @@ class Mute_(commands.Cog):
             for v, k in matches:
                 time += time_dict[k]*float(v)
             guild_id = ctx.author.guild.id
-            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                 data = await cursor.fetchone()
                 role_id = data[0]
             role_name = ctx.guild.get_role(role_id)
@@ -175,7 +175,7 @@ class Mute_(commands.Cog):
                 for v, k in matches:
                     time += time_dict[k]*float(v)
                 guild_id = ctx.author.guild.id
-                async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                     data = await cursor.fetchone()
                     role_id = data[0]
                 role_name = ctx.guild.get_role(role_id)
@@ -232,7 +232,7 @@ class Mute_(commands.Cog):
 
         elif member != None and reason != None:
             guild_id = ctx.author.guild.id
-            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                 data = await cursor.fetchone()
                 role_id = data[0]
             role_name = ctx.guild.get_role(role_id)
@@ -264,7 +264,7 @@ class Mute_(commands.Cog):
             
         elif member != None and reason == None:
             guild_id = ctx.author.guild.id
-            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                 data = await cursor.fetchone()
                 role_id = data[0]
             role_name = ctx.guild.get_role(role_id)
@@ -284,7 +284,7 @@ class Mute_(commands.Cog):
             if ctx.guild.id == 889027208964874240:
                 log = self.bot.get_channel(log_channel_id)
                 guild_id = ctx.author.guild.id
-                async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+                async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                     data = await cursor.fetchone()
                     role_id = data[0]
                 role_name = ctx.guild.get_role(role_id)
@@ -337,7 +337,7 @@ class Mute_(commands.Cog):
         elif member != None:
             log = self.bot.get_channel(log_channel_id)
             guild_id = ctx.author.guild.id
-            async with self.bot.db2.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                 data = await cursor.fetchone()
                 role_id = data[0]
             role_name = ctx.guild.get_role(role_id)

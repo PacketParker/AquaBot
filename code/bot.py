@@ -26,18 +26,15 @@ async def on_ready():
 
 async def initialise():
     await bot.wait_until_ready()
-    bot.db = await aiosqlite.connect("database/expData.db")
+    bot.db = await aiosqlite.connect("database/data.db")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS guildData (guild_id int, user_id int, exp int, PRIMARY KEY (guild_id, user_id))")
-    bot.dbLevelChannel = await aiosqlite.connect("database/expData.db")
-    await bot.dbLevelChannel.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
-    bot.db2 = await aiosqlite.connect("database/mute.db")
-    await bot.db2.execute("CREATE TABLE IF NOT EXISTS mute (guild_id int, role_id int, PRIMARY KEY (guild_id, role_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS mute (guild_id int, role_id int, PRIMARY KEY (guild_id, role_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS join_message (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
 
 
 bot.remove_command('help')
 bot.loop.create_task(initialise())
 bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")
 asyncio.run(bot.db.close())
-asyncio.run(bot.dbLevelChannel.close())
-asyncio.run(bot.db2.close())
 
