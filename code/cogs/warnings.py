@@ -5,6 +5,7 @@ from nextcord.utils import get
 from aiohttp import request
 import aiosqlite
 from datetime import datetime
+import random
 
 log_channel_id = 889293946801516554
 
@@ -21,15 +22,24 @@ class Warnings(commands.Cog):
     async def warn(self, ctx: commands.Context, member: nextcord.Member=None, *, reason=None):
         guild_id = ctx.author.guild.id
         user_id = member.id
-        await self.bot.db.execute("INSERT OR IGNORE INTO warnings (guild_id, user_id, warning) VALUES (?,?,?)", (guild_id, user_id, reason))
-        await self.bot.db.commit()
+        warn_id = ctx.message.id
 
-        embed = nextcord.Embed(
-            title = f"{member.name}#{member.discriminator} Has Been Warned -",
-            description = f"User was warned in `{ctx.author.guild.name}`. Reason = {reason}",
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)    
+        if member == None:
+            await ctx.send(f"{ctx.author.mention}, you must provide a member for me to warn.")
+
+        elif reason == None:
+            await ctx.send(f"{ctx.author.mention}, you must provide a reason in order to warn {member}")
+
+        elif reason != None and member != None:
+            await self.bot.db.execute("INSERT OR IGNORE INTO warnings (warn_id, guild_id, user_id, warning) VALUES (?,?,?,?)", (warn_id, guild_id, user_id, reason))
+            await self.bot.db.commit()
+
+            embed = nextcord.Embed(
+                title = f"{member.name}#{member.discriminator} Has Been Warned -",
+                description = f"User was warned in `{ctx.author.guild.name}`. Reason = {reason}",
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)    
 
 
     @commands.command()
@@ -60,10 +70,11 @@ class Warnings(commands.Cog):
             return await ctx.send(embed=embed)
 
         else:
-            # get user exp
             async with self.bot.db.execute("SELECT warning FROM warnings WHERE guild_id = ? AND user_id = ?", (guild_id, user_id)) as cursor:
                 data = await cursor.fetchone()
                 warnings = data[0]
+                print (warnings)
+                print(data)
 
             await ctx.send(f"WARNINGS FOR {member.name}#{member.discriminator} \n {warnings}")
 
