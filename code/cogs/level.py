@@ -1,9 +1,6 @@
 import nextcord
 from nextcord import Color
 from nextcord.ext import commands
-from nextcord.ext.commands import MissingPermissions
-from nextcord.utils import get
-from aiohttp import request
 import aiosqlite
 import math
 import asyncio
