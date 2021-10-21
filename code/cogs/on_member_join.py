@@ -18,11 +18,17 @@ class Join_(commands.Cog):
     async def setjoin(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
         guild_id = ctx.author.guild.id
         join = channel_name
-        join_id = join.id
-        self.join.set_channel(guild_id, join_id)
+        channel_id = join.id
+        cursor = await self.bot.db.execute("UPDATE join_channel SET channel_id = ? WHERE guild_id = ?", (channel_id, guild_id))
+        await self.bot.db.commit()
+
+        if cursor.rowcount == 0:
+            cursor = await self.bot.db.execute("INSERT INTO join_channel (channel_id, guild_id) VALUES(?, ?)", (channel_id, guild_id))
+            await self.bot.db.commit()
+
         embed = nextcord.Embed(
             title = "Join Channel Changed -",
-            description = f"<#{join_id}> has been assigned as the channel for new member message in {ctx.author.guild.name}",
+            description = f"<#{channel_id}> has been assigned as the channel for new member message in {ctx.author.guild.name}",
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -60,13 +66,37 @@ class Join_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def deljoin(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
-        self.join.channel_remove_entry(guild_id)
-        embed = nextcord.Embed(
-            title = "New Member Message Channel Deleted -",
-            description = f"The new member message channel for {ctx.author.guild.name} has been deleted.",
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+
+        async with self.bot.db.execute("SELECT channel_id FROM join_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Join Channel Not Set!",
+                    description = f"• The join channel is not set, therefore there is no channel I can delete."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Join Channel Not Set!",
+                description = f"• The join channel is not set, therefore there is no channel I can delete."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
+        else:  
+            cursor = await self.bot.db.execute("UPDATE join_channel SET channel_id = NULL WHERE guild_id = ?", (guild_id,))
+            await self.bot.db.commit()           
+            embed = nextcord.Embed(
+                title = "New Member Message Channel Deleted -",
+                description = f"The new member message channel for {ctx.author.guild.name} has been deleted.",
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
 
     @deljoin.error
@@ -84,10 +114,32 @@ class Join_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def joinchannel(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
-        profile = self.join.channel_get_entry_for_commands(guild_id)
+
+        async with self.bot.db.execute("SELECT channel_id FROM join_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Join Channel Not Set!",
+                    description = f"• The join channel has not yet been set. Ask an admin to set it up using `$setjoin`."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Join Channel Not Set!",
+                description = f"• The join channel has not yet been set. Ask an admin to set it up using `$setjoin`."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             title = f"New member message channel for {ctx.author.guild.name}",
-            description= '<#{}>'.format(profile[1])
+            description= f'<#{channel_id}>'
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -116,19 +168,40 @@ class Join_(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         guild_id = member.guild.id
-        profile = self.join.channel_get_entry_for_commands(guild_id)
-        channel = self.bot.get_channel(profile[1])
 
-        embed = nextcord.Embed(
-            title = f"New Member",
-            description = f"Welcome {member.mention} to `{member.guild}`. Thank you for joining our server!",
-            colour = nextcord.Colour.random()
-        )
-        embed.set_footer(text="User joined at: " + datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        embed.set_thumbnail(url=member.avatar.url)
+        async with self.bot.db.execute("SELECT channel_id FROM join_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
 
-        await channel.send(embed=embed)
-            
+                if channel_id == 0:
+                    print("RETURNED AT 1")
+                    return
+
+                if channel_id == None:
+                    print("RETURNED AT NONE")
+                    return
+
+                if channel_id == "NULL":
+                    print("RETURNED AT NULL")
+                    return
+                    
+            elif not data:
+                print("RETURNED AT 2")
+                return
+ 
+            channel = self.bot.get_channel(channel_id)
+
+            embed = nextcord.Embed(
+                title = f"New Member",
+                description = f"Welcome {member.mention} to `{member.guild}`. Thank you for joining our server!",
+                colour = nextcord.Colour.random()
+            )
+            embed.set_footer(text="User joined at: " + datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            embed.set_thumbnail(url=member.avatar.url)
+
+            await channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Join_(bot))

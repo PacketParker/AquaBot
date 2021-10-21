@@ -30,7 +30,8 @@ async def initialise():
     await bot.db.execute("CREATE TABLE IF NOT EXISTS guildData (guild_id int, user_id int, exp int, PRIMARY KEY (guild_id, user_id))")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS level_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS mute (guild_id int, role_id int, PRIMARY KEY (guild_id, role_id))")
-    await bot.db.execute("CREATE TABLE IF NOT EXISTS join_message (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS join_channel (guild_id int, channel_id int, PRIMARY KEY (guild_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS economy (user_id int, money int, PRIMARY KEY (user_id))")
 
 
 bot.remove_command('help')

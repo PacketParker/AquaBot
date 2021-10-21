@@ -34,21 +34,20 @@ class messageCount(commands.Cog):
         if channel_id == None or 0 and not data:
             return
 
-        if not message.author.bot:
-            cursor = await self.bot.db.execute("INSERT OR IGNORE INTO guildData (guild_id, user_id, exp) VALUES (?,?,?)", (message.guild.id, message.author.id, 1)) 
+        cursor = await self.bot.db.execute("INSERT OR IGNORE INTO guildData (guild_id, user_id, exp) VALUES (?,?,?)", (message.guild.id, message.author.id, 1)) 
 
-            if cursor.rowcount == 0:
-                await self.bot.db.execute("UPDATE guildData SET exp = exp + 1 WHERE guild_id = ? AND user_id = ?", (message.guild.id, message.author.id))
-                cur = await self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ? AND user_id = ?", (message.guild.id, message.author.id))
-                data = await cur.fetchone()
-                exp = data[0]
-                lvl = math.sqrt(exp) / self.bot.multiplier
-            
-                if lvl.is_integer():
-                    channel = self.bot.get_channel(channel_id)
-                    await channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
+        if cursor.rowcount == 0:
+            await self.bot.db.execute("UPDATE guildData SET exp = exp + 1 WHERE guild_id = ? AND user_id = ?", (message.guild.id, message.author.id))
+            cur = await self.bot.db.execute("SELECT exp FROM guildData WHERE guild_id = ? AND user_id = ?", (message.guild.id, message.author.id))
+            data = await cur.fetchone()
+            exp = data[0]
+            lvl = math.sqrt(exp) / self.bot.multiplier
+        
+            if lvl.is_integer():
+                channel = self.bot.get_channel(channel_id)
+                await channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
 
-            await self.bot.db.commit()
+        await self.bot.db.commit()
 
 
     @commands.command()
@@ -75,6 +74,87 @@ class messageCount(commands.Cog):
 
     @setlvl.error
     async def setlvl_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+        )
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def lvlreset(self, ctx: commands.Context):
+        guild_id = ctx.guild.id
+
+        async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                channel_id = data[0]
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Leveling Not Setup!",
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
+                
+        if channel_id == None or 0 and not data:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Leveling Not Setup!",
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await ctx.send(embed=embed)
+
+        else:
+            embed = nextcord.Embed(
+                color=0xa3a3ff, 
+                title = ":warning: ALERT :warning: ", 
+                description=f"{ctx.author.mention}, are you sure you want to delete the levels for everyone in this server? y/n",
+            )
+            embed.set_footer(text="Send either `y` or `n` in order to continue.")
+            
+            await ctx.send(embed=embed)
+
+            a = ["y", "yes", "Yes", "YEs", "YES"]
+            b = ["n", "no", "No", "NO"] 
+
+            msg = await self.bot.wait_for('message', check=lambda message:message.author == ctx.author and message.channel.id == ctx.channel.id)
+            if msg.content in a:
+                embed = nextcord.Embed(
+                    title=f"All levels have just been DELETED!", 
+                    description=f"Levels deleted by: {ctx.author.name}#{ctx.author.discriminator}",
+                    color=0xa3a3ff
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await self.bot.db.execute("DELETE FROM guildData WHERE guild_id = ?", (guild_id,))
+                await ctx.send(embed=embed)
+
+            elif msg.content in b:
+                embed = nextcord.Embed(
+                    title = ":red_circle: NOTICE :red_circle:", 
+                    description = f"All levels were NOT deleted!",
+                    color=0xa3a3ff
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+
+            else:
+                embed = nextcord.Embed(
+                    title = ":red_circle: NOTICE :red_circle:", 
+                    description = "All levels were NOT deleted!",
+                    color=0xa3a3ff
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+
+
+    @lvlreset.error
+    async def lvlreset_error(self, ctx, error):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
