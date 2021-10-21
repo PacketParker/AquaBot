@@ -13,16 +13,6 @@ class Database:
         """Initializes the database"""
         self.conn = sqlite3.connect('database/database.db', isolation_level=None)
         self.conn.execute('PRAGMA journal_mode = wal2')
-        self.curMute = self.conn.cursor()
-        self.curMute.execute("""CREATE TABLE IF NOT EXISTS mute (
-            guild_id INTEGER NOT NULL PRIMARY KEY,
-            mute_id INTEGER NULL
-        )""")
-        self.curJoin = self.conn.cursor()
-        self.curJoin.execute("""CREATE TABLE IF NOT EXISTS channel (
-            guild_id INTEGER NOT NULL PRIMARY KEY,
-            channel_id INTEGER NULL
-        )""")
         self.curEconomy = self.conn.cursor()
         self.curEconomy.execute("""CREATE TABLE IF NOT EXISTS economy (
             user_id INTEGER NOT NULL PRIMARY KEY,
@@ -34,8 +24,6 @@ class Database:
         """Safely closes the database"""
         if self.conn:
             self.conn.commit()
-            self.curMute.close()
-            self.curJoin.close()
             self.curEconomy.close()
             self.conn.close()
 
@@ -46,110 +34,6 @@ class Database:
             self.conn.commit()
             return result
         return wrapper
-
-    def mute_get_entry(self, guild_id: int, mute_id: int) -> Entry:
-        self.curMute.execute(
-            "SELECT * FROM mute WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curMute.fetchone()
-        if result: return result
-        return self.mute_new_entry(guild_id, mute_id)
-
-    def mute_get_entry_for_commands(self, guild_id: int) -> Entry:
-        self.curMute.execute(
-            "SELECT * FROM mute WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curMute.fetchone()
-        if result: return result
-
-    @_commit
-    def mute_new_entry(self, guild_id: int, mute_id: int) -> Entry:
-        try:
-            self.curMute.execute(
-                "INSERT INTO mute(guild_id, mute_id) VALUES(?,?)",
-                (guild_id, mute_id)
-            )
-            return self.mute_get_entry(guild_id, mute_id)
-        except sqlite3.IntegrityError:
-            return self.mute_get_entry(guild_id, mute_id)
-
-    @_commit 
-    def mute_remove_entry(self, guild_id: int) -> None:
-        self.curMute.execute(
-            "DELETE FROM mute WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-
-    @_commit
-    def set_mute(self, guild_id: int, mute_id: int) -> Entry:
-        self.curMute.execute(
-            "UPDATE mute SET mute_id=? WHERE guild_id=?",
-            (mute_id, guild_id)
-        )
-        return self.mute_get_entry(guild_id, mute_id)
-
-    @_commit
-    def set_role(self, guild_id: int, mute_id: int) -> Entry:
-        self.set_mute(guild_id, mute_id)
-        return self.mute_get_entry(guild_id, mute_id)
-
-
-##BEGIN THE ON_MEMBER_JOIN CODE
-
-
-    def channel_get_entry(self, guild_id: int, channel_id: int) -> Entry:
-        self.curJoin.execute(
-            "SELECT * FROM channel WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curJoin.fetchone()
-        if result: return result
-        return self.channel_new_entry(guild_id, channel_id)
-
-    def channel_get_entry_for_commands(self, guild_id: int) -> Entry:
-        self.curJoin.execute(
-            "SELECT * FROM channel WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-        result = self.curJoin.fetchone()
-        if result: return result
-
-    @_commit
-    def channel_new_entry(self, guild_id: int, channel_id: int) -> Entry:
-        try:
-            self.curJoin.execute(
-                "INSERT INTO channel(guild_id, channel_id) VALUES(?,?)",
-                (guild_id, channel_id)
-            )
-            return self.channel_get_entry(guild_id, channel_id)
-        except sqlite3.IntegrityError:
-            return self.channel_get_entry(guild_id, channel_id)
-
-    @_commit
-    def channel_remove_entry(self, guild_id: int) -> None:
-        self.curJoin.execute(
-            "DELETE FROM channel WHERE guild_id=:guild_id",
-            {'guild_id': guild_id}
-        )
-
-    @_commit
-    def set_channel_for_channel(self, guild_id: int, channel_id: int) -> Entry:
-        self.curJoin.execute(
-            "UPDATE channel SET channel_id=? WHERE guild_id=?",
-            (channel_id, guild_id)
-        )
-        return self.channel_get_entry(guild_id, channel_id)
-
-    @_commit
-    def set_channel(self, guild_id: int, channel_id: int) -> Entry:
-        self.set_channel_for_channel(guild_id, channel_id)
-        return self.channel_get_entry(guild_id, channel_id)
-
-
-##BEGIN ECONOMY CODE
-
 
     def get_entry(self, user_id: int) -> Entry:
         self.curEconomy.execute(
@@ -202,8 +86,3 @@ class Database:
     def top_entries(self, n: int=0) -> List[Entry]:
         self.curEconomy.execute("SELECT * FROM economy ORDER BY money DESC")
         return (self.curEconomy.fetchmany(n) if n else self.curEconomy.fetchall())
-
-
-##BEGIN LEVEL CODE
-
-

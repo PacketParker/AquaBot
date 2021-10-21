@@ -11,7 +11,6 @@ color = 0xc48aff
 class Coinflip(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Database()
     
     def check_bet(
         self,
