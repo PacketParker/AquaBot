@@ -2,15 +2,12 @@ import nextcord
 from nextcord.ext import commands
 from datetime import datetime
 
-from database.database import Database
-
 log_channel_id = 889293946801516554
 color = 0xc48aff
 
 class Join_(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.join = Database()
 
 
     @commands.command()

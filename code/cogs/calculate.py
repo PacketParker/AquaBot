@@ -4,7 +4,6 @@ from nextcord.utils import get
 import aiohttp
 import urllib
 
-
 class BadArgument(Exception):
     pass
 
