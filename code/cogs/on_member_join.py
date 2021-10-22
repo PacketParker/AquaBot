@@ -175,19 +175,15 @@ class Join_(commands.Cog):
                 channel_id = data[0]
 
                 if channel_id == 0:
-                    print("RETURNED AT 1")
                     return
 
                 if channel_id == None:
-                    print("RETURNED AT NONE")
                     return
 
                 if channel_id == "NULL":
-                    print("RETURNED AT NULL")
                     return
-                    
+
             elif not data:
-                print("RETURNED AT 2")
                 return
  
             channel = self.bot.get_channel(channel_id)
