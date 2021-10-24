@@ -1,6 +1,6 @@
 import nextcord
 from nextcord.ext import commands
-from database.database import Database
+from utils.economy import Database
 from utils.helpers import *
 from datetime import datetime
 

@@ -6,7 +6,7 @@ from typing import List, Tuple, Union
 import nextcord
 from nextcord.ext import commands
 from utils.card import Card
-from database.database import Database
+from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
 from datetime import datetime

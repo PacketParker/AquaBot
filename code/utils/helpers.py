@@ -5,12 +5,9 @@ import yaml
 from nextcord import Color, Embed
 
 class InsufficientFundsException(Exception):
-    def __init__(self, current, bet) -> None:
-        self.needs = bet - current
+    def __init__(self) -> None:
         super().__init__()
 
-    def __str__(self) -> str:
-        return f"${self.needs} more needed to play."
 
 os.chdir(Path(__file__).parent.parent)
 ABS_PATH = Path(os.getcwd())

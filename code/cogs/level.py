@@ -21,6 +21,9 @@ class messageCount(commands.Cog):
         self.bot.multiplier = 1
         guild_id = message.author.guild.id
 
+        if message.author.bot:
+            return
+
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
             if data:
@@ -47,9 +50,9 @@ class messageCount(commands.Cog):
         await self.bot.db.commit()
 
 
-    @commands.command()
+    @commands.command(aliases = ['setlvl'])
     @commands.has_permissions(manage_channels=True)
-    async def setlvl(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
+    async def setlevel(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
         guild_id = ctx.author.guild.id
         channel = channel_name
         channel_id = channel.id
@@ -69,7 +72,7 @@ class messageCount(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @setlvl.error
+    @setlevel.error
     async def setlvl_error(self, ctx, error):
         embed = nextcord.Embed(
             colour = color,

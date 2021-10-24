@@ -15,8 +15,8 @@ class HelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Moderation', description='mute, tempmute, unmute, kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
-            nextcord.SelectOption(label='Admin', description='setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
-            nextcord.SelectOption(label='Fun', description='calculate, reverse, donald, kanye', emoji='🎉'),
+            nextcord.SelectOption(label='Admin', description='setlevel, lvlreset, dellevel, lvlchannel, setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
+            nextcord.SelectOption(label='Fun', description='level, lvlboard, calculate, reverse, donald, kanye', emoji='🎉'),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
@@ -29,7 +29,7 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Add**", value = "**Usage: `$add`**\nGive you $2,500. Can be run every 2 hours", inline=False)
+            embed.add_field(name = "**Add**", value = "**Usage: `$add`**\nGives you $2,500. Can be run every 2 hours", inline=False)
             embed.add_field(name = "**🃏 - Blackjack (bj)**", value = "**Usage: `$blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
             embed.add_field(name = "**🎰 - Slots**", value = "**Usage: `$slots <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
             embed.add_field(name = "**🪙 - Coinflip (cf)**", value = "**Usage: `$coinflip <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
@@ -43,7 +43,10 @@ class HelpDropdown(nextcord.ui.Select):
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
-            embed.add_field(name = "**Mute**", value = "**Usage: `$mute <member> <time>`** \nMute a member so they can't send anymore messages", inline=True)
+            embed.add_field(name = "**Warn**", value = "**Usage: `$warn <member> <reason>`** \nWarn a member for doing something against the rules.", inline=True)
+            embed.add_field(name = "**Delwarn**", value = "**Usage: `$delwarn <member> <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
+            embed.add_field(name = "**Warnings**", value = "**Usage: `$warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
+            embed.add_field(name = "**Mute**", value = "**Usage: `$mute <member> <time>`** \nMute a member so they can't send anymore messages.", inline=True)
             embed.add_field(name = "**Tempmute**", value = "**Usage: `$tempmute <member> <time>` \nExample: `$tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=True)
             embed.add_field(name = "**Unmute**", value = "**Usage: `$unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)      
             embed.add_field(name = "**Purge**", value = "**Usage: `$purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
@@ -98,6 +101,10 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
+            embed.add_field(name = "**Setlevel**", value = "**Usage: `$setlevel <name of channel>` **\nSets the channel for level up messages to be sent to.", inline=True)
+            embed.add_field(name = "**Lvlreset**", value = "**Usage: `$lvlreset` **\nResets all of the levels for everyone in the server.", inline=True)
+            embed.add_field(name = "**Dellevel**", value = "**Usage: `$dellevel` **\nDeletes the channel from our database, and stops sending new level up messages.", inline=True)
+            embed.add_field(name = "**Lvlchannel**", value = "**Usage: `$lvlchannel` ** \nShows the current channel for leveling messages.", inline=True)
             embed.add_field(name = "**Setmute**", value = "**Usage: `$setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=False)
             embed.add_field(name = "**Delmute**", value = "**Usage: `$delmute` **\nDeletes the muted role from our database.", inline=False)
             embed.add_field(name = "**Muterole**", value = "**Usage: `$muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=False)
@@ -114,6 +121,8 @@ class HelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
+            embed.add_field(name = "**Level**", value = "**Usage: `$level`** \nSends your current level in the server.", inline=False)
+            embed.add_field(name = "**Lvlboard**", value = "**Usage: `$lvlboard`** \nSends the current leaderboard for your servers leveling system.", inline=False)
             embed.add_field(name = "**Calculate**", value = "**Usage: `$calculate`** \nSends a calculator with buttons for you to do math.", inline=False)
             embed.add_field(name = "**Reverse**", value = "**Usage: `$reverse <text>`** \nReverses whatever text you put in.", inline=False)
             embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a quote from Donald Trump.", inline=False)
@@ -156,8 +165,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
             nextcord.SelectOption(label='Moderation', description='kick, ban, softban, mute, tempmute, unmute, lock, unlock, purge', emoji="<:moderation:893273273385754686>"),
             nextcord.SelectOption(label='Info', description='contact, covid, invite, track, ping, serverinfo, whois, botinfo, vote', emoji="ℹ️"),
             nextcord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
-            nextcord.SelectOption(label='Admin', description='setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
-            nextcord.SelectOption(label='Fun', description='calculate, reverse, donald, kanye', emoji='🎉'),
+            nextcord.SelectOption(label='Admin', description='setlevel, lvlreset, dellevel, lvlchannel, setmute, muterole, delmute, setjoin, joinchannel, deljoin', emoji="⚙️"),
+            nextcord.SelectOption(label='Fun', description='level, lvlboard, calculate, reverse, donald, kanye', emoji='🎉'),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
@@ -184,7 +193,9 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
-
+            embed.add_field(name = "**Warn**", value = "**Usage: `$warn <member> <reason>`** \nWarn a member for doing something against the rules.", inline=True)
+            embed.add_field(name = "**Delwarn**", value = "**Usage: `$delwarn <member> <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
+            embed.add_field(name = "**Warnings**", value = "**Usage: `$warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
             embed.add_field(name = "**Mute**", value = "**Usage: `$mute <member> <time>` \nExample: `$mute @bob 2d 4h 6m 8s`** \nMute a member so they can't send anymore messages for a specified amount of time.", inline=True)
             embed.add_field(name = "**Tempmute**", value = "**Usage: `$tempmute <member> <time>` \nExample: `$tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=False)
             embed.add_field(name = "**Unmute**", value = "**Usage: `$unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)      
@@ -242,12 +253,16 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "**Setmute**", value = "**Usage: `$setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=False)
-            embed.add_field(name = "**Delmute**", value = "**Usage: `$delmute` **\nDeletes the muted role from our database.", inline=False)
-            embed.add_field(name = "**Muterole**", value = "**Usage: `$muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=False)
-            embed.add_field(name = "**Setjoin**", value = "**Usage: `$setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=False)
-            embed.add_field(name = "**Deljoin**", value = "**Usage: `$deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=False),
-            embed.add_field(name = "**Joinchannel**", value = "**Usage: `$joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=False)
+            embed.add_field(name = "**Setlevel**", value = "**Usage: `$setlevel <name of channel>` **\nSets the channel for level up messages to be sent to.", inline=True)
+            embed.add_field(name = "**Lvlreset**", value = "**Usage: `$lvlreset` **\nResets all of the levels for everyone in the server.", inline=True)
+            embed.add_field(name = "**Dellevel**", value = "**Usage: `$dellevel` **\nDeletes the channel from our database, and stops sending new level up messages.", inline=True)
+            embed.add_field(name = "**Lvlchannel**", value = "**Usage: `$lvlchannel` ** \nShows the current channel for leveling messages.", inline=True)
+            embed.add_field(name = "**Setmute**", value = "**Usage: `$setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=True)
+            embed.add_field(name = "**Delmute**", value = "**Usage: `$delmute` **\nDeletes the muted role from our database.", inline=True)
+            embed.add_field(name = "**Muterole**", value = "**Usage: `$muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
+            embed.add_field(name = "**Setjoin**", value = "**Usage: `$setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=True)
+            embed.add_field(name = "**Deljoin**", value = "**Usage: `$deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=True),
+            embed.add_field(name = "**Joinchannel**", value = "**Usage: `$joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=True)
 
             await interaction.response.edit_message(embed=embed)  
 
@@ -258,6 +273,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
                 colour = nextcord.Colour.random()
             )
 
+            embed.add_field(name = "**Level**", value = "**Usage: `$level`** \nSends your current level in the server.", inline=False)
+            embed.add_field(name = "**Lvlboard**", value = "**Usage: `$lvlboard`** \nSends the current leaderboard for your servers leveling system.", inline=False)
             embed.add_field(name = "**Calculate**", value = "**Usage: `$calculate`** \nSends a calculator with buttons for you to do math.", inline=False)
             embed.add_field(name = "**Reverse**", value = "**Usage: `$reverse <text>`** \nReverses whatever text you put in.", inline=False)
             embed.add_field(name = "**Donald**", value = "**Usage: `$donald` **\nSends a quote from Donald Trump.", inline=False)

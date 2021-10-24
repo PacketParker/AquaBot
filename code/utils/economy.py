@@ -10,8 +10,7 @@ class Database:
         self.open()
 
     def open(self):
-        """Initializes the database"""
-        self.conn = sqlite3.connect('database/database.db', isolation_level=None)
+        self.conn = sqlite3.connect('database/data.db', isolation_level=None)
         self.conn.execute('PRAGMA journal_mode = wal2')
         self.curEconomy = self.conn.cursor()
         self.curEconomy.execute("""CREATE TABLE IF NOT EXISTS economy (
