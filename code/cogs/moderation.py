@@ -22,7 +22,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Amount Not Given!",
-                description="• Please provide an amount of messages you would like to delete. Example: `$purge 5`"
+                description=f"• Please provide an amount of messages you would like to delete. Example: `{ctx.prefix}purge 5`"
             )
             await ctx.send(embed=embed)
     
@@ -69,7 +69,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -150,7 +150,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -230,7 +230,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -334,7 +334,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -444,7 +444,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -554,7 +554,7 @@ class Moderation(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)

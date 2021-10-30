@@ -10,7 +10,7 @@ from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
 from datetime import datetime
-from utils.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 
@@ -81,8 +81,8 @@ class Blackjack(commands.Cog):
         return sum
 
 
-    #Play a simple game of blackjack. Bet must be greater than $0
-    #Usage: $blackjac
+    #Play a simple game of blackjack. Bet must be greater than 0
+    #Usage: blackjack
     @commands.command(aliases = ["bj"])
     async def blackjack(self, ctx: commands.Context, bet: int=DEFAULT_BET):
         self.check_bet(ctx, bet)

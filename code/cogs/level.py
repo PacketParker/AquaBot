@@ -18,7 +18,7 @@ class messageCount(commands.Cog):
  
     @commands.Cog.listener()
     async def on_message(self, message):
-        self.bot.multiplier = 1
+        self.bot.multiplier = 2
         guild_id = message.author.guild.id
 
         if message.author.bot:
@@ -45,7 +45,7 @@ class messageCount(commands.Cog):
         
             if lvl.is_integer():
                 channel = self.bot.get_channel(channel_id)
-                await channel.send(f"{message.author.mention} well done! You're now level: {int(lvl)}.")
+                await channel.send(f"{message.author.mention} congratulations! You have leveled up, your new level is - `{int(lvl)}`")
 
         await self.bot.db.commit()
 
@@ -77,7 +77,7 @@ class messageCount(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -85,7 +85,7 @@ class messageCount(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(administrator=True)
-    async def lvlreset(self, ctx: commands.Context):
+    async def lvlreset(self, ctx):
         guild_id = ctx.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -96,7 +96,7 @@ class messageCount(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -105,7 +105,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -158,7 +158,7 @@ class messageCount(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -166,7 +166,7 @@ class messageCount(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def dellevel(self, ctx: commands.Context, NULL:int = None):
+    async def dellevel(self, ctx, NULL:int = None):
         guild_id = ctx.author.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -177,7 +177,7 @@ class messageCount(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -186,7 +186,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -207,7 +207,7 @@ class messageCount(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -215,7 +215,7 @@ class messageCount(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def lvlchannel(self, ctx: commands.Context):
+    async def lvlchannel(self, ctx):
         guild_id = ctx.author.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -226,7 +226,7 @@ class messageCount(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -235,7 +235,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -255,7 +255,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -263,7 +263,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -284,7 +284,7 @@ class messageCount(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -293,7 +293,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -332,7 +332,7 @@ class messageCount(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -350,7 +350,7 @@ class messageCount(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -359,7 +359,7 @@ class messageCount(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `$setlevel` command."
+                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -413,7 +413,7 @@ class messageCount(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)

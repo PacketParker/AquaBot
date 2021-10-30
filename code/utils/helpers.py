@@ -18,7 +18,7 @@ with open(os.path.join(ABS_PATH.parent, 'config.yml'),  # type:ignore
     config = yaml.safe_load(f.read()).get('bot', {})
 
 TOKEN = config.get('token')
-PREFIX = config.get('prefix', '$')
+DEFAULT_PREFIX = config.get('prefix', '$')
 OWNER_IDS = config.get('owner_ids')
 DEFAULT_BET = config.get('default_bet', 125)
 B_MULT = config.get('bonus_multiplier', 20)

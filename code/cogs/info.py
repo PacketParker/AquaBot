@@ -30,7 +30,7 @@ class Information(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -103,7 +103,7 @@ class Information(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -211,7 +211,7 @@ class Information(commands.Cog):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Member!",
-                description="• Please mention a valid member! Example: `$whois @user`"
+                description=f"• Please mention a valid member! Example: `{ctx.prefix}whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -219,7 +219,7 @@ class Information(commands.Cog):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Argument!",
-                description="• Please put a valid option! Example: `$whois @user`"
+                description=f"• Please put a valid option! Example: `{ctx.prefix}whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -235,7 +235,7 @@ class Information(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -273,8 +273,8 @@ class Information(commands.Cog):
                         "\n —",
             colour = nextcord.Colour.random()
         )
-        embed.add_field(name="• Amount of Servers: ", value=f"{guilds}", inline=False),
-        embed.add_field(name="• Amount of Members: ", value=f"{members}", inline=False),
+        embed.add_field(name="• Amount of Servers: ", value=f"{guilds:,}", inline=False),
+        embed.add_field(name="• Amount of Members: ", value=f"{members:,}", inline=False),
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)

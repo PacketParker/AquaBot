@@ -5,8 +5,6 @@ from nextcord.utils import get
 from aiohttp import request
 import aiosqlite
 from datetime import datetime
-import random
-import asyncio
 
 log_channel_id = 889293946801516554
 
@@ -16,7 +14,6 @@ color = 0xc48aff
 class Warnings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
 
     @commands.command()
     @commands.has_permissions(manage_messages=True)

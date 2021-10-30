@@ -7,7 +7,7 @@ from nextcord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
-from utils.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 
@@ -29,7 +29,7 @@ class Slots(commands.Cog):
             raise InsufficientFundsException(current, bet)
 
 
-    #Usage: $slots [bet]
+    #Usage: slots [bet]
     @commands.command()
     @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):

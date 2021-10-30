@@ -34,7 +34,7 @@ class Fun(commands.Cog):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Argument!",
-                description="• Please provide some text for the bot to reverse. Example: `$reverse <text>`"
+                description=f"• Please provide some text for the bot to reverse. Example: `{ctx.prefix}reverse <text>`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -42,7 +42,7 @@ class Fun(commands.Cog):
             embed = nextcord.Embed(
                 color=color,
                 title="→ Invalid Argument!",
-                description="• Please provide some text for the bot to reverse. Example: `$reverse <text>`"
+                description=f"• Please provide some text for the bot to reverse. Example: `{ctx.prefix}reverse <text>`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -50,7 +50,7 @@ class Fun(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)

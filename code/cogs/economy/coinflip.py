@@ -4,7 +4,7 @@ from nextcord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
 from datetime import datetime
-from utils.helpers import PREFIX, InsufficientFundsException
+from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 
 color = 0xc48aff
 

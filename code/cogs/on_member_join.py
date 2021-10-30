@@ -37,7 +37,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Channel Not Found!",
-                description = f"• That channel wasn't found. Check your spelling, or simply just tag the channel you want to assign for new member messages. Example: `$setjoin #channel`"
+                description = f"• That channel wasn't found. Check your spelling, or simply just tag the channel you want to assign for new member messages. Example: `{ctx.prefix}setjoin #channel`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -45,7 +45,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Channel Given!",
-                description = f"• It seems you didn't provide a channel for me. Heres an example on how to use the command: `$setjoin #channel`, or do `$help` for help."
+                description = f"• It seems you didn't provide a channel for me. Heres an example on how to use the command: `{ctx.prefix}setjoin #channel`, or do `{ctx.prefix}help` for help."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -53,7 +53,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -101,7 +101,7 @@ class Join_(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -120,7 +120,7 @@ class Join_(commands.Cog):
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Join Channel Not Set!",
-                    description = f"• The join channel has not yet been set. Ask an admin to set it up using `$setjoin`."
+                    description = f"• The join channel has not yet been set. Ask an admin to set it up using `{ctx.prefix}setjoin`."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
@@ -129,7 +129,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Join Channel Not Set!",
-                description = f"• The join channel has not yet been set. Ask an admin to set it up using `$setjoin`."
+                description = f"• The join channel has not yet been set. Ask an admin to set it up using `{ctx.prefix}setjoin`."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await ctx.send(embed=embed)
@@ -148,7 +148,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Channel Set!",
-                description = f"• It seems you haven't set a new member message channel yet. Please go do that with `$setjoin` before running this command."
+                description = f"• It seems you haven't set a new member message channel yet. Please go do that with `{ctx.prefix}setjoin` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -156,7 +156,7 @@ class Join_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)

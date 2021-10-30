@@ -22,8 +22,14 @@ class Mute_(commands.Cog):
         guild_id = ctx.author.guild.id
         role = role_name
         role_id = role.id
-        cursor = await self.bot.db.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, role_id))
+
+        cursor = await self.bot.db.execute("UPDATE mute SET role_id = ? WHERE guild_id = ?", (role_id, guild_id))
         await self.bot.db.commit()
+
+        if cursor.rowcount == 0:
+            cursor = await self.bot.db.execute("INSERT INTO mute (role_id, guild_id) VALUES(?, ?)", (role_id, guild_id))
+            await self.bot.db.commit()
+
         embed = nextcord.Embed(
             title = "Mute Role Changed -",
             description = f"<@&{role_id}> has been assigned as the mute role for {ctx.author.guild.name}",
@@ -38,7 +44,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Role Not Found!",
-                description = f"• That role wasn't found. Check your spelling, or simply just ping the role you want to assign as the muted role. Example: `$setmute @Muted`"
+                description = f"• That role wasn't found. Check your spelling, or simply just ping the role you want to assign as the muted role. Example: `{ctx.prefix}setmute @Muted`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -46,7 +52,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Given!",
-                description = f"• It seems you didn't provide a role for me. Heres an example on how to use the command: `$setmute @Muted`, or do `$help` for help."
+                description = f"• It seems you didn't provide a role for me. Heres an example on how to use the command: `{ctx.prefix}setmute @Muted`, or do `{ctx.prefix}help` for help."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -54,7 +60,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -79,7 +85,7 @@ class Mute_(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
@@ -107,7 +113,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
-                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `{ctx.prefix}setmute` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -115,7 +121,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -123,13 +129,13 @@ class Mute_(commands.Cog):
 
     @commands.command()
     @commands.has_permissions(manage_roles=True)
-    async def tempmute(self, ctx: commands.Context, member:nextcord.Member=None, *, argument=None): 
+    async def tempmute(self, ctx, member:nextcord.Member=None, *, argument=None): 
         log = self.bot.get_channel(log_channel_id)
         if member == None:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Member!",
-                description = f"• Please provide a member for me to mute. Example: `$mute @bob 3d 5h 7m 9s."
+                description = f"• Please provide a member for me to mute. Example: `{ctx.prefix}mute @bob 3d 5h 7m 9s."
             )
             await ctx.send(embed=embed)
 
@@ -137,7 +143,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Time!",
-                description = f"• Please provide an amount of time for me to mute {member} for. Example: `$mute @bob 3d 5h 7m 9s`."
+                description = f"• Please provide an amount of time for me to mute {member} for. Example: `{ctx.prefix}mute @bob 3d 5h 7m 9s`."
             )
             await ctx.send(embed=embed)
 
@@ -201,7 +207,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
-                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `{ctx.prefix}setmute` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -210,7 +216,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -224,7 +230,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Member!",
-                description = f"• Please provide a member for me to mute. Example: `$mute @bob 3d 5h 7m 9s."
+                description = f"• Please provide a member for me to mute. Example: `{ctx.prefix}mute @bob 3d 5h 7m 9s."
             )
             await ctx.send(embed=embed)
 
@@ -306,7 +312,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
-                description = f"• It seems you haven't set a muted role yet. Please go do that with `$setmute` before running this command."
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `{ctx.prefix}setmute` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -315,7 +321,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -328,7 +334,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Member!",
-                description = f"• Please provide a member for me to mute. Example: `$unmute @bob`."
+                description = f"• Please provide a member for me to mute. Example: `{ctx.prefix}unmute @bob`."
             )
             await ctx.send(embed=embed)
         
@@ -369,7 +375,7 @@ class Mute_(commands.Cog):
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
-            description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
