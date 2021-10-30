@@ -50,13 +50,6 @@ async def on_ready():
         if filename.endswith('.py'):
             bot.load_extension(f'cogs.economy.{filename[:-3]}') 
 
-
-
-@bot.command()
-async def test(ctx):
-    print(str(get_prefix))
-
-
 bot.remove_command('help')
 bot.loop.create_task(initialise())
 bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")

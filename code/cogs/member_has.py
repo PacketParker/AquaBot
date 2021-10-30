@@ -6,6 +6,7 @@ from nextcord.utils import get
 from aiohttp import request
 import asyncio
 import nacl
+from datetime import datetime
 
 log_channel_id = 889293946801516554
 
@@ -15,6 +16,7 @@ color = 0xc48aff
 class MemberHas(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -38,6 +40,30 @@ class MemberHas(commands.Cog):
                 while vc.is_playing():
                     await asyncio.sleep(3)
                 await vc.disconnect()
+
+
+    @commands.Cog.listener()
+    async def on_error(self, ctx, error):
+        if isinstance(error, nextcord.errors.ClientException):
+            return
+
+        if isinstance(error, (commands.MissingRequiredArgument, commands.TooManyArguments, commands.BadArgument)):
+            embed = nextcord.Embed(
+                title = "→ Incorrect Syntax!",
+                description = f"• That is the incorrect way to send that command. In order to see how to use that command, use `{ctx.prefix}help {ctx.command.name}`",
+                colour = color
+            )
+            await ctx.send(embed=embed)
+
+        elif not commands.MissingRequiredArgument and not commands.TooManyArguments and not commands.BadArgument:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(MemberHas(bot))

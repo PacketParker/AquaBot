@@ -1,5 +1,6 @@
 import nextcord
-from nextcord.errors import InteractionResponded
+from nextcord.client import Client
+from nextcord.errors import ClientException, InteractionResponded
 from nextcord.ext import commands
 from nextcord.ext.commands.errors import *
 from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
@@ -9,11 +10,10 @@ color = 0xc48aff
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-'''
+
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        
         error = getattr(error, 'original', error)
 
         if isinstance(error, InteractionResponded):
@@ -34,7 +34,7 @@ class Handlers(commands.Cog, name='handlers'):
                 colour = color
             )
             await ctx.send(embed=embed)
-        
+    
         elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
             embed = nextcord.Embed(
                 colour = color,
@@ -44,6 +44,6 @@ class Handlers(commands.Cog, name='handlers'):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
-'''
+
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))
