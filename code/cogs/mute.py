@@ -40,6 +40,24 @@ class Mute_(commands.Cog):
 
     @setmute.error
     async def setmute_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+            
         if isinstance(error, commands.RoleNotFound):
             embed = nextcord.Embed(
                 colour = color,
@@ -82,6 +100,24 @@ class Mute_(commands.Cog):
 
     @delmute.error
     async def delmute_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -109,6 +145,24 @@ class Mute_(commands.Cog):
 
     @muterole.error
     async def muterole_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         if isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
@@ -203,7 +257,25 @@ class Mute_(commands.Cog):
     
     @tempmute.error
     async def tempmute_error(self, ctx, error):
-        if isinstance(error, commands.CommandInvokeError):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
@@ -308,7 +380,25 @@ class Mute_(commands.Cog):
 
     @mutecommand.error
     async def mutecommand_error(self, ctx, error):
-        if isinstance(error, commands.CommandInvokeError):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
@@ -371,14 +461,32 @@ class Mute_(commands.Cog):
 
 
     @unmute.error
-    async def unmute_error(self, ctx):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+    async def unmute_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage roles` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage roles` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
 
 
 def setup(bot):

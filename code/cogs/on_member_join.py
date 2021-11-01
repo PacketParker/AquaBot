@@ -33,7 +33,25 @@ class Join_(commands.Cog):
 
     @setjoin.error
     async def setjoin_error(self, ctx, error):
-        if isinstance(error, commands.ChannelNotFound):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.ChannelNotFound):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Channel Not Found!",
@@ -60,7 +78,7 @@ class Join_(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_channels=True)
     async def deljoin(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
 
@@ -98,6 +116,24 @@ class Join_(commands.Cog):
 
     @deljoin.error
     async def deljoin_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -108,7 +144,7 @@ class Join_(commands.Cog):
 
 
     @commands.command()
-    @commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_channels=True)
     async def joinchannel(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
 
@@ -144,6 +180,24 @@ class Join_(commands.Cog):
 
     @joinchannel.error
     async def joinchannel_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         if isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,

@@ -74,6 +74,24 @@ class messageCount(commands.Cog):
 
     @setlevel.error
     async def setlvl_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -155,6 +173,24 @@ class messageCount(commands.Cog):
 
     @lvlreset.error
     async def lvlreset_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `administrator` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `administrator` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -204,6 +240,24 @@ class messageCount(commands.Cog):
 
     @dellevel.error
     async def dellevel_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
         embed = nextcord.Embed(
             colour = color,
             title = "→ Error!",
@@ -251,6 +305,24 @@ class messageCount(commands.Cog):
 
     @lvlchannel.error
     async def lvlchannel_error(self, ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Missing Permissions!",
+                description="• You are missing the `manage channels` permission."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+
+        elif isinstance(error, commands.BotMissingPermissions):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Bot Missing Permissions!",
+                description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed)
+            
         if isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,

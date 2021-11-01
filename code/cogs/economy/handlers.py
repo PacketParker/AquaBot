@@ -33,17 +33,9 @@ class Handlers(commands.Cog, name='handlers'):
                 description = "• You do not have enough money to use that command. You can use `{ctx.prefix}add` to add more money. You can also check your current balance with `{ctx.prefix}money`",
                 colour = color
             )
-            await ctx.send(embed=embed)
-    
-        if isinstance(error, MissingPermissions):
-            embed = nextcord.Embed(
-                title = "→ Missing Permissions!",
-                description = "• You do not have the required permissions to do that command, try asking someone above you to try it again.",
-                colour = color
-            )
-            await ctx.send(embed=embed)       
+            await ctx.send(embed=embed)    
 
-        elif not CommandOnCooldown and not MissingPermissions and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
+        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
