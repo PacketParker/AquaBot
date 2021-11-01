@@ -10,7 +10,7 @@ color = 0xc48aff
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-'''
+
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -35,7 +35,15 @@ class Handlers(commands.Cog, name='handlers'):
             )
             await ctx.send(embed=embed)
     
-        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
+        if isinstance(error, MissingPermissions):
+            embed = nextcord.Embed(
+                title = "→ Missing Permissions!",
+                description = "• You do not have the required permissions to do that command, try asking someone above you to try it again.",
+                colour = color
+            )
+            await ctx.send(embed=embed)       
+
+        elif not CommandOnCooldown and not MissingPermissions and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
@@ -43,7 +51,7 @@ class Handlers(commands.Cog, name='handlers'):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-'''
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))
