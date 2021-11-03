@@ -8,17 +8,6 @@ from utils.helpers import *
 
 color = 0xc48aff
 
-async def get_prefix(self, message):
-    async with self.bot.db.execute("SELECT prefix FROM prefix WHERE guild_id = ?", (message.guild.id,)) as cursor:
-        data = await cursor.fetchone()
-        if data:
-            prefix = data[0]
-            return prefix
-        else:
-            prefix = DEFAULT_PREFIX
-            return prefix
-
-
 class HelpDropdown(nextcord.ui.Select):
     def __init__(self):
 
@@ -160,8 +149,8 @@ class HelpView(nextcord.ui.View):
     async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         embed = nextcord.Embed(
             title = "Help",
-            description = "For extended information on commands and categories, please choose and option from the dropdown menu below.",
-            colour = nextcord.Colour.random()   
+            description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{self.ctx.prefix}help`** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
+            colour = nextcord.Colour.random()    
         )
 
         await interaction.response.edit_message(embed=embed)
@@ -314,8 +303,8 @@ class GuildHelpView(nextcord.ui.View):
     async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         embed = nextcord.Embed(
             title = "Help",
-            description = "For extended information on commands and categories, please choose and option from the dropdown menu below.",
-            colour = nextcord.Colour.random()   
+            description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{self.ctx.prefix}help`** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
+            colour = nextcord.Colour.random()    
         )
 
         await interaction.response.edit_message(embed=embed)
@@ -354,9 +343,15 @@ class Help(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.content == "$help":
+        if self.bot.user.mentioned_in(message):
             ctx = await self.bot.get_context(message)
-            await ctx.invoke(self.bot.get_command('help'))
+            prefix = await self.bot.get_prefix(message)
+            embed = nextcord.Embed(
+                title = f"Prefix - {prefix}",
+                description = f"**You the prefix above to run commands, or use `{prefix}help` in order to get help on what commands I have.**",
+                colour = nextcord.Colour.blurple()    
+            )
+            await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):

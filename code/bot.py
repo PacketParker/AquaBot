@@ -41,7 +41,7 @@ bot = commands.Bot(
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.change_presence(activity = nextcord.Game(f"{get_prefix}help"))
+    await bot.change_presence(activity = nextcord.Game(f"Ping Me For Help!"))
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             bot.load_extension(f'cogs.{filename[:-3]}') 
