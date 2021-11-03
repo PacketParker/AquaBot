@@ -52,5 +52,5 @@ async def on_ready():
 
 bot.remove_command('help')
 bot.loop.create_task(initialise())
-bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")
+bot.run("ODg5MDI3MTI1Mjc1OTIyNDYy.YUbRBw.nevr90Fl-spt10q72mj6Q185iFc")
 asyncio.run(bot.db.close())

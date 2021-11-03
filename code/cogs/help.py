@@ -335,7 +335,7 @@ class Help(commands.Cog):
         if ctx.message.guild.id != 889027208964874240:
             embed = nextcord.Embed(
                 title = "Help",
-                description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{ctx.prefix}new`** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
+                description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{ctx.prefix}help`** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
                 colour = nextcord.Colour.random()    
             )
 
@@ -345,7 +345,7 @@ class Help(commands.Cog):
         if ctx.message.guild.id == 889027208964874240:
             embed = nextcord.Embed(
                 title = "Help",
-                description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{ctx.prefix}new`** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
+                description = f"**IMPORTANT - Many things have changed in the new update, in order to see all of these changes, please run `{ctx.prefix}help** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
                 colour = nextcord.Colour.random()    
             )
 
