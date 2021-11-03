@@ -40,8 +40,8 @@ bot = commands.Bot(
 
 @bot.event
 async def on_ready():
-    print(f'{bot.user} has connected to nextcord!')
-    await bot.change_presence(activity = nextcord.Game("$help"))
+    print(f'{bot.user} has connected to Discord!')
+    await bot.change_presence(activity = nextcord.Game(f"{get_prefix}help"))
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
             bot.load_extension(f'cogs.{filename[:-3]}') 
@@ -52,5 +52,5 @@ async def on_ready():
 
 bot.remove_command('help')
 bot.loop.create_task(initialise())
-bot.run("ODg5MDI3MTI1Mjc1OTIyNDYy.YUbRBw.nevr90Fl-spt10q72mj6Q185iFc")
+bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")
 asyncio.run(bot.db.close())

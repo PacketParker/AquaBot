@@ -122,7 +122,7 @@ class Slots(commands.Cog):
                 description = "• To prevent spamming, the slots command in on a 3 second cooldown. Sorry for the inconvenience.",
                 colour = color
             )
-            await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):

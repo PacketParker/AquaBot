@@ -118,12 +118,12 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Lvlreset**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlreset` **\nResets all of the levels for everyone in the server.", inline=True)
             embed.add_field(name = "**Dellevel**", value = f"**Usage: `{self.view.ctx.clean_prefix}dellevel` **\nDeletes the channel from our database, and stops sending new level up messages.", inline=True)
             embed.add_field(name = "**Lvlchannel**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlchannel` ** \nShows the current channel for leveling messages.", inline=True)
-            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=False)
-            embed.add_field(name = "**Delmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}delmute` **\nDeletes the muted role from our database.", inline=False)
-            embed.add_field(name = "**Muterole**", value = f"**Usage: `{self.view.ctx.clean_prefix}muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=False)
-            embed.add_field(name = "**Setjoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=False)
-            embed.add_field(name = "**Deljoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=False),
-            embed.add_field(name = "**Joinchannel**", value = f"**Usage: `{self.view.ctx.clean_prefix}joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=False)
+            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=True)
+            embed.add_field(name = "**Delmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}delmute` **\nDeletes the muted role from our database.", inline=True)
+            embed.add_field(name = "**Muterole**", value = f"**Usage: `{self.view.ctx.clean_prefix}muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
+            embed.add_field(name = "**Setjoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=True)
+            embed.add_field(name = "**Deljoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}deljoin`** \nDeletes the channel from our database, and stops sending new user messages.", inline=True),
+            embed.add_field(name = "**Joinchannel**", value = f"**Usage: `{self.view.ctx.clean_prefix}joinchannel`** \nSends the current channel that is assigned as the new user messages channel.", inline=True)
 
             await interaction.response.edit_message(embed=embed)  
 
@@ -351,6 +351,12 @@ class Help(commands.Cog):
 
             view = GuildHelpView()
             await ctx.send(embed=embed, view=view)
+
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.content == "$help":
+            ctx = await self.bot.get_context(message)
+            await ctx.invoke(self.bot.get_command('help'))
 
 
 def setup(bot: commands.Bot):

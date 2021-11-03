@@ -19,6 +19,21 @@ class Handlers(commands.Cog, name='handlers'):
         if isinstance(error, InteractionResponded):
             return
 
+        if isinstance(error, CommandOnCooldown) and ctx.command.qualified_name != "slots":
+            s = int(error.retry_after)
+            s = s % (24 * 3600)
+            h = s // 3600
+            s %= 3600
+            m = s // 60
+            s %= 60
+
+            embed = nextcord.Embed(
+                title = "→ Command On Cooldown!",
+                description = f"• Please wait another {h}hrs {m}min {s}sec before trying that command again.",
+                colour = color
+            )
+            await ctx.send(embed=embed)
+
         if isinstance(error, (MissingRequiredArgument, TooManyArguments, BadArgument)):
             embed = nextcord.Embed(
                 title = "→ Incorrect Syntax!",

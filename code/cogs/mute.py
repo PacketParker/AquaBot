@@ -58,7 +58,7 @@ class Mute_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
             
-        if isinstance(error, commands.RoleNotFound):
+        elif isinstance(error, commands.RoleNotFound):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Role Not Found!",
@@ -163,7 +163,7 @@ class Mute_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
-        if isinstance(error, commands.CommandInvokeError):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
