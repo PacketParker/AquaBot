@@ -10,7 +10,7 @@ color = 0xc48aff
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
+'''
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -44,6 +44,6 @@ class Handlers(commands.Cog, name='handlers'):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
 
-
+'''
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))

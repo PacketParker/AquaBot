@@ -78,23 +78,15 @@ class GamblingHelpers(commands.Cog, name='General'):
         entries = self.economy.top_entries(5)
         embed = make_embed(title='Global Economy Leaderboard:', color=nextcord.Color.gold())
         for i, entry in enumerate(entries):
+            id = entry[0]
+            name = await self.bot.fetch_user(id)
             embed.add_field(
-                name=f"{i+1}. {self.bot.get_user(entry[0]).name}",
+                name=f"{i+1}. {name}",
                 value='${:,}'.format(entry[1]),
                 inline=False
             )
         await ctx.send(embed=embed)
 
-    
-    @leaderboard.error
-    async def leaderboard_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):
