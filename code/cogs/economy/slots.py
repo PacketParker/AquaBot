@@ -26,7 +26,7 @@ class Slots(commands.Cog):
             raise commands.errors.BadArgument()
         current = self.economy.get_entry(ctx.author.id)[1]
         if bet > current:
-            raise InsufficientFundsException(current, bet)
+            raise InsufficientFundsException()
 
 
     #Usage: slots [bet]
@@ -112,17 +112,6 @@ class Slots(commands.Cog):
         )
 
         os.remove(fp)
-
-
-    @slots.error
-    async def slots_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = nextcord.Embed(
-                title = "→ Slots Cooldown!",
-                description = "• To prevent spamming, the slots command in on a 3 second cooldown. Sorry for the inconvenience.",
-                colour = color
-            )
-        await ctx.send(embed=embed)
 
 
 def setup(bot: commands.Bot):

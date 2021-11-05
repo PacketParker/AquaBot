@@ -23,7 +23,7 @@ class Coinflip(commands.Cog):
             raise commands.errors.BadArgument()
         current = self.economy.get_entry(ctx.author.id)[1]
         if bet > current:
-            raise InsufficientFundsException(current, bet)
+            raise InsufficientFundsException()
 
 
     @commands.command(aliases = ["cf"])

@@ -29,7 +29,7 @@ class Blackjack(commands.Cog):
             raise commands.errors.BadArgument()
         current = self.economy.get_entry(ctx.author.id)[1]
         if bet > current:
-            raise InsufficientFundsException(current, bet)
+            raise InsufficientFundsException()
 
     @staticmethod
     def hand_to_images(hand: List[Card]) -> List[Image.Image]:

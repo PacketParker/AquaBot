@@ -34,10 +34,18 @@ class Handlers(commands.Cog, name='handlers'):
             )
             await ctx.send(embed=embed)
 
+        if isinstance(error, CommandOnCooldown) and ctx.command.qualified_name == "slots":
+            embed = nextcord.Embed(
+                title = "→ Slots Cooldown!",
+                description = "• To prevent spamming, the slots command in on a 3 second cooldown. Sorry for the inconvenience.",
+                colour = color
+            )
+            await ctx.send(embed=embed)
+
         if isinstance(error, (MissingRequiredArgument, TooManyArguments, BadArgument)):
             embed = nextcord.Embed(
                 title = "→ Incorrect Syntax!",
-                description = f"• That is the incorrect way to send that command. In order to see how to use that command, use `{ctx.prefix}help {ctx.command.name}`",
+                description = f"• That is the incorrect way to send that command. In order to see how to use that, use `{ctx.prefix}help` and search for that command.",
                 colour = color
             )
             await ctx.send(embed=embed)
@@ -45,7 +53,7 @@ class Handlers(commands.Cog, name='handlers'):
         if isinstance(error, InsufficientFundsException):
             embed = nextcord.Embed(
                 title = "→ Insufficient Funds!",
-                description = "• You do not have enough money to use that command. You can use `{ctx.prefix}add` to add more money. You can also check your current balance with `{ctx.prefix}money`",
+                description = f"• You do not have enough money to use that command. You can use `{ctx.prefix}add` to add more money. You can also check your current balance with `{ctx.prefix}money`",
                 colour = color
             )
             await ctx.send(embed=embed)    
