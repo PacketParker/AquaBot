@@ -5,6 +5,7 @@ import nextcord
 from nextcord.ext import commands
 from nextcord.ext.commands import context
 from utils.helpers import *
+import re
 
 color = 0xc48aff
 
@@ -48,7 +49,7 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Delwarn**", value = f"**Usage: `{self.view.ctx.clean_prefix}delwarn <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
             embed.add_field(name = "**Warnings**", value = f"**Usage: `{self.view.ctx.clean_prefix}warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
             embed.add_field(name = "**Mute**", value = f"**Usage: `{self.view.ctx.clean_prefix}mute <member> <time>`** \nMute a member so they can't send anymore messages.", inline=True)
-            embed.add_field(name = "**Tempmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}tempmute <member> <time>` \nExample: `$tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=True)
+            embed.add_field(name = "**Tempmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}tempmute <member> <time>` \nExample: `{self.view.ctx.clean_prefix}tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=True)
             embed.add_field(name = "**Unmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)      
             embed.add_field(name = "**Purge**", value = f"**Usage: `{self.view.ctx.clean_prefix}purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
             embed.add_field(name = "**Kick**", value = f"**Usage: `{self.view.ctx.clean_prefix}kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
@@ -76,7 +77,7 @@ class HelpDropdown(nextcord.ui.Select):
 
         if self.values[0] == "Music (BETA)":
             embed = nextcord.Embed(
-                title = "🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `$contact`",
+                title = f"🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `{self.view.ctx.clean_prefix}contact`",
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
@@ -107,7 +108,7 @@ class HelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Lvlreset**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlreset` **\nResets all of the levels for everyone in the server.", inline=True)
             embed.add_field(name = "**Dellevel**", value = f"**Usage: `{self.view.ctx.clean_prefix}dellevel` **\nDeletes the channel from our database, and stops sending new level up messages.", inline=True)
             embed.add_field(name = "**Lvlchannel**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlchannel` ** \nShows the current channel for leveling messages.", inline=True)
-            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=True)
+            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `{self.view.ctx.clean_prefix}mute` command.", inline=True)
             embed.add_field(name = "**Delmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}delmute` **\nDeletes the muted role from our database.", inline=True)
             embed.add_field(name = "**Muterole**", value = f"**Usage: `{self.view.ctx.clean_prefix}muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
             embed.add_field(name = "**Setjoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=True)
@@ -199,8 +200,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Warn**", value = f"**Usage: `{self.view.ctx.clean_prefix}warn <member> <reason>`** \nWarn a member for doing something against the rules.", inline=True)
             embed.add_field(name = "**Delwarn**", value = f"**Usage: `{self.view.ctx.clean_prefix}delwarn <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
             embed.add_field(name = "**Warnings**", value = f"**Usage: `{self.view.ctx.clean_prefix}warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
-            embed.add_field(name = "**Mute**", value = f"**Usage: `{self.view.ctx.clean_prefix}mute <member> <time>` \nExample: `$mute @bob 2d 4h 6m 8s`** \nMute a member so they can't send anymore messages for a specified amount of time.", inline=True)
-            embed.add_field(name = "**Tempmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}tempmute <member> <time>` \nExample: `$tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=False)
+            embed.add_field(name = "**Mute**", value = f"**Usage: `{self.view.ctx.clean_prefix}mute <member> <time>` \nExample: `{self.view.ctx.clean_prefix}mute @bob 2d 4h 6m 8s`** \nMute a member so they can't send anymore messages for a specified amount of time.", inline=True)
+            embed.add_field(name = "**Tempmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}tempmute <member> <time>` \nExample: `{self.view.ctx.clean_prefix}tempmute @bob 2d 4h 6m 8s`** \nMutes the member temporarily, they will be unmute once the specified time has passed.", inline=False)
             embed.add_field(name = "**Unmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)      
             embed.add_field(name = "**Purge**", value = f"**Usage: `{self.view.ctx.clean_prefix}purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.", inline=True)
             embed.add_field(name = "**Kick**", value = f"**Usage: `{self.view.ctx.clean_prefix}kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
@@ -231,7 +232,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
 
         if self.values[0] == "Music (BETA)":
             embed = nextcord.Embed(
-                title = "🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `$contact`",
+                title = f"🎵 - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `{self.view.ctx.clean_prefix}contact`",
                 description = "**Options in `<>` are mandatory, and those in `()` are optional.**",
                 colour = nextcord.Colour.random()
             )
@@ -240,7 +241,8 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Skip**", value = f"**Usage: `{self.view.ctx.clean_prefix}skip` **\nSkips the song that is currently playing.", inline=True)
             embed.add_field(name = "**Queue**", value = f"**Usage: `{self.view.ctx.clean_prefix}queue`** \nSends all of the songs that are in the queue.", inline=True)
             embed.add_field(name = "**Remove**", value = f"**Usage: `{self.view.ctx.clean_prefix}remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
-            embed.add_field(name = "**Stop**", value = f"**Usage: `{self.view.ctx.clean_prefix}stop`** \nStops music, clears queue, and leaves VC.", inline=True),            embed.add_field(name = "**Clear**", value = "**Usage: `$clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name = "**Stop**", value = f"**Usage: `{self.view.ctx.clean_prefix}stop`** \nStops music, clears queue, and leaves VC.", inline=True),            
+            embed.add_field(name = "**Clear**", value = f"**Usage: `{self.view.ctx.clean_prefix}clear` **\nRemoves ALL songs in the queue.", inline=True)
             embed.add_field(name = "**Repeat**", value = f"**Usage: `{self.view.ctx.clean_prefix}remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
             embed.add_field(name = "**Shuffle**", value = f"**Usage: `{self.view.ctx.clean_prefix}shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
             embed.add_field(name = "**Nowplaying**", value = f"**Usage: `{self.view.ctx.clean_prefix}nowplaying` **\nSends the song that is currently playing.", inline=True)
@@ -261,7 +263,7 @@ class GuildHelpDropdown(nextcord.ui.Select):
             embed.add_field(name = "**Lvlreset**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlreset` **\nResets all of the levels for everyone in the server.", inline=True)
             embed.add_field(name = "**Dellevel**", value = f"**Usage: `{self.view.ctx.clean_prefix}dellevel` **\nDeletes the channel from our database, and stops sending new level up messages.", inline=True)
             embed.add_field(name = "**Lvlchannel**", value = f"**Usage: `{self.view.ctx.clean_prefix}lvlchannel` ** \nShows the current channel for leveling messages.", inline=True)
-            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `$mute` command.", inline=True)
+            embed.add_field(name = "**Setmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}setmute <name of role>` **\nSets the role that will be given to users whenever you use the `{self.view.ctx.clean_prefix}mute` command.", inline=True)
             embed.add_field(name = "**Delmute**", value = f"**Usage: `{self.view.ctx.clean_prefix}delmute` **\nDeletes the muted role from our database.", inline=True)
             embed.add_field(name = "**Muterole**", value = f"**Usage: `{self.view.ctx.clean_prefix}muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
             embed.add_field(name = "**Setjoin**", value = f"**Usage: `{self.view.ctx.clean_prefix}setjoin <name of channel>` **\nSets the channel for messages to be sent whenever a new user joins your server.", inline=True)
@@ -342,8 +344,8 @@ class Help(commands.Cog):
             await ctx.send(embed=embed, view=view)
 
     @commands.Cog.listener()
-    async def on_message(self, message):
-        if self.bot.user.mentioned_in(message):
+    async def on_message(self, message: nextcord.Message) -> None:
+        if re.fullmatch(rf"<@!?{self.bot.user.id}>", message.content):
             ctx = await self.bot.get_context(message)
             prefix = await self.bot.get_prefix(message)
             embed = nextcord.Embed(

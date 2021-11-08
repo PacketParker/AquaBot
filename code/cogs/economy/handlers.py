@@ -58,7 +58,13 @@ class Handlers(commands.Cog, name='handlers'):
             )
             await ctx.send(embed=embed)    
 
-        elif not CommandOnCooldown and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
+        if isinstance(error, AttributeError):
+            return
+
+        if isinstance(error, UnboundLocalError):
+            await ctx.send(f"{ctx.author.mention}, your game timed out, no money was lost or gained.")
+            
+        elif not CommandOnCooldown and not TypeError and not AttributeError and not InsufficientFundsException and not MissingRequiredArgument and not TooManyArguments and not BadArgument and not InteractionResponded:
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",

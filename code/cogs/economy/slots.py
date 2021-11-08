@@ -14,9 +14,9 @@ color = 0xc48aff
 class Slots(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Database()
+        self.economy = Database(bot)
 
-    def check_bet(
+    async def check_bet(
         self,
         ctx: commands.Context,
         bet: int=DEFAULT_BET,
@@ -24,7 +24,7 @@ class Slots(commands.Cog):
         bet = int(bet)
         if bet <= 0:
             raise commands.errors.BadArgument()
-        current = self.economy.get_entry(ctx.author.id)[1]
+        current = (await self.economy.get_entry(ctx.author.id))[1]
         if bet > current:
             raise InsufficientFundsException()
 
@@ -33,7 +33,7 @@ class Slots(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 2.5, commands.BucketType.user)
     async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        self.check_bet(ctx, bet=bet)
+        await self.check_bet(ctx, bet=bet)
         path = os.path.join(ABS_PATH, 'utils/')
         facade = Image.open(f'{path}slot-face.png').convert('RGBA')
         reel = Image.open(f'{path}slot-reel.png').convert('RGBA')
@@ -80,13 +80,13 @@ class Slots(commands.Cog):
 
         # win logic
         result = ('lost', bet)
-        self.economy.add_money(ctx.author.id, bet*-1)       
+        await self.economy.add_money(ctx.author.id, bet*-1)       
         # (1+s1)%6 gets the symbol 0-5 inclusive
         if (1+s1)%6 == (1+s2)%6 == (1+s3)%6:
             symbol = (1+s1)%6
             reward = [4, 80, 40, 25, 10, 5][symbol] * bet
             result = ('won', reward)
-            self.economy.add_money(ctx.author.id, reward)
+            await self.economy.add_money(ctx.author.id, reward)
 
         embed = make_embed(
             title=(
@@ -95,7 +95,7 @@ class Slots(commands.Cog):
             ),
             description=(
                 'You now have ' +
-                f'**{self.economy.get_entry(ctx.author.id)[1]:,}** ' +
+                f'**{(await self.economy.get_entry(ctx.author.id))[1]:,}** ' +
                 'dollars.'
             ),
             color=(

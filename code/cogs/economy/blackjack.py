@@ -6,20 +6,24 @@ from typing import List, Tuple, Union
 import nextcord
 from nextcord.ext import commands
 from utils.card import Card
-from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
 from datetime import datetime
 from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
+from utils.economy import Database
+
+import aiosqlite
+
+Entry = tuple[int, int]
 
 color = 0xc48aff
 
 class Blackjack(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Database()
-    
-    def check_bet(
+        self.economy = Database(bot)
+
+    async def check_bet(
         self,
         ctx: commands.Context,
         bet: int=DEFAULT_BET,
@@ -27,7 +31,7 @@ class Blackjack(commands.Cog):
         bet = int(bet)
         if bet <= 0:
             raise commands.errors.BadArgument()
-        current = self.economy.get_entry(ctx.author.id)[1]
+        current = (await self.economy.get_entry(ctx.author.id))[1]
         if bet > current:
             raise InsufficientFundsException()
 
@@ -62,7 +66,7 @@ class Blackjack(commands.Cog):
         return bg
 
     def output(self, name, *hands: Tuple[List[Card]]) -> None:
-        self.center(*map(self.hand_to_images, hands)).save(f'{name}.png')
+        self.center(*map(self.hand_to_images, hands)).save(f'tables/{name}.png')
 
     @staticmethod
     def calc_hand(hand: List[List[Card]]) -> int:
@@ -81,126 +85,128 @@ class Blackjack(commands.Cog):
         return sum
 
 
-    #Play a simple game of blackjack. Bet must be greater than 0
-    #Usage: blackjack
     @commands.command(aliases = ["bj"])
     async def blackjack(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        self.check_bet(ctx, bet)
-        deck = [Card(suit, num) for num in range(2,15) for suit in Card.suits]
-        random.shuffle(deck) # Generate deck and shuffle it
+        if f"{ctx.author.id}.png" in os.listdir("tables"):
+            await ctx.send(f"{ctx.author.mention}, you must finish the game you have started before beginning a new one.")
 
-        player_hand: List[Card] = []
-        dealer_hand: List[Card] = []
+        else:
+            await self.check_bet(ctx, bet)
+            deck = [Card(suit, num) for num in range(2,15) for suit in Card.suits]
+            random.shuffle(deck) # Generate deck and shuffle it
 
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop())
-        player_hand.append(deck.pop())
-        dealer_hand.append(deck.pop().flip())
+            player_hand: List[Card] = []
+            dealer_hand: List[Card] = []
 
-        player_score = self.calc_hand(player_hand)
-        dealer_score = self.calc_hand(dealer_hand)
+            player_hand.append(deck.pop())
+            dealer_hand.append(deck.pop())
+            player_hand.append(deck.pop())
+            dealer_hand.append(deck.pop().flip())
 
-        async def out_table(**kwargs) -> nextcord.Message:
-            """Sends a picture of the current table"""
-            self.output(ctx.author.id, dealer_hand, player_hand)
-            embed = make_embed(**kwargs)
-            file = nextcord.File(
-                f"{ctx.author.id}.png", filename=f"{ctx.author.id}.png"
-            )
-            embed.set_image(url=f"attachment://{ctx.author.id}.png")
-            msg: nextcord.Message = await ctx.send(file=file, embed=embed)
-            return msg
-        
-        def check(
-            reaction: nextcord.Reaction,
-            user: Union[nextcord.Member, nextcord.User]
-        ) -> bool:
-            return all((
-                str(reaction.emoji) in ("🇸", "🇭"),  # correct emoji
-                user == ctx.author,                  # correct user
-                user != self.bot.user,           # isn't the bot
-                reaction.message == msg            # correct message
-            ))
-
-        standing = False
-
-        while True:
             player_score = self.calc_hand(player_hand)
             dealer_score = self.calc_hand(dealer_hand)
-            if player_score == 21:  # win condition
-                bet = int(bet*1.5)
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("Blackjack!", 'won')
-                break
-            elif player_score > 21:  # losing condition
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ("Player busts", 'lost')
-                break
-            msg = await out_table(
-                title="Your Turn",
-                description=f"Your hand: {player_score}\n" \
-                    f"Dealer's hand: {dealer_score}"
-            )
-            await msg.add_reaction("🇭")
-            await msg.add_reaction("🇸")
-            
-            try:  # reaction command
-                reaction, _ = await self.bot.wait_for(
-                    'reaction_add', timeout=60, check=check
+
+            async def out_table(**kwargs) -> nextcord.Message:
+                self.output(ctx.author.id, dealer_hand, player_hand)
+                embed = make_embed(**kwargs)
+                file = nextcord.File(
+                    f"tables/{ctx.author.id}.png", filename=f"{ctx.author.id}.png"
                 )
-            except asyncio.TimeoutError:
-                await msg.delete()
+                embed.set_image(url=f"attachment://{ctx.author.id}.png")
+                msg: nextcord.Message = await ctx.send(file=file, embed=embed)
+                return msg
+            
+            def check(
+                reaction: nextcord.Reaction,
+                user: Union[nextcord.Member, nextcord.User]
+            ) -> bool:
+                return all((
+                    str(reaction.emoji) in ("🇸", "🇭"),  # correct emoji
+                    user == ctx.author,                  # correct user
+                    user != self.bot.user,           # isn't the bot
+                    reaction.message == msg            # correct message
+                ))
 
-            if str(reaction.emoji) == "🇭":
-                player_hand.append(deck.pop())
-                await msg.delete()
-                continue
-            elif str(reaction.emoji) == "🇸":
-                standing = True
-                break
+            standing = False
 
-        if standing:
-            dealer_hand[1].flip()
-            player_score = self.calc_hand(player_hand)
-            dealer_score = self.calc_hand(dealer_hand)
+            while True:
+                player_score = self.calc_hand(player_hand)
+                dealer_score = self.calc_hand(dealer_hand)
+                if player_score == 21:  # win condition
+                    bet = int(bet*1.5)
+                    await self.economy.add_money(ctx.author.id, bet)
+                    result = ("Blackjack!", 'won')
+                    break
+                elif player_score > 21:  # losing condition
+                    await self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ("Player busts", 'lost')
+                    break
+                msg = await out_table(
+                    title="Your Turn",
+                    description=f"Your hand: {player_score}\n" \
+                        f"Dealer's hand: {dealer_score}"
+                )
+                await msg.add_reaction("🇭")
+                await msg.add_reaction("🇸")
+                
+                try:  # reaction command
+                    reaction, _ = await self.bot.wait_for(
+                        'reaction_add', timeout=60, check=check
+                    )
+                except asyncio.TimeoutError:
+                    await msg.delete()
+                    os.remove(f'./tables/{ctx.author.id}.png')
 
-            while dealer_score < 17:  # dealer draws until 17 or greater
-                dealer_hand.append(deck.pop())
+                if str(reaction.emoji) == "🇭":
+                    player_hand.append(deck.pop())
+                    await msg.delete()
+                    continue
+                elif str(reaction.emoji) == "🇸":
+                    standing = True
+                    break
+
+            if standing:
+                dealer_hand[1].flip()
+                player_score = self.calc_hand(player_hand)
                 dealer_score = self.calc_hand(dealer_hand)
 
-            if dealer_score == 21:  # winning/losing conditions
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ('Dealer blackjack', 'lost')
-            elif dealer_score > 21:
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("Dealer busts", 'won')
-            elif dealer_score == player_score:
-                result = ("Tie!", 'kept')
-            elif dealer_score > player_score:
-                self.economy.add_money(ctx.author.id, bet*-1)
-                result = ("You lose!", 'lost')
-            elif dealer_score < player_score:
-                self.economy.add_money(ctx.author.id, bet)
-                result = ("You win!", 'won')
+                while dealer_score < 17:  # dealer draws until 17 or greater
+                    dealer_hand.append(deck.pop())
+                    dealer_score = self.calc_hand(dealer_hand)
 
-        color = (
-            nextcord.Color.red() if result[1] == 'lost'
-            else nextcord.Color.green() if result[1] == 'won'
-            else nextcord.Color.blue()
-        )
-        try:
-            await msg.delete()
-        except:
-            pass
-        msg = await out_table(
-            title=result[0],
-            color=color,
-            description=(
-                f"**You {result[1]} ${bet}**\nYour hand: {player_score}\n" +
-                f"Dealer's hand: {dealer_score}"
+                if dealer_score == 21:  # winning/losing conditions
+                    await self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ('Dealer blackjack', 'lost')
+                elif dealer_score > 21:
+                    await self.economy.add_money(ctx.author.id, bet)
+                    result = ("Dealer busts", 'won')
+                elif dealer_score == player_score:
+                    result = ("Tie!", 'kept')
+                elif dealer_score > player_score:
+                    await self.economy.add_money(ctx.author.id, bet*-1)
+                    result = ("You lose!", 'lost')
+                elif dealer_score < player_score:
+                    await self.economy.add_money(ctx.author.id, bet)
+                    result = ("You win!", 'won')
+
+            color = (
+                nextcord.Color.red() if result[1] == 'lost'
+                else nextcord.Color.green() if result[1] == 'won'
+                else nextcord.Color.blue()
             )
-        )
-        os.remove(f'./{ctx.author.id}.png')
+            try:
+                await msg.delete()
+            except:
+                pass
+            msg = await out_table(
+                title=result[0],
+                color=color,
+                description=(
+                    f"**You {result[1]} ${bet}**\nYour hand: {player_score}\n" +
+                    f"Dealer's hand: {dealer_score}"
+                )
+            )
+            os.remove(f'./tables/{ctx.author.id}.png')
 
 
 def setup(bot: commands.Bot):

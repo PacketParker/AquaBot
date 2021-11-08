@@ -36,7 +36,7 @@ class ContactView(nextcord.ui.View):
 class ModMail(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-'''
+
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -56,16 +56,16 @@ class ModMail(commands.Cog):
             channel = utils.get(categ.channels, topic = str(message.author.id))
             if not channel:
                 channel = await categ.create_text_channel(name = f"{message.author.name}#{message.author.discriminator}", topic = str(message.author.id))
-                await channel.send("@Helpers")
+                await channel.send("<@&896911715512487987>")
                 embed = nextcord.Embed(
-                    title = f"New Ticket Created By: {message.author.mention}"
+                    description = f"**New Ticket Created By: {message.author.mention}**"
                 )
                 await channel.send(embed=embed)
 
-            await channel.send(f"{message.content} - [{message.author.mention}]")
+            await channel.send(f"{message.content} - [{message.author}]")
 
         elif isinstance(message.channel, nextcord.TextChannel):
-            if message.content.startswith(self.bot.command_prefix):
+            if message.content.startswith("$"):
                 pass
             else:
                 topic = message.channel.topic
@@ -100,7 +100,7 @@ class ModMail(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Error!",
-                description = f"• An error occured, try running `$help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `$contact`"
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
@@ -119,6 +119,6 @@ class ModMail(commands.Cog):
             )
             await log.send(embed=embed)
 
-'''
+
 def setup(bot):
 	bot.add_cog(ModMail(bot))

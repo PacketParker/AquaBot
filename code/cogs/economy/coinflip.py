@@ -11,9 +11,9 @@ color = 0xc48aff
 class Coinflip(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.economy = Database()
+        self.economy = Database(bot)
     
-    def check_bet(
+    async def check_bet(
         self,
         ctx: commands.Context,
         bet: int=DEFAULT_BET,
@@ -21,7 +21,7 @@ class Coinflip(commands.Cog):
         bet = int(bet)
         if bet <= 0:
             raise commands.errors.BadArgument()
-        current = self.economy.get_entry(ctx.author.id)[1]
+        current = (await self.economy.get_entry(ctx.author.id))[1]
         if bet > current:
             raise InsufficientFundsException()
 
@@ -29,37 +29,35 @@ class Coinflip(commands.Cog):
     @commands.command(aliases = ["cf"])
     @commands.cooldown(1, 1.5, commands.BucketType.user)
     async def coinflip(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        self.check_bet(ctx, bet)
+        await self.check_bet(ctx, bet)
         coinsides = ["heads", "tails"]
         outcome = random.choice(coinsides)
-        profile = self.economy.get_entry(ctx.author.id)
+        profile = await self.economy.get_entry(ctx.author.id)
 
 
         if outcome == "heads":
-            self.economy.add_money(ctx.author.id, bet)
-            embed = make_embed(
+            await self.economy.add_money(ctx.author.id, bet)
+            embed = nextcord.Embed(
                 title = "→ You win!",
-                description = f"• You won {bet:,} dollars. \nYou now have " + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1]),
+                description = f"• You won {bet:,} dollars. \nYou now have " + f'**${(await self.economy.get_entry(ctx.author.id))[1]:,}**'.format(profile[1]),
                 color = nextcord.Color.green()
             )
-            fp = f'heads.gif'
-            file = nextcord.File(fp, filename = fp)
-            embed.set_image(url = f"attachment://{fp}")
+            file = nextcord.File("./heads_tails/heads.gif", filename = "heads.gif")
+            embed.set_image(url = "attachment://heads.gif")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(file=file, embed=embed)
 
 
         elif outcome == "tails":
-            self.economy.add_money(ctx.author.id, bet*-1)
-            embed = make_embed(
+            await self.economy.add_money(ctx.author.id, bet*-1)
+            embed = nextcord.Embed(
                 title = "→ You Lose!",
-                description = f"• You lost {bet:,} dollars. \nYou now have " + f'**${self.economy.get_entry(ctx.author.id)[1]:,}**'.format(profile[1]),
+                description = f"• You lost {bet:,} dollars. \nYou now have " + f'**${(await self.economy.get_entry(ctx.author.id))[1]:,}**'.format(profile[1]),
                 color = nextcord.Color.red()
             )
 
-            fp = f'tails.gif'
-            file = nextcord.File(fp, filename = fp)
-            embed.set_image(url = f"attachment://{fp}")
+            file = nextcord.File("./heads_tails/tails.gif", filename = "tails.gif")
+            embed.set_image(url = f"attachment://tails.gif")
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(file=file, embed=embed)
 

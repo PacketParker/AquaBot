@@ -18,11 +18,12 @@ class messageCount(commands.Cog):
  
     @commands.Cog.listener()
     async def on_message(self, message):
-        self.bot.multiplier = 2
-        guild_id = message.author.guild.id
-
+        if not message.guild:
+            return
         if message.author.bot:
             return
+        self.bot.multiplier = 2
+        guild_id = message.author.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()

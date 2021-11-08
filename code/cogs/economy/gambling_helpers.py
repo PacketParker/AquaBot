@@ -9,7 +9,7 @@ color = 0xc48aff
 class GamblingHelpers(commands.Cog, name='General'):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
-        self.economy = Database()
+        self.economy = Database(bot)
 
 
     #Give you {DEFAULT_BET * B_MULT} once every {B_COOLDOWN}hrs
@@ -18,7 +18,7 @@ class GamblingHelpers(commands.Cog, name='General'):
     @commands.cooldown(1, B_COOLDOWN*3600, type=commands.BucketType.user)
     async def add(self, ctx: commands.Context):
         amount = DEFAULT_BET*B_MULT
-        self.economy.add_money(ctx.author.id, amount)
+        await self.economy.add_money(ctx.author.id, amount)
         embed = nextcord.Embed(
             title = "I've added $2,500 to you balance",
             description = f"Come back again in {B_COOLDOWN} hours."
@@ -30,7 +30,7 @@ class GamblingHelpers(commands.Cog, name='General'):
     async def money(self, ctx: commands.Context, user: nextcord.Member=None):
         user = user.id if user else ctx.author.id
         user = self.bot.get_user(user)
-        profile = self.economy.get_entry(user.id)
+        profile = await self.economy.get_entry(user.id)
         embed = make_embed(
             title=user.name,
             description=(
@@ -75,7 +75,7 @@ class GamblingHelpers(commands.Cog, name='General'):
 
     @commands.command(aliases=["top"])
     async def leaderboard(self, ctx):
-        entries = self.economy.top_entries(5)
+        entries = await self.economy.top_entries(5)
         embed = make_embed(title='Global Economy Leaderboard:', color=nextcord.Color.gold())
         for i, entry in enumerate(entries):
             id = entry[0]
@@ -86,7 +86,6 @@ class GamblingHelpers(commands.Cog, name='General'):
                 inline=False
             )
         await ctx.send(embed=embed)
-
 
 
 def setup(bot: commands.Bot):
