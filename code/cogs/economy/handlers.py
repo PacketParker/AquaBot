@@ -12,9 +12,17 @@ class Handlers(commands.Cog, name='handlers'):
         self.bot = bot
 
 
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         error = getattr(error, 'original', error)
+
+        if isinstance(error, CommandNotFound):
+            return
+
+        if ctx.command.cog != self.bot.get_cog("Slots") or self.bot.get_cog("GamblingHelpers") or self.bot.get_cog("Coinflip") or self.bot.get_cog("Blackjack"):
+            return
+
 
         if isinstance(error, InteractionResponded):
             return

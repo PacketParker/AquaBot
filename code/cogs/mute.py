@@ -44,7 +44,7 @@ class Mute_(commands.Cog):
             embed = nextcord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
-                description="• You are missing the `manage roles` permission."
+                description = "• You are missing the `manage roles` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)

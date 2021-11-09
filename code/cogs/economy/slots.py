@@ -25,6 +25,7 @@ class Slots(commands.Cog):
         if bet <= 0:
             raise commands.errors.BadArgument()
         current = (await self.economy.get_entry(ctx.author.id))[1]
+        print(current)
         if bet > current:
             raise InsufficientFundsException()
 

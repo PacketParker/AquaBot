@@ -1,6 +1,8 @@
 import nextcord
 from nextcord.ext import commands
 import os
+
+from nextcord.ext.commands.core import max_concurrency
 from utils.helpers import *
 import aiosqlite
 import asyncio
@@ -19,6 +21,7 @@ async def initialise():
     await bot.db.execute("CREATE TABLE IF NOT EXISTS warnings (warn_id int, guild_id int, user_id int, warning, warn_time, warned_by, PRIMARY KEY (warn_id))")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefix (guild_id, prefix, PRIMARY KEY (guild_id))")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS economy (user_id INTEGER NOT NULL PRIMARY KEY, money INTEGER NOT NULL DEFAULT 0)")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS counter (bot_id int, count int, PRIMARY KEY (bot_id))")
 
 async def get_prefix(bot, message):
     if not message.guild:    
@@ -40,7 +43,6 @@ async def get_prefix(bot, message):
         except:
             prefix = DEFAULT_PREFIX
             return prefix
-
 
 bot = commands.Bot(
     command_prefix=get_prefix,
