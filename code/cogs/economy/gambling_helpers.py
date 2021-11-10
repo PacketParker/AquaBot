@@ -5,7 +5,7 @@ from utils.helpers import *
 
 color = 0xc48aff
 
-class GamblingHelpers(commands.Cog, name='General'):
+class GamblingHelpers(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.economy = Database(bot)
@@ -21,6 +21,42 @@ class GamblingHelpers(commands.Cog, name='General'):
         embed = nextcord.Embed(
             title = "I've added $2,500 to you balance",
             description = f"Come back again in {B_COOLDOWN} hours."
+        )
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.is_owner()
+    async def refund(self, ctx: commands.Context, user: int = None, amount: int = None):
+        await self.economy.add_money(user, amount)
+        member = self.bot.get_user(user)
+        await ctx.send(f"{member.mention} has been compensated with ${amount:,}")
+
+
+    @refund.error
+    async def refund_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ You Are Not The Owner!",
+            description = f"• You can not run that command because you are not the bot owner."
+        )
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
+    @commands.is_owner()
+    async def deduct(self, ctx: commands.Context, user: int = None, amount: int = None):
+        await self.economy.add_money(user, amount*-1)
+        member = self.bot.get_user(user)
+        await ctx.send(f"{member.mention} has had ${amount:,} deducted form their account.")
+
+
+    @deduct.error
+    async def deduct_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ You Are Not The Owner!",
+            description = f"• You can not run that command because you are not the bot owner."
         )
         await ctx.send(embed=embed)
 

@@ -26,11 +26,15 @@ class Profile(commands.Cog):
 
         embed = nextcord.Embed(
             title = "Shop",
-            description = "Buy items with the money you've earned, and view everything in your inventory",
+            description = f"Choose from one of the categories below in order to shop for items \n\nBalance: {balance:,}",
             color = nextcord.Color.random()
         )
 
-        embed.add_field(name = f"Balance: {balance}", value = "\u200b")
+        await ctx.send(embed=embed)
+
+        ##TODO: Add a dropdown menu in order for people to choose the category that they want to shop in.
+               #Once the category is chosen, figure out a system for how they are going to buy items, e.g. Buttons, Dropdowns, Commands
+               #Come up with new ideas to add to the shop in order to make it more interesting for new users, and those with a lot of moneyx
 
 
 def setup(bot):

@@ -22,6 +22,7 @@ async def initialise():
     await bot.db.execute("CREATE TABLE IF NOT EXISTS prefix (guild_id, prefix, PRIMARY KEY (guild_id))")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS economy (user_id INTEGER NOT NULL PRIMARY KEY, money INTEGER NOT NULL DEFAULT 0)")
     await bot.db.execute("CREATE TABLE IF NOT EXISTS counter (bot_id int, count int, PRIMARY KEY (bot_id))")
+    await bot.db.execute("CREATE TABLE IF NOT EXISTS profile (user_id int, rank, items, misc, PRIMARY KEY (user_id))")
 
 async def get_prefix(bot, message):
     if not message.guild:    

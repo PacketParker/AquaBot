@@ -1,4 +1,5 @@
 from nextcord.ext import commands
+import nextcord
 
 log_channel_id = 889293946801516554
 
@@ -38,6 +39,16 @@ class Count(commands.Cog):
             count = data[0]
 
         await ctx.send(f"{count:,}")
+
+
+    @count.error
+    async def count_error(self, ctx, error):
+        embed = nextcord.Embed(
+            colour = color,
+            title = "→ You Are Not The Owner!",
+            description = f"• You can not run that command because you are not the bot owner."
+        )
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

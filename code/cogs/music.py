@@ -66,7 +66,7 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-'''
+
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(self.bot.user.id)
@@ -405,6 +405,6 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-'''
+
 def setup(bot):
     bot.add_cog(Music(bot))

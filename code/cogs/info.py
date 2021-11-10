@@ -49,6 +49,18 @@ class Information(commands.Cog):
 
 
     @commands.command()
+    async def join(self, ctx):
+        embed = nextcord.Embed(
+            colour = nextcord.Colour.blurple(),
+            title = "Join our support server!",
+            description = "[Click here to join](https://discord.gg/fAD3jcexzM)"
+        )
+        embed.set_thumbnail(url = self.bot.user.avatar.url)
+        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        await ctx.send(embed=embed)
+
+
+    @commands.command()
     async def serverinfo(self, ctx):
         guild = ctx.guild
         embed = nextcord.Embed(
