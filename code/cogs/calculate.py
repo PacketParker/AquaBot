@@ -1,6 +1,5 @@
 import nextcord
 from nextcord.ext import commands
-from nextcord.utils import get
 import aiohttp
 import urllib
 

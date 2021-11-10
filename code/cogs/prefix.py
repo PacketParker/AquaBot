@@ -1,9 +1,5 @@
 import nextcord
 from nextcord.ext import commands
-from nextcord.ext.commands import MissingPermissions
-from nextcord.utils import get
-from aiohttp import request
-import aiosqlite
 from datetime import datetime
 
 log_channel_id = 889293946801516554

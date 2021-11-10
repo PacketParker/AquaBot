@@ -88,14 +88,26 @@ class Mute_(commands.Cog):
     @commands.has_permissions(manage_roles=True)
     async def delmute(self, ctx: commands.Context, NULL:int = None):
         guild_id = ctx.author.guild.id
-        cursor = await self.bot.db.execute("INSERT OR IGNORE INTO mute (guild_id, role_id) VALUES (?,?)", (guild_id, NULL))
-        await self.bot.db.commit()
-        embed = nextcord.Embed(
-            title = "Mute Role Deleted -",
-            description = f"The mute role for {ctx.author.guild.name} has been deleted.",
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
+            data = await cursor.fetchone()
+            if data:
+                await self.bot.db.execute(f"DELETE FROM mute WHERE guild_id = ?", (guild_id,))
+                await self.bot.db.commit()
+
+                embed = nextcord.Embed(
+                    title = "Mute Role Deleted -",
+                    description = f"The mute role for {ctx.author.guild.name} has been deleted.",
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+            else:
+                embed = nextcord.Embed(
+                    colour = color,
+                    title = "→ Mute Role Not Set!",
+                    description = f"• The mute role is not set, therefore there is no role I can delete."
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                return await ctx.send(embed=embed)
 
 
     @delmute.error
@@ -133,14 +145,22 @@ class Mute_(commands.Cog):
         guild_id = ctx.author.guild.id
         async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
-            role_id = data[0]
-
-        embed = nextcord.Embed(
-            title = f"Mute role for {ctx.author.guild.name}",
-            description= f'<@&{role_id}>'
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+            if data:
+                role_id = data[0]
+                embed = nextcord.Embed(
+                    title = f"Mute role for {ctx.author.guild.name}",
+                    description= f'<@&{role_id}>'
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+            
+            else:
+                embed = nextcord.Embed(
+                    title = f"→ Mute Role Not Set!",
+                    description= f'The mute role has not yet been set. Ask an admin to set it up using `{ctx.prefix}setmute`'
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
 
 
     @muterole.error

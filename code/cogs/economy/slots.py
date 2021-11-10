@@ -25,7 +25,6 @@ class Slots(commands.Cog):
         if bet <= 0:
             raise commands.errors.BadArgument()
         current = (await self.economy.get_entry(ctx.author.id))[1]
-        print(current)
         if bet > current:
             raise InsufficientFundsException()
 
@@ -47,7 +46,7 @@ class Slots(commands.Cog):
         s2 = random.randint(1, items-1)
         s3 = random.randint(1, items-1)
 
-        win_rate = 12/100
+        win_rate = 1/100
 
         if random.random() < win_rate:
             symbols_weights = [3.5, 7, 15, 25, 55] # 

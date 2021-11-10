@@ -1,16 +1,17 @@
 import nextcord
-from nextcord.client import Client
-from nextcord.errors import ClientException, InteractionResponded
+from nextcord.errors import InteractionResponded
 from nextcord.ext import commands
 from nextcord.ext.commands.errors import *
-from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
+from utils.helpers import InsufficientFundsException
 from datetime import datetime
+import traceback
+import sys
+
 color = 0xc48aff
 
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
 
 
     @commands.Cog.listener()
@@ -20,8 +21,8 @@ class Handlers(commands.Cog, name='handlers'):
         if isinstance(error, CommandNotFound):
             return
 
-        if ctx.command.cog != self.bot.get_cog("Slots") or self.bot.get_cog("GamblingHelpers") or self.bot.get_cog("Coinflip") or self.bot.get_cog("Blackjack"):
-            return
+        if ctx.command.cog not in [self.bot.get_cog(name) for name in ('Slots', 'Blackjack', "GamblingHelpers", "Coinflip")]:
+            return traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
         if isinstance(error, InteractionResponded):

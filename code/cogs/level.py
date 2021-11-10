@@ -1,7 +1,5 @@
 import nextcord
-from nextcord import Color
 from nextcord.ext import commands
-import aiosqlite
 import math
 import asyncio
 from datetime import datetime
@@ -20,8 +18,7 @@ class messageCount(commands.Cog):
     async def on_message(self, message):
         if not message.guild:
             return
-        if message.author.bot:
-            return
+
         self.bot.multiplier = 2
         guild_id = message.author.guild.id
 
@@ -205,38 +202,26 @@ class messageCount(commands.Cog):
     @commands.has_permissions(manage_channels=True)
     async def dellevel(self, ctx, NULL:int = None):
         guild_id = ctx.author.guild.id
-
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
             if data:
-                channel_id = data[0]
+                await self.bot.db.execute(f"DELETE FROM level_channel WHERE guild_id = ?", (guild_id,))
+                await self.bot.db.commit()
+
+                embed = nextcord.Embed(
+                    title = "Leveling Channel Deleted -",
+                    description = f"The level channel for {ctx.author.guild.name} has been deleted.",
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
             else:
                 embed = nextcord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
-                    description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
+                    description = f"• No leveling channel has been setup, therefore I can not delete any channel."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
-                
-        if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Leveling Not Setup!",
-                description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
-
-        else:
-            cursor = await self.bot.db.execute("UPDATE level_channel SET channel_id = NULL WHERE guild_id = ?", (guild_id,))
-            await self.bot.db.commit()
-            embed = nextcord.Embed(
-                title = "Leveling Channel Deleted -",
-                description = f"The level channel for {ctx.author.guild.name} has been deleted.",
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
 
 
     @dellevel.error

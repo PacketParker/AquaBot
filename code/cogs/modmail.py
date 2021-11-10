@@ -1,8 +1,5 @@
 from nextcord.ext import commands
-from nextcord import utils
 import nextcord
-import asyncio
-from datetime import datetime
 
 log_channel_id = 889293946801516554
 color = 0xc48aff

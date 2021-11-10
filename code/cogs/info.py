@@ -1,6 +1,6 @@
 import time
 import nextcord
-from nextcord.ext import commands, tasks
+from nextcord.ext import commands
 from datetime import datetime
 from aiohttp import request
 

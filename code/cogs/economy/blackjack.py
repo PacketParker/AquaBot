@@ -8,7 +8,6 @@ from nextcord.ext import commands
 from utils.card import Card
 from utils.helpers import *
 from PIL import Image
-from datetime import datetime
 from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 from utils.economy import Database
 

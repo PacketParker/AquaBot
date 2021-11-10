@@ -1,9 +1,5 @@
-from typing import List
-from urllib.parse import quote_plus
-
 import nextcord
 from nextcord.ext import commands
-from nextcord.ext.commands import context
 from utils.helpers import *
 import re
 

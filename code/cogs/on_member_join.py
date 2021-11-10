@@ -81,11 +81,18 @@ class Join_(commands.Cog):
     @commands.has_permissions(manage_channels=True)
     async def deljoin(self, ctx: commands.Context):
         guild_id = ctx.author.guild.id
-
         async with self.bot.db.execute("SELECT channel_id FROM join_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
             if data:
-                channel_id = data[0]
+                await self.bot.db.execute(f"DELETE FROM join_channel WHERE guild_id = ?", (guild_id,))
+                await self.bot.db.commit()
+                embed = nextcord.Embed(
+                    title = "New Member Message Channel Deleted -",
+                    description = f"The new member message channel for {ctx.author.guild.name} has been deleted.",
+                )
+                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+                await ctx.send(embed=embed)
+
             else:
                 embed = nextcord.Embed(
                     colour = color,
@@ -94,24 +101,6 @@ class Join_(commands.Cog):
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 return await ctx.send(embed=embed)
-                
-        if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Join Channel Not Set!",
-                description = f"• The join channel is not set, therefore there is no channel I can delete."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
-        else:  
-            cursor = await self.bot.db.execute("UPDATE join_channel SET channel_id = NULL WHERE guild_id = ?", (guild_id,))
-            await self.bot.db.commit()           
-            embed = nextcord.Embed(
-                title = "New Member Message Channel Deleted -",
-                description = f"The new member message channel for {ctx.author.guild.name} has been deleted.",
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
 
 
     @deljoin.error

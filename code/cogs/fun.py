@@ -1,7 +1,5 @@
 import nextcord
 from nextcord.ext import commands
-from nextcord.utils import get
-from aiohttp import request
 from datetime import datetime
 import requests
 import json

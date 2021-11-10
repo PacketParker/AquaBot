@@ -2,7 +2,6 @@ import nextcord
 from nextcord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
-from datetime import datetime
 
 color = 0xc48aff
 
