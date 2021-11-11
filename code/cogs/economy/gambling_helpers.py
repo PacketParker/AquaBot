@@ -1,5 +1,7 @@
 import nextcord
+from nextcord.errors import NotFound
 from nextcord.ext import commands
+from nextcord.ext.commands.errors import CommandInvokeError, UserNotFound
 from utils.economy import Database
 from utils.helpers import *
 
@@ -28,6 +30,9 @@ class GamblingHelpers(commands.Cog):
     @commands.command()
     @commands.is_owner()
     async def refund(self, ctx: commands.Context, user: int = None, amount: int = None):
+        await self.bot.fetch_user(user)
+        if user or amount == None:
+            await ctx.send(f"{ctx.author.mention}, please provide both a user ID and an amount to be refunded.")
         await self.economy.add_money(user, amount)
         member = self.bot.get_user(user)
         await ctx.send(f"{member.mention} has been compensated with ${amount:,}")
@@ -35,17 +40,28 @@ class GamblingHelpers(commands.Cog):
 
     @refund.error
     async def refund_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ You Are Not The Owner!",
-            description = f"• You can not run that command because you are not the bot owner."
-        )
-        await ctx.send(embed=embed)
+        if isinstance(error, CommandInvokeError):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Invalid ID!",
+                description = f"• That is not a valid ID of a member, please provide a valid member ID to be refunded."
+            )
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ You Are Not The Owner!",
+                description = f"• You can not run that command because you are not the bot owner."
+            )
+            await ctx.send(embed=embed)
 
 
     @commands.command()
     @commands.is_owner()
     async def deduct(self, ctx: commands.Context, user: int = None, amount: int = None):
+        await self.bot.fetch_user(user)
+        if user or amount == None:
+            await ctx.send(f"{ctx.author.mention}, please provide both a user ID and an amount to be deducted.")
         await self.economy.add_money(user, amount*-1)
         member = self.bot.get_user(user)
         await ctx.send(f"{member.mention} has had ${amount:,} deducted form their account.")
@@ -53,12 +69,20 @@ class GamblingHelpers(commands.Cog):
 
     @deduct.error
     async def deduct_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ You Are Not The Owner!",
-            description = f"• You can not run that command because you are not the bot owner."
-        )
-        await ctx.send(embed=embed)
+        if isinstance(error, CommandInvokeError):
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ Invalid ID!",
+                description = f"• That is not a valid ID of a member, please provide a valid member ID to be refunded."
+            )
+            await ctx.send(embed=embed)
+        else:
+            embed = nextcord.Embed(
+                colour = color,
+                title = "→ You Are Not The Owner!",
+                description = f"• You can not run that command because you are not the bot owner."
+            )
+            await ctx.send(embed=embed)
 
 
     @commands.command(aliases=['profile'])
@@ -112,7 +136,7 @@ class GamblingHelpers(commands.Cog):
     async def leaderboard(self, ctx):
         entries = await self.economy.top_entries(5)
         embed = make_embed(title='Global Economy Leaderboard:', color=nextcord.Color.gold())
-        for i, entry in enumerate(entries):
+        for i, entry in enumerate(entries): 
             id = entry[0]
             name = await self.bot.fetch_user(id)
             embed.add_field(
