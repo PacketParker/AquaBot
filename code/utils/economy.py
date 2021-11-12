@@ -10,7 +10,7 @@ class Database:
         self.bot = bot
 
     async def get_entry(self, user_id: int) -> Entry:    
-        async with self.bot.db.execute("SELECT * FROM economy WHERE user_id=:user_id", {'user_id': user_id}) as cursor:
+        async with self.bot.db.execute("SELECT * FROM economy WHERE user_id = ?", (user_id,)) as cursor:
             result = await cursor.fetchone()
             if result: 
                 return result
