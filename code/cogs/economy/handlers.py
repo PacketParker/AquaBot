@@ -12,8 +12,8 @@ color = 0xc48aff
 class Handlers(commands.Cog, name='handlers'):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-
 '''
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         error = getattr(error, 'original', error)
@@ -23,7 +23,6 @@ class Handlers(commands.Cog, name='handlers'):
 
         if ctx.command.cog not in [self.bot.get_cog(name) for name in ('Slots', 'Blackjack', "GamblingHelpers", "Coinflip")]:
             return traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
-
 
         if isinstance(error, InteractionResponded):
             return
@@ -81,7 +80,7 @@ class Handlers(commands.Cog, name='handlers'):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed)
-'''
 
+'''
 def setup(bot: commands.Bot):
     bot.add_cog(Handlers(bot))

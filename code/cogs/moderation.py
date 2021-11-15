@@ -45,6 +45,7 @@ class Moderation(commands.Cog):
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 await log.send(embed=embed)
 
+
     @purge.error
     async def purge_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):

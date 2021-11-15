@@ -31,8 +31,6 @@ class GamblingHelpers(commands.Cog):
     @commands.is_owner()
     async def refund(self, ctx: commands.Context, user: int = None, amount: int = None):
         await self.bot.fetch_user(user)
-        if user or amount == None:
-            await ctx.send(f"{ctx.author.mention}, please provide both a user ID and an amount to be refunded.")
         await self.economy.add_money(user, amount)
         member = self.bot.get_user(user)
         await ctx.send(f"{member.mention} has been compensated with ${amount:,}")
@@ -60,8 +58,6 @@ class GamblingHelpers(commands.Cog):
     @commands.is_owner()
     async def deduct(self, ctx: commands.Context, user: int = None, amount: int = None):
         await self.bot.fetch_user(user)
-        if user or amount == None:
-            await ctx.send(f"{ctx.author.mention}, please provide both a user ID and an amount to be deducted.")
         await self.economy.add_money(user, amount*-1)
         member = self.bot.get_user(user)
         await ctx.send(f"{member.mention} has had ${amount:,} deducted form their account.")
@@ -85,7 +81,7 @@ class GamblingHelpers(commands.Cog):
             await ctx.send(embed=embed)
 
 
-    @commands.command(aliases=['profile'])
+    @commands.command()
     async def money(self, ctx: commands.Context, user: nextcord.Member=None):
         user = user.id if user else ctx.author.id
         user = self.bot.get_user(user)
