@@ -439,36 +439,129 @@ class ShopDropdown(nextcord.ui.Select):
 
 
     async def callback(self, interaction: nextcord.Interaction):
+        user_id = interaction.user.id
+        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
+            data = await cursor.fetchall()
+            if data:
+                names = ', '.join([str(i[0]) for i in data])
+
+                if "Copper III," in names:
+                    copper_iii = "~~Copper III~~ - OWNED"
+                else:
+                    copper_iii = "Copper III"
+
+                if "Copper II," in names:
+                    copper_ii = "~~Copper II~~ - OWNED"
+                else:
+                    copper_ii = "Copper II"
+
+                if "Copper I," in names:
+                    copper_i = "~~Copper I~~ - OWNED"
+                else:
+                    copper_i = "Copper I"
+
+                if "Bronze III," in names:
+                    bronze_iii = "~~Bronze III~~ - OWNED"
+                else:
+                    bronze_iii = "Bronze III"
+
+                if "Bronze II," in names:
+                    bronze_ii = "~~Bronze II~~ - OWNED"
+                else:
+                    bronze_ii = "Bronze II"
+
+                if "Bronze I," in names:
+                    bronze_i = "~~Bronze I~~ - OWNED"
+                else:
+                    bronze_i = "Bronze I"
+
+                if "Silver III," in names:
+                    silver_iii = "~~Silver III~~ - OWNED"
+                else:
+                    silver_iii = "Silver III"
+
+                if "Silver II," in names:
+                    silver_ii = "~~Silver II~~ - OWNED"
+                else:
+                    silver_ii = "Silver II"
+
+                if "Silver I," in names:
+                    silver_i = "~~Silver I~~ - OWNED"
+                else:
+                    silver_i = "Silver I"
+
+                if "Gold III," in names:
+                    gold_iii = "~~Gold III~~ - OWNED"
+                else:
+                    gold_iii = "Gold III"
+
+                if "Gold II," in names:
+                    gold_ii = "~~Gold II~~ - OWNED"
+                else:
+                    gold_ii = "Gold II"
+
+                if "Gold I," in names:
+                    gold_i = "~~Gold I~~ - OWNED"
+                else:
+                    gold_i = "Gold I"
+
+                if "Platinum III," in names:
+                    platinum_iii = "~~Platinum III~~ - OWNED"
+                else:
+                    platinum_iii = "Platinum III"
+
+                if "Platinum II," in names:
+                    platinum_ii = "~~Platinum II~~ - OWNED"
+                else:
+                    platinum_ii = "Platinum II"
+
+                if "Platinum I," in names:
+                    platinum_i = "~~Platinum I~~ - OWNED"
+                else:
+                    platinum_i = "Platinum I"
+
+                if "Diamond," in names:
+                    diamond = "~~Diamond~~ - OWNED"
+                else:
+                    diamond = "Diamond"
+
+                if "Champion," in names:
+                    champion = "~~Champion~~ - OWNED"
+                else:
+                    champion = "Champion"
+            else:
+                return
+
         if self.values[0] == 'Ranks':
             embed = nextcord.Embed(
-                title = "💰 - Ranks \nSpend your money in order to get more ranks.",
+                title = "Ranks \nSpend your money in order to get more ranks.",
                 description = "**Purchase a rank by clicking on one of the dropdown menus below, and then confirming your purchase.**",
                 colour = nextcord.Colour.random()
             )
 
-            embed.add_field(name = "Copper III", value = f"1,000", inline=True)
-            embed.add_field(name = "Copper II", value = f"2,000", inline=True)
-            embed.add_field(name = "Copper I", value = f"3,000", inline=True)
+            embed.add_field(name = f"{copper_iii}", value = f"1,000", inline=True)
+            embed.add_field(name = f"{copper_ii}", value = f"2,000", inline=True)
+            embed.add_field(name = f"{copper_i}", value = f"3,000", inline=True)
 
-            embed.add_field(name = "Bronze III", value = f"10,000", inline=True)
-            embed.add_field(name = "Bronze II", value = f"20,000", inline=True)
-            embed.add_field(name = "Bronze I", value = f"30,000", inline=True)
+            embed.add_field(name = f"{bronze_iii}", value = f"10,000", inline=True)
+            embed.add_field(name = f"{bronze_ii}", value = f"20,000", inline=True)
+            embed.add_field(name = f"{bronze_i}", value = f"30,000", inline=True)
 
-            embed.add_field(name = "Silver III", value = f"100,000", inline=True)
-            embed.add_field(name = "Silver II", value = f"200,000", inline=True)
-            embed.add_field(name = "Silver I", value = f"300,000", inline=True)
+            embed.add_field(name = f"{silver_iii}", value = f"100,000", inline=True)
+            embed.add_field(name = f"{silver_ii}", value = f"200,000", inline=True)
+            embed.add_field(name = f"{silver_i}", value = f"300,000", inline=True)
 
-            embed.add_field(name = "Gold III", value = f"1,000,000", inline=True)
-            embed.add_field(name = "Gold II", value = f"2,000,000", inline=True)
-            embed.add_field(name = "Gold I", value = f"3,000,000", inline=True)
+            embed.add_field(name = f"{gold_iii}", value = f"1,000,000", inline=True)
+            embed.add_field(name = f"{gold_ii}", value = f"2,000,000", inline=True)
+            embed.add_field(name = f"{gold_i}", value = f"3,000,000", inline=True)
 
-            embed.add_field(name = "Platinum III", value = f"10,000,000", inline=True)
-            embed.add_field(name = "Platinum II", value = f"20,000,000", inline=True)
-            embed.add_field(name = "Platinum I", value = f"30,000,000", inline=True)
+            embed.add_field(name = f"{platinum_iii}", value = f"10,000,000", inline=True)
+            embed.add_field(name = f"{platinum_ii}", value = f"20,000,000", inline=True)
+            embed.add_field(name = f"{platinum_i}", value = f"30,000,000", inline=True)
             
-            embed.add_field(name = "Diamond", value = f"1,000,000,000,000", inline=True)
+            embed.add_field(name = f"{diamond}", value = f"1,000,000,000,000", inline=True)
 
-            embed.add_field(name = "Champion", value = f"1,000,000,000,000,000", inline=True)
+            embed.add_field(name = f"{champion}", value = f"1,000,000,000,000,000", inline=True)
 
             view = RankView(self.bot)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -495,6 +588,7 @@ class ShopView(nextcord.ui.View):
 
             else:
                 names = "No ranks"
+
         embed = nextcord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
