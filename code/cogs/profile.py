@@ -443,89 +443,89 @@ class ShopDropdown(nextcord.ui.Select):
         async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
             data = await cursor.fetchall()
             if data:
-                names = ', '.join([str(i[0]) for i in data])
-
-                if "Copper III," in names:
+                names = ([str(i[0]) for i in data])
+                
+                if "Copper III" in names:
                     copper_iii = "~~Copper III~~ - OWNED"
                 else:
                     copper_iii = "Copper III"
 
-                if "Copper II," in names:
+                if "Copper II" in names:
                     copper_ii = "~~Copper II~~ - OWNED"
                 else:
                     copper_ii = "Copper II"
 
-                if "Copper I," in names:
+                if "Copper I" in names:
                     copper_i = "~~Copper I~~ - OWNED"
                 else:
                     copper_i = "Copper I"
 
-                if "Bronze III," in names:
+                if "Bronze III" in names:
                     bronze_iii = "~~Bronze III~~ - OWNED"
                 else:
                     bronze_iii = "Bronze III"
 
-                if "Bronze II," in names:
+                if "Bronze II" in names:
                     bronze_ii = "~~Bronze II~~ - OWNED"
                 else:
                     bronze_ii = "Bronze II"
 
-                if "Bronze I," in names:
+                if "Bronze I" in names:
                     bronze_i = "~~Bronze I~~ - OWNED"
                 else:
                     bronze_i = "Bronze I"
 
-                if "Silver III," in names:
+                if "Silver III" in names:
                     silver_iii = "~~Silver III~~ - OWNED"
                 else:
                     silver_iii = "Silver III"
 
-                if "Silver II," in names:
+                if "Silver II" in names:
                     silver_ii = "~~Silver II~~ - OWNED"
                 else:
                     silver_ii = "Silver II"
 
-                if "Silver I," in names:
+                if "Silver I" in names:
                     silver_i = "~~Silver I~~ - OWNED"
                 else:
                     silver_i = "Silver I"
 
-                if "Gold III," in names:
+                if "Gold III" in names:
                     gold_iii = "~~Gold III~~ - OWNED"
                 else:
                     gold_iii = "Gold III"
 
-                if "Gold II," in names:
+                if "Gold II" in names:
                     gold_ii = "~~Gold II~~ - OWNED"
                 else:
                     gold_ii = "Gold II"
 
-                if "Gold I," in names:
+                if "Gold I" in names:
                     gold_i = "~~Gold I~~ - OWNED"
                 else:
                     gold_i = "Gold I"
 
-                if "Platinum III," in names:
+                if "Platinum III" in names:
                     platinum_iii = "~~Platinum III~~ - OWNED"
                 else:
                     platinum_iii = "Platinum III"
 
-                if "Platinum II," in names:
+                if "Platinum II" in names:
                     platinum_ii = "~~Platinum II~~ - OWNED"
                 else:
                     platinum_ii = "Platinum II"
 
-                if "Platinum I," in names:
+                if "Platinum I" in names:
                     platinum_i = "~~Platinum I~~ - OWNED"
                 else:
                     platinum_i = "Platinum I"
 
-                if "Diamond," in names:
+                if "Diamond" in names:
                     diamond = "~~Diamond~~ - OWNED"
                 else:
                     diamond = "Diamond"
 
-                if "Champion," in names:
+                if "Champion" in names:
                     champion = "~~Champion~~ - OWNED"
                 else:
                     champion = "Champion"
