@@ -28,8 +28,9 @@ class Economy:
         if bet > current:
             raise InsufficientFundsException()
 
+#BEGIN CODE FOR RANK PURCHASING
 
-class AfterPurchase(nextcord.ui.View):
+class AfterRankPurchase(nextcord.ui.View):
     def __init__(self, bot, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.bot = bot
@@ -64,7 +65,7 @@ class AfterPurchase(nextcord.ui.View):
         await interaction.message.delete()
 
 
-class ConfirmPurchase(nextcord.ui.View):
+class ConfirmRankPurchase(nextcord.ui.View):
     def __init__(self, bot, bet, rank_value, rank_name, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.bot = bot
@@ -93,7 +94,7 @@ class ConfirmPurchase(nextcord.ui.View):
                     color = nextcord.Color.random()
                 )
 
-                view = AfterPurchase(self.bot)
+                view = AfterRankPurchase(self.bot)
                 await interaction.response.edit_message(embed=embed, view=view)
 
             except sqlite3.IntegrityError:
@@ -164,7 +165,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Copper III'
             bet = 1000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Copper II':
@@ -178,7 +179,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Copper II'
             bet = 2000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Copper I':
@@ -192,7 +193,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Copper I'
             bet = 3000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze III':
@@ -206,7 +207,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Bronze III'
             bet = 10000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze II':
@@ -220,7 +221,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Bronze II'
             bet = 20000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze I':
@@ -234,7 +235,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Bronze I'
             bet = 30000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver III':
@@ -248,7 +249,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Silver III'
             bet = 100000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver II':
@@ -262,7 +263,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Silver II'
             bet = 200000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver I':
@@ -276,7 +277,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Silver I'
             bet = 300000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold III':
@@ -290,7 +291,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Gold III'
             bet = 1000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold II':
@@ -304,7 +305,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Gold II'
             bet = 2000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold I':
@@ -318,7 +319,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Gold I'
             bet = 3000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum III':
@@ -332,7 +333,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Platinum III'
             bet = 10000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum II':
@@ -346,7 +347,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Platinum II'
             bet = 20000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum I':
@@ -360,7 +361,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Platinum I'
             bet = 30000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Diamond':
@@ -374,7 +375,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Diamond'
             bet = 1000000000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Champion':
@@ -388,7 +389,7 @@ class RankDropdown(nextcord.ui.Select):
             rank_name = 'Champion'
             bet = 1000000000000000
 
-            view = ConfirmPurchase(self.bot, bet, rank_value, rank_name)
+            view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
 
 
@@ -427,7 +428,7 @@ class RankView(nextcord.ui.View):
         await interaction.message.delete()
 
 
-class ShopDropdown(nextcord.ui.Select):
+class RankShopDropdown(nextcord.ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
@@ -567,12 +568,33 @@ class ShopDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
 
+#BEING CODE FOR ____ PURCHASING 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#BEING SHOWING FOR SHOP, i.e. DROPDOWNS, BUTTONS, AND ANY OTHER SHIT
+
 class ShopView(nextcord.ui.View):
     def __init__(self, bot, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.economy = Database(bot)
         self.bot = bot
-        self.add_item(ShopDropdown(bot))
+        self.add_item(RankShopDropdown(bot))
 
 
     @nextcord.ui.button(label='Main Page', style=nextcord.ButtonStyle.blurple, row=2)
@@ -603,6 +625,7 @@ class ShopView(nextcord.ui.View):
     async def delete(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
         await interaction.message.delete()
 
+#BEGIN CODE FOR PROFILE VIEWING
 
 class Profile(commands.Cog):
     def __init__(self, bot):
@@ -658,10 +681,6 @@ class Profile(commands.Cog):
 
         view = ShopView(self.bot)
         await ctx.send(embed=embed, view=view)
-
-        ##TODO: Add a dropdown menu in order for people to choose the category that they want to shop in.
-               #Once the category is chosen, figure out a system for how they are going to buy items, e.g. Buttons, Dropdowns, Commands
-               #Come up with new ideas to add to the shop in order to make it more interesting for new users, and those with a lot of moneyx
 
 
 def setup(bot):
