@@ -1,7 +1,7 @@
 import zlib
-import nextcord
+import discord
 
-from nextcord.ext import commands
+from discord.ext import commands
 
 
 class SocketFix(commands.Cog):
@@ -28,7 +28,7 @@ class SocketFix(commands.Cog):
             msg = msg.decode('utf-8')
             self._buffer = bytearray()
 
-        msg = nextcord.utils._from_json(msg)
+        msg = discord.utils._from_json(msg)
         self.bot.dispatch('on_socket_response', msg)
 
 

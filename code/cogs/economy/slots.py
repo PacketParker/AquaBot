@@ -2,8 +2,8 @@ import bisect
 import os
 import random
 
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
@@ -19,7 +19,7 @@ class Slots(commands.Cog):
     async def check_bet(
         self,
         ctx: commands.Context,
-        bet: int=DEFAULT_BET,
+        bet
     ):
         bet = int(bet)
         if bet <= 0:
@@ -32,8 +32,12 @@ class Slots(commands.Cog):
     #Usage: slots [bet]
     @commands.command()
     @commands.cooldown(1, 2.5, commands.BucketType.user)
-    async def slots(self, ctx: commands.Context, bet: int=DEFAULT_BET):
-        await self.check_bet(ctx, bet=bet)
+    async def slots(self, 
+        ctx: commands.Context, 
+        bet: int=commands.Option(description="Amount you would like to bet")
+    ):
+        "Bet a specified amount of money on the slot machines"
+        await self.check_bet(ctx, bet)
         path = os.path.join(ABS_PATH, 'utils/')
         facade = Image.open(f'{path}slot-face.png').convert('RGBA')
         reel = Image.open(f'{path}slot-reel.png').convert('RGBA')
@@ -99,12 +103,12 @@ class Slots(commands.Cog):
                 'dollars.'
             ),
             color=(
-                nextcord.Color.red() if result[0] == "lost"
-                else nextcord.Color.green()
+                discord.Color.red() if result[0] == "lost"
+                else discord.Color.green()
             )
         )
 
-        file = nextcord.File(fp, filename=fp)
+        file = discord.File(fp, filename=fp)
         embed.set_image(url=f"attachment://{fp}") # none of this makes sense to me :)
         await ctx.send(
             file=file,

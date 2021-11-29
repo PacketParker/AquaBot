@@ -1,7 +1,7 @@
-import nextcord
-from nextcord.errors import NotFound
-from nextcord.ext import commands
-from nextcord.ext.commands.errors import CommandInvokeError, UserNotFound
+import discord
+from discord.errors import NotFound
+from discord.ext import commands
+from discord.ext.commands.errors import CommandInvokeError, UserNotFound
 from utils.economy import Database
 from utils.helpers import *
 
@@ -18,16 +18,17 @@ class GamblingHelpers(commands.Cog):
     @commands.command()
     @commands.cooldown(1, B_COOLDOWN*3600, type=commands.BucketType.user)
     async def add(self, ctx: commands.Context):
+        "Add $2,500 to your balance every 2 hours"
         amount = DEFAULT_BET*B_MULT
         await self.economy.add_money(ctx.author.id, amount)
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "I've added $2,500 to you balance",
             description = f"Come back again in {B_COOLDOWN} hours."
         )
         await ctx.send(embed=embed)
 
 
-    @commands.command()
+    @commands.command(slash_command=False)
     @commands.is_owner()
     async def refund(self, ctx: commands.Context, user: int = None, amount: int = None):
         await self.bot.fetch_user(user)
@@ -39,22 +40,22 @@ class GamblingHelpers(commands.Cog):
     @refund.error
     async def refund_error(self, ctx, error):
         if isinstance(error, CommandInvokeError):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Invalid ID!",
                 description = f"• That is not a valid ID of a member, please provide a valid member ID to be refunded."
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ You Are Not The Owner!",
                 description = f"• You can not run that command because you are not the bot owner."
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
 
-    @commands.command()
+    @commands.command(slash_command=False)
     @commands.is_owner()
     async def deduct(self, ctx: commands.Context, user: int = None, amount: int = None):
         await self.bot.fetch_user(user)
@@ -66,24 +67,25 @@ class GamblingHelpers(commands.Cog):
     @deduct.error
     async def deduct_error(self, ctx, error):
         if isinstance(error, CommandInvokeError):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Invalid ID!",
                 description = f"• That is not a valid ID of a member, please provide a valid member ID to be refunded."
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ You Are Not The Owner!",
                 description = f"• You can not run that command because you are not the bot owner."
             )
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
-    async def money(self, ctx: commands.Context, user: nextcord.Member=None):
-        user = user.id if user else ctx.author.id
+    async def money(self, ctx: commands.Context):
+        "Shows the current balance for your account"
+        user = ctx.author.id
         user = self.bot.get_user(user)
         profile = await self.economy.get_entry(user.id)
         embed = make_embed(
@@ -91,7 +93,7 @@ class GamblingHelpers(commands.Cog):
             description=(
                 '**${:,}**'.format(profile[1]) + "\nKeep working to get more money!"
             ),
-            footer=nextcord.Embed.Empty
+            footer=discord.Embed.Empty
         )
         embed.set_thumbnail(url=user.avatar.url)
         await ctx.send(embed=embed)
@@ -99,39 +101,19 @@ class GamblingHelpers(commands.Cog):
 
     @money.error
     async def money_error(self, ctx, error):
-        if isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Member Not Found!",
-                description = f"• Member {error.argument} was not found."
-            )
-            await ctx.send(embed=embed)
-
-        if isinstance(error, (commands.MissingRequiredArgument, commands.TooManyArguments, commands.BadArgument)):
-            await ctx.invoke(self.bot.get_command('help'), ctx.command.name)
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Incorrect usage!",
-                description = f"• The command you entered used incorrect syntax. Run `{ctx.prefix}help` to see how to use that command."
-            )
-            await ctx.send(embed=embed)
-
-        if isinstance(error, InsufficientFundsException):
-            await ctx.invoke(self.bot.get_command('money'))
-
-        else:
-            embed = nextcord.Embed(
-                colour = color,
-                title = "→ Error!",
-                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-            )
-            await ctx.send(embed=embed)
+        embed = discord.Embed(
+            colour = color,
+            title = "→ Error!",
+            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+        )
+        await ctx.send(embed=embed, ephemeral=True)
 
 
-    @commands.command(aliases=["top"])
+    @commands.command()
     async def leaderboard(self, ctx):
+        "Show the global currency leaderboard"
         entries = await self.economy.top_entries(5)
-        embed = make_embed(title='Global Economy Leaderboard:', color=nextcord.Color.gold())
+        embed = make_embed(title='Global Economy Leaderboard:', color=discord.Color.gold())
         for i, entry in enumerate(entries): 
             id = entry[0]
             name = await self.bot.fetch_user(id)

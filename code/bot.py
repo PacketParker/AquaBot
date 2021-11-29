@@ -1,5 +1,5 @@
-import nextcord
-from nextcord.ext import commands, tasks
+import discord
+from discord.ext import commands, tasks
 import os
 from utils.helpers import *
 import aiosqlite
@@ -11,10 +11,12 @@ import time
 import base64
 import requests
 import asyncio
+from aiohttp import request
+from decimal import *
+
+#TODO SLOTS AND BLACKJACK ARE BROKEN WITHIN SLASH COMMANDS
 
 log_channel_id = 889293946801516554
-intents = nextcord.Intents.default()
-intents.members = True
 
 async def initialise():
     await bot.wait_until_ready()
@@ -51,25 +53,45 @@ async def get_prefix(bot, message):
             prefix = DEFAULT_PREFIX
             return prefix
 
+
 bot = commands.Bot(
     command_prefix=get_prefix,
+    status = discord.Game(f"Ping Me For Help!"),
     owner_ids=OWNER_IDS,
-    intents=intents
+    intents = discord.Intents(
+    guild_reactions=True,
+    guild_messages=True,
+    guilds=True,
+    integrations=True,
+    voice_states=True,
+    dm_reactions=True,
+    guild_typing=True,
+    dm_messages=True,
+    dm_typing=True,
+    webhooks=True,
+    members=True,
+    invites=True,
+    emojis=True,
+    bans=True,
+    ),
+    slash_commands=True,
+    slash_command_guilds = [891743644938297395]
 )
+
+bot.remove_command('help')
+
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        bot.load_extension(f'cogs.{filename[:-3]}') 
+
+for filename in os.listdir('./cogs/economy'):
+    if filename.endswith('.py'):
+        bot.load_extension(f'cogs.economy.{filename[:-3]}') 
+
 
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.change_presence(activity = nextcord.Game(f"Ping Me For Help!"))
-    for filename in os.listdir('./cogs'):
-        if filename.endswith('.py'):
-            bot.load_extension(f'cogs.{filename[:-3]}') 
-
-    for filename in os.listdir('./cogs/economy'):
-        if filename.endswith('.py'):
-            bot.load_extension(f'cogs.economy.{filename[:-3]}') 
-
-    update.start()
 
 api_key = "ca75c18a5eb09f6d3e2b691f176fcbb2dc46c0f3226818a1f5f5e026939303be"
 secret = "83f9a8c0a33b9a6c652c6b8342beb43050c69b2cfea13664de3f438e7333fb9df527ad60a311515947b6bd58752c50542f53144edd3c3442e317bdece2234cd9"
@@ -94,52 +116,121 @@ headers = {
     'DEV-SHRIMPY-API-SIGNATURE': signature_b64
 }
 
-bot.price_dict = {'Bitcoin':f'0', 'Ethereum':f'0', 'Binance Coin':f'0', 
-'Solana':f'0', 'Cardano':f'0', 'XRP':f'0', 'Polkadot':f'0',
-'Dogecoin':f'0', 'Avalanche':f'0', 'SHIBA INU':f'0', 
-'Terra':f'0', 'Litecoin':f'0', 'Uniswap':f'0', 'Chainlink':f'0',
-'Polygon':f'0', 'Algorand':f'0', 'Bitcoin Cash':f'0', 
-'VeChain':f'0', 'Stellar':f'0', 'Internet Computer':f'0'}
+bot.price_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0, 
+    'Solana (SOL)':0, 'Cardano (ADA)':0, 'XRP (XRP)':0, 'Polkadot (DOT)':0,
+    'Dogecoin (DOGE)':0, 'Avalanche (AVAX)':0, 'SHIBA INU (SHIB)':0, 
+    'Terra (LUNA)':0, 'Litecoin (LTC)':0, 'Uniswap (UNI)':0, 'Chainlink (LINK)':0,
+    'Polygon (MATIC)':0, 'Algorand (ALGO)':0, 'Bitcoin Cash (BCH)':0, 
+    'VeChain (VET)':0, 'Stellar (XLM)':0, 'Internet Computer (ICP)':0}
+
+bot.price_change_dict = {'bitcoin_change':0, 'ethereum_change':0, 'binance_coin_change':0, 
+    'solana_change':0, 'cardano_change':0, 'xrp_change':0, 'polkadot_change':0,
+    'dogecoin_change':0, 'avalanche_change':0, 'shib_inu_change':0, 
+    'terra_change':0, 'litecoin_change':0, 'uniswap_change':0, 'chainlink_change':0,
+    'polygon_change':0, 'algorand_change':0, 'bitcoin_cash_change':0, 
+    'vechain_change':0, 'stellar_change':0, 'internet_computer_change':0}
 
 @tasks.loop(seconds=60)
-async def update():
+async def update_crypto():
     response = requests.get(
         base_url + request_path,
         headers = headers
     )
 
-    btc_price = response.json()[1].get('priceUsd')
-    eth_price = response.json()[0].get('priceUsd')
-    bnb_price = response.json()[3].get('priceUsd')
-    sol_price = response.json()[176].get('priceUsd')
-    ada_price = response.json()[64].get('priceUsd')
-    xrp_price = response.json()[41].get('priceUsd')
-    dot_price = response.json()[222].get('priceUsd')
-    doge_price = response.json()[143].get('priceUsd')
-    avax_price = response.json()[250].get('priceUsd')
-    shib_price = response.json()[362].get('priceUsd')
-    luna_price = response.json()[226].get('priceUsd')
-    ltc_price = response.json()[2].get('priceUsd')
-    uni_price = response.json()[240].get('priceUsd')
-    link_price = response.json()[20].get('priceUsd')
-    matic_price = response.json()[135].get('priceUsd')
-    algo_price = response.json()[142].get('priceUsd')
-    bch_price = response.json()[162].get('priceUsd')
-    vet_price = response.json()[121].get('priceUsd')
-    xlm_price = response.json()[67].get('priceUsd')
-    icp_price = response.json()[364].get('priceUsd')
+    btc_price = float(response.json()[1].get('priceUsd'))
+    eth_price = float(response.json()[0].get('priceUsd'))
+    bnb_price = float(response.json()[3].get('priceUsd'))
+    sol_price = float(response.json()[176].get('priceUsd'))
+    ada_price = float(response.json()[64].get('priceUsd'))
+    xrp_price = float(response.json()[41].get('priceUsd'))
+    dot_price = float(response.json()[222].get('priceUsd'))
+    doge_price = float(response.json()[143].get('priceUsd'))
+    avax_price = float(response.json()[250].get('priceUsd'))
+    shib_price = Decimal(response.json()[362].get('priceUsd'))
+    luna_price = float(response.json()[226].get('priceUsd'))
+    ltc_price = float(response.json()[2].get('priceUsd'))
+    uni_price = float(response.json()[240].get('priceUsd'))
+    link_price = float(response.json()[20].get('priceUsd'))
+    matic_price = float(response.json()[135].get('priceUsd'))
+    algo_price = float(response.json()[142].get('priceUsd'))
+    bch_price = float(response.json()[162].get('priceUsd'))
+    vet_price = float(response.json()[121].get('priceUsd'))
+    xlm_price = float(response.json()[67].get('priceUsd'))
+    icp_price = float(response.json()[364].get('priceUsd'))
 
-    update_dict = {'Bitcoin (BTC) -':f'{btc_price}', 'Ethereum (ETH) -':f'{eth_price}', 'Binance Coin (BNB) -':f'{bnb_price}', 
-    'Solana (SOL) -':f'{sol_price}', 'Cardano (ADA) -':f'{ada_price}', 'XRP (XRP) -':f'{xrp_price}', 'Polkadot (DOT) -':f'{dot_price}',
-    'Dogecoin (DOGE) -':f'{doge_price}', 'Avalanche (AVAX) -':f'{avax_price}', 'SHIBA INU (SHIB) -':f'{shib_price}', 
-    'Terra (LUNA) -':f'{luna_price}', 'Litecoin (LTC) -':f'{ltc_price}', 'Uniswap (UNI) -':f'{uni_price}', 'Chainlink (LINK) -':f'{link_price}',
-    'Polygon (MATIC) -':f'{matic_price}', 'Algorand (ALGO) -':f'{algo_price}', 'Bitcoin Cash (BCH) -':f'{bch_price}', 
-    'VeChain (VET) -':f'{vet_price}', 'Stellar (XLM) -':f'{xlm_price}', 'Internet Computer (ICP) -':f'{icp_price}'}
+    btc_change = float(response.json()[1].get('percentChange24hUsd'))
+    eth_change = float(response.json()[0].get('percentChange24hUsd'))
+    bnb_change = float(response.json()[3].get('percentChange24hUsd'))
+    sol_change = float(response.json()[176].get('percentChange24hUsd'))
+    ada_change = float(response.json()[64].get('percentChange24hUsd'))
+    xrp_change = float(response.json()[41].get('percentChange24hUsd'))
+    dot_change = float(response.json()[222].get('percentChange24hUsd'))
+    doge_change = float(response.json()[143].get('percentChange24hUsd'))
+    avax_change = float(response.json()[250].get('percentChange24hUsd'))
+    shib_change = float(response.json()[362].get('percentChange24hUsd'))
+    luna_change = float(response.json()[226].get('percentChange24hUsd'))
+    ltc_change = float(response.json()[2].get('percentChange24hUsd'))
+    uni_change = float(response.json()[240].get('percentChange24hUsd'))
+    link_change = float(response.json()[20].get('percentChange24hUsd'))
+    matic_change = float(response.json()[135].get('percentChange24hUsd'))
+    algo_change = float(response.json()[142].get('percentChange24hUsd'))
+    bch_change = float(response.json()[162].get('percentChange24hUsd'))
+    vet_change = float(response.json()[121].get('percentChange24hUsd'))
+    xlm_change = float(response.json()[67].get('percentChange24hUsd'))
+    icp_change = float(response.json()[364].get('percentChange24hUsd'))
 
-    bot.price_dict.update(update_dict)
+    update_price_dict = {'Bitcoin (BTC)':round(btc_price, 2), 'Ethereum (ETH)':round(eth_price, 2), 'Binance Coin (BNB)':round(bnb_price, 2), 
+    'Solana (SOL)':round(sol_price, 2), 'Cardano (ADA)':round(ada_price, 2), 'XRP (XRP)':round(xrp_price, 2), 'Polkadot (DOT)':round(dot_price, 2),
+    'Dogecoin (DOGE)':round(doge_price, 4), 'Avalanche (AVAX)':round(avax_price, 2), 'SHIBA INU (SHIB)':shib_price, 
+    'Terra (LUNA)':round(luna_price, 2), 'Litecoin (LTC)':round(ltc_price, 2), 'Uniswap (UNI)':round(uni_price, 2), 'Chainlink (LINK)':round(link_price, 2),
+    'Polygon (MATIC)':round(matic_price, 2), 'Algorand (ALGO)':round(algo_price, 2), 'Bitcoin Cash (BCH)':round(bch_price, 2), 
+    'VeChain (VET)':round(vet_price, 2), 'Stellar (XLM)':round(xlm_price, 2), 'Internet Computer (ICP)':round(icp_price, 2)}
+
+    update_price_change_dict = {'bitcoin_change':round(btc_change, 2), 'ethereum_change':round(eth_change, 2), 'binance_coin_change':round(bnb_change, 2), 
+    'solana_change':round(sol_change, 2), 'cardano_change':round(ada_change, 2), 'xrp_change':round(xrp_change, 2), 'polkadot_change':round(dot_change, 2),
+    'dogecoin_change':round(doge_change, 2), 'avalanche_change':round(avax_change, 2), 'shib_inu_change':round(shib_change, 2), 
+    'terra_change':round(luna_change, 2), 'litecoin_change':round(ltc_change, 2), 'uniswap_change':round(uni_change, 2), 'chainlink_change':round(link_change, 2),
+    'polygon_change':round(matic_change, 2), 'algorand_change':round(algo_change, 2), 'bitcoin_cash_change':round(bch_change, 2), 
+    'vechain_change':round(vet_change, 2), 'stellar_change':round(xlm_change, 2), 'internet_computer_change':round(icp_change, 2)}
+
+    bot.price_dict.update(update_price_dict)
+    bot.price_change_dict.update(update_price_change_dict)
 
 
-bot.remove_command('help')
+bot.covid_dict = {':microbe: Total cases':0, ':skull_crossbones: Total deaths':0, 
+':syringe: Total recovered':0, ':radioactive: Total active cases':0, ':map: Total affected countries':0}
+
+
+
+URL = "https://disease.sh/v3/covid-19/all"
+
+@tasks.loop(seconds=300)
+async def update_covid():
+    async with request("GET", URL, headers={}) as response:
+        if response.status == 200:
+            data = await response.json()
+            cases = int(data["cases"])
+            deaths = int(data["deaths"])
+            recovered = int(data["recovered"])
+            active = int(data["active"])
+            countries = int(data["affectedCountries"])
+        
+        else:
+            cases = 0
+            deaths = 0
+            recovered = 0
+            active = 0
+            countries = 0
+
+        update_crypto_dict = {':microbe: Total cases':cases, ':skull_crossbones: Total deaths':deaths, 
+        ':syringe: Total recovered':recovered, ':radioactive: Total active cases':active, 
+        ':map: Total affected countries':countries}
+
+        bot.covid_dict.update(update_crypto_dict)
+
+
+update_covid.start()
+update_crypto.start()
 bot.loop.create_task(initialise())
-bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.JnHalLuRzYdjXodKmjCKHbdTLSk")
+bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.N3JAvRe0ZlmYL-KTLCGTXRuCnvE")
 asyncio.run(bot.db.close())

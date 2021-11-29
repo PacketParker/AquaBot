@@ -1,5 +1,5 @@
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
 from PIL import Image
@@ -30,15 +30,15 @@ class Economy:
 
 #BEGIN CODE FOR RANK PURCHASING
 
-class AfterRankPurchase(nextcord.ui.View):
+class AfterRankPurchase(discord.ui.View):
     def __init__(self, bot, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.bot = bot
         self.economy = Database(bot)
         self.value = None
 
-    @nextcord.ui.button(label='Main Page', style=nextcord.ButtonStyle.blurple, row=2)
-    async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)
+    async def main_page(self, button: discord.ui.Button, interaction: discord.Interaction):
         user_id = interaction.user.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -51,21 +51,21 @@ class AfterRankPurchase(nextcord.ui.View):
             else:
                 names = "No ranks"
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
-    @nextcord.ui.button(label='Delete', style=nextcord.ButtonStyle.red, row=2)
-    async def delete(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Delete', style=discord.ButtonStyle.red, row=2)
+    async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
 
 
-class ConfirmRankPurchase(nextcord.ui.View):
+class ConfirmRankPurchase(discord.ui.View):
     def __init__(self, bot, bet, rank_value, rank_name, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.bot = bot
@@ -77,8 +77,8 @@ class ConfirmRankPurchase(nextcord.ui.View):
         self.add_item(RankDropdown(bot))
 
 
-    @nextcord.ui.button(label='Yes', style=nextcord.ButtonStyle.green, row=2)
-    async def yes(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Yes', style=discord.ButtonStyle.green, row=2)
+    async def yes(self, button: discord.ui.Button, interaction: discord.Interaction):
         user_id = interaction.user.id
 
         async with self.bot.db.execute("SELECT rank_name, rank_int FROM profile WHERE user_id = ?", (user_id,)) as cursor:
@@ -88,77 +88,77 @@ class ConfirmRankPurchase(nextcord.ui.View):
                 await self.check.check_bet(user_id, self.bet)
                 await self.economy.add_money(user_id, self.bet*-1)
 
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title = "Purchase Successful",
                     description = f"Your purchase was successful. In order to purchase more items, please click the main page button below.",
-                    color = nextcord.Color.random()
+                    color = discord.Color.random()
                 )
 
                 view = AfterRankPurchase(self.bot)
                 await interaction.response.edit_message(embed=embed, view=view)
 
             except sqlite3.IntegrityError:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title = "Rank Already Owned",
                     description = f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
-                    color = nextcord.Color.random()
+                    color = discord.Color.random()
                 )
 
                 view = RankView(self.bot)
                 return await interaction.response.edit_message(embed=embed, view=view)
 
 
-    @nextcord.ui.button(label='No', style=nextcord.ButtonStyle.red, row=2)
-    async def no(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
-        embed = nextcord.Embed(
+    @discord.ui.button(label='No', style=discord.ButtonStyle.red, row=2)
+    async def no(self, button: discord.ui.Button, interaction: discord.Interaction):
+        embed = discord.Embed(
             title = "Purchase Canceled, Taken Back to Shop",
             description = f"Choose from one of the categories below in order to shop for items.",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
-class RankDropdown(nextcord.ui.Select):
+class RankDropdown(discord.ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
         options = [
-            nextcord.SelectOption(label='Copper III', description="1,000", emoji = "<:copper_3:908535582534299688>"),
-            nextcord.SelectOption(label='Copper II', description="2,000", emoji = "<:copper_2:908535594714558524>"),
-            nextcord.SelectOption(label='Copper I', description="3,000", emoji = "<:copper_1:908535605644918895>"),
+            discord.SelectOption(label='Copper III', description="1,000", emoji = "<:copper_3:908535582534299688>"),
+            discord.SelectOption(label='Copper II', description="2,000", emoji = "<:copper_2:908535594714558524>"),
+            discord.SelectOption(label='Copper I', description="3,000", emoji = "<:copper_1:908535605644918895>"),
 
-            nextcord.SelectOption(label='Bronze III', description="10,000", emoji = "<:bronze_3:908535616650760222>"),
-            nextcord.SelectOption(label='Bronze II', description="20,000", emoji = "<:bronze_2:908535628503863296>"),
-            nextcord.SelectOption(label='Bronze I', description="30,000", emoji = "<:bronze_1:908535639606198292>"),
+            discord.SelectOption(label='Bronze III', description="10,000", emoji = "<:bronze_3:908535616650760222>"),
+            discord.SelectOption(label='Bronze II', description="20,000", emoji = "<:bronze_2:908535628503863296>"),
+            discord.SelectOption(label='Bronze I', description="30,000", emoji = "<:bronze_1:908535639606198292>"),
 
-            nextcord.SelectOption(label='Silver III', description="100,000", emoji = "<:silver_3:908535654667911168>"),
-            nextcord.SelectOption(label='Silver II', description="200,000", emoji = "<:silver_2:908535667263434782>"),
-            nextcord.SelectOption(label='Silver I', description="300,000", emoji = "<:silver_1:908535680064442398>"),
+            discord.SelectOption(label='Silver III', description="100,000", emoji = "<:silver_3:908535654667911168>"),
+            discord.SelectOption(label='Silver II', description="200,000", emoji = "<:silver_2:908535667263434782>"),
+            discord.SelectOption(label='Silver I', description="300,000", emoji = "<:silver_1:908535680064442398>"),
 
-            nextcord.SelectOption(label='Gold III', description="1,000,000", emoji = "<:gold_3:908535691137388554>"),
-            nextcord.SelectOption(label='Gold II', description="2,000,000", emoji = "<:gold_2:908535705154764870>"),
-            nextcord.SelectOption(label='Gold I', description="3,000,000", emoji = "<:gold_1:908535742224027758>"),
+            discord.SelectOption(label='Gold III', description="1,000,000", emoji = "<:gold_3:908535691137388554>"),
+            discord.SelectOption(label='Gold II', description="2,000,000", emoji = "<:gold_2:908535705154764870>"),
+            discord.SelectOption(label='Gold I', description="3,000,000", emoji = "<:gold_1:908535742224027758>"),
 
-            nextcord.SelectOption(label='Platinum III', description="10,000,000", emoji = "<:platinum_3:908535751900282880>"),
-            nextcord.SelectOption(label='Platinum II', description="20,000,000", emoji = "<:platinum_2:908535764629999656>"),
-            nextcord.SelectOption(label='Platinum I', description="30,000,000", emoji = "<:platinum_1:908535773689679932>"),
+            discord.SelectOption(label='Platinum III', description="10,000,000", emoji = "<:platinum_3:908535751900282880>"),
+            discord.SelectOption(label='Platinum II', description="20,000,000", emoji = "<:platinum_2:908535764629999656>"),
+            discord.SelectOption(label='Platinum I', description="30,000,000", emoji = "<:platinum_1:908535773689679932>"),
 
-            nextcord.SelectOption(label='Diamond', description="1,000,000,000,000", emoji = "<:diamond:908535791700037702>"),
+            discord.SelectOption(label='Diamond', description="1,000,000,000,000", emoji = "<:diamond:908535791700037702>"),
 
-            nextcord.SelectOption(label='Champion', description="1,000,000,000,000,000", emoji = "<:champion:908535801338540042>"),
+            discord.SelectOption(label='Champion', description="1,000,000,000,000,000", emoji = "<:champion:908535801338540042>"),
 
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
 
-    async def callback(self, interaction: nextcord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         if self.values[0] == 'Copper III':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Copper III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 1
@@ -169,10 +169,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Copper II':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Copper II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 2
@@ -183,10 +183,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Copper I':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Copper I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 3
@@ -197,10 +197,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze III':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Bronze III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 4
@@ -211,10 +211,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze II':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Bronze II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 5
@@ -225,10 +225,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Bronze I':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Bronze I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 6
@@ -239,10 +239,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver III':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Silver III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 7
@@ -253,10 +253,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver II':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Silver II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 8
@@ -267,10 +267,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Silver I':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Silver I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 9
@@ -281,10 +281,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold III':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Gold III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 10
@@ -295,10 +295,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold II':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Gold II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 11
@@ -309,10 +309,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Gold I':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Gold I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 12
@@ -323,10 +323,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum III':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Platinum III`rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 13
@@ -337,10 +337,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum II':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Platinum II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 14
@@ -351,10 +351,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Platinum I':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Platinum I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 15
@@ -365,10 +365,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Diamond':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Diamond` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 16
@@ -379,10 +379,10 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
         if self.values[0] == 'Champion':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
                 description = "If you are sure you would like to purchase the `Champion`rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             rank_value = 17
@@ -393,7 +393,7 @@ class RankDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
 
-class RankView(nextcord.ui.View):
+class RankView(discord.ui.View):
     def __init__(self, bot, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.bot = bot
@@ -401,8 +401,8 @@ class RankView(nextcord.ui.View):
         self.add_item(RankDropdown(bot))
 
 
-    @nextcord.ui.button(label='Main Page', style=nextcord.ButtonStyle.blurple, row=2)
-    async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)
+    async def main_page(self, button: discord.ui.Button, interaction: discord.Interaction):
         user_id = interaction.user.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -414,32 +414,32 @@ class RankView(nextcord.ui.View):
 
             else:
                 names = "No ranks"
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
-    @nextcord.ui.button(label='Delete', style=nextcord.ButtonStyle.red, row=2)
-    async def delete(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Delete', style=discord.ButtonStyle.red, row=2)
+    async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
 
 
-class RankShopDropdown(nextcord.ui.Select):
+class RankShopDropdown(discord.ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
         options = [
-            nextcord.SelectOption(label='Ranks', description='Buy ranks and show off your wealth'),
+            discord.SelectOption(label='Ranks', description='Buy ranks and show off your wealth'),
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
 
 
-    async def callback(self, interaction: nextcord.Interaction):
+    async def callback(self, interaction: discord.Interaction):
         user_id = interaction.user.id
         async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
             data = await cursor.fetchall()
@@ -534,10 +534,10 @@ class RankShopDropdown(nextcord.ui.Select):
                 return
 
         if self.values[0] == 'Ranks':
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = "Ranks \nSpend your money in order to get more ranks.",
                 description = "**Purchase a rank by clicking on one of the dropdown menus below, and then confirming your purchase.**",
-                colour = nextcord.Colour.random()
+                colour = discord.Colour.random()
             )
 
             embed.add_field(name = f"{copper_iii}", value = f"1,000", inline=True)
@@ -568,28 +568,7 @@ class RankShopDropdown(nextcord.ui.Select):
             await interaction.response.edit_message(embed=embed, view=view)
 
 
-#BEING CODE FOR ____ PURCHASING 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#BEING SHOWING FOR SHOP, i.e. DROPDOWNS, BUTTONS, AND ANY OTHER SHIT
-
-class ShopView(nextcord.ui.View):
+class ShopView(discord.ui.View):
     def __init__(self, bot, *, timeout = 180.0):
         super().__init__(timeout=timeout)
         self.economy = Database(bot)
@@ -597,8 +576,8 @@ class ShopView(nextcord.ui.View):
         self.add_item(RankShopDropdown(bot))
 
 
-    @nextcord.ui.button(label='Main Page', style=nextcord.ButtonStyle.blurple, row=2)
-    async def main_page(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)
+    async def main_page(self, button: discord.ui.Button, interaction: discord.Interaction):
         user_id = interaction.user.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -611,18 +590,18 @@ class ShopView(nextcord.ui.View):
             else:
                 names = "No ranks"
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
 
-    @nextcord.ui.button(label='Delete', style=nextcord.ButtonStyle.red, row=2)
-    async def delete(self, button: nextcord.ui.Button, interaction: nextcord.Interaction):
+    @discord.ui.button(label='Delete', style=discord.ButtonStyle.red, row=2)
+    async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
 
 #BEGIN CODE FOR PROFILE VIEWING
@@ -634,7 +613,11 @@ class Profile(commands.Cog):
 
 
     @commands.command()
-    async def profile(self, ctx, *, user: nextcord.User=None):
+    async def profile(self, 
+        ctx, 
+        user: discord.Member=commands.Option(description="User whose profile you want to see")
+    ):
+        "Show the profile for the given user"
         user_id = user.id if user else ctx.author.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -647,10 +630,10 @@ class Profile(commands.Cog):
             else:
                 names = "No ranks"
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = f"Profile For - {await self.bot.fetch_user(user_id)}",
             description = f"Below will show all economy information for this user",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         embed.add_field(name = "Money Balance:", value = f"${balance:,}", inline=False)
@@ -659,8 +642,39 @@ class Profile(commands.Cog):
         await ctx.send(embed=embed)
 
 
+    @profile.error
+    async def profile_error(self, ctx, error):
+        if isinstance(error, commands.MemberNotFound):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Member Not Found!",
+                description = f"• That member was not found, please check your spelling and try again."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
+
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
+
+
     @commands.command()
     async def shop(self, ctx):
+        "Shows the shop so that you can buy items"
         user_id = ctx.author.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -673,10 +687,10 @@ class Profile(commands.Cog):
             else:
                 names = "No ranks"
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = nextcord.Color.random()
+            color = discord.Color.random()
         )
 
         view = ShopView(self.bot)

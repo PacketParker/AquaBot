@@ -1,7 +1,7 @@
 import re
-import nextcord
+import discord
 import lavalink
-from nextcord.ext import commands
+from discord.ext import commands
 import math
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
@@ -12,7 +12,7 @@ class VoiceConnectionError(commands.CommandError):
 class InvalidVoiceChannel(VoiceConnectionError):
     """Exception for cases of invalid Voice Channels."""
 
-class LavalinkVoiceClient(nextcord.VoiceClient):
+class LavalinkVoiceClient(discord.VoiceClient):
     """
     This is the preferred way to handle external voice sending
     This client will be created via a cls in the connect method of the channel
@@ -20,7 +20,7 @@ class LavalinkVoiceClient(nextcord.VoiceClient):
     https://discordpy.readthedocs.io/en/latest/api.html#voiceprotocol
     """
 
-    def __init__(self, client: nextcord.Client, channel: nextcord.abc.Connectable):
+    def __init__(self, client: discord.Client, channel: discord.abc.Connectable):
         self.client = client
         self.channel = channel
         if hasattr(self.client, 'lavalink'):
@@ -148,7 +148,7 @@ class Music(commands.Cog):
         if not results or not results['tracks']:
             return await ctx.send('Nothing found!')
 
-        embed = nextcord.Embed(color=nextcord.Color.green())
+        embed = discord.Embed(color=discord.Color.green())
 
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
@@ -181,10 +181,10 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ No Channel", 
                 description="• I am not currently connected to any voice channel", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -196,9 +196,9 @@ class Music(commands.Cog):
         player.queue.clear()
         await player.stop()
         await ctx.voice_client.disconnect(force=True)
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             description = f"**Goodbye, thank you :wave: - [{ctx.author.mention}]**", 
-            color=nextcord.Color.green()
+            color=discord.Color.green()
         )
         await ctx.send(embed=embed)
 
@@ -208,10 +208,10 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ No Channel", 
                 description="• I am not currently connected to any voice channel", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -219,9 +219,9 @@ class Music(commands.Cog):
             return await ctx.send('You\'re not in my voicechannel!')
 
         player.queue.clear()
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             description = f"**Queue Cleared - [{ctx.author.mention}]**", 
-            color=nextcord.Color.green()
+            color=discord.Color.green()
         )
         await ctx.send(embed=embed)
 
@@ -232,17 +232,17 @@ class Music(commands.Cog):
 
         if player.is_playing:
             await player.skip()
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 description = f"**Track Skipped - [{ctx.author.mention}]**",
-                colour = nextcord.Colour.green()
+                colour = discord.Colour.green()
             )
             await ctx.send(embed=embed)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing, so I can't skip anything.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -253,17 +253,17 @@ class Music(commands.Cog):
 
         if player.is_playing:
             await player.set_pause(pause = True)
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 description = f"**Pause ⏸️ - [{ctx.author.mention}]**",
-                colour = nextcord.Colour.green()
+                colour = discord.Colour.green()
             )
             await ctx.send(embed=embed)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing, so I can't pause anything.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -274,17 +274,17 @@ class Music(commands.Cog):
 
         if player.is_playing:
             await player.set_pause(pause = False)
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 description = f"**Resuming ⏯️ - [{ctx.author.mention}]**",
-                colour = nextcord.Colour.green()
+                colour = discord.Colour.green()
             )
             await ctx.send(embed=embed)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Paused", 
                 description="• Nothing is currently paused, so I can't resume anything.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -294,10 +294,10 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.queue:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Queued", 
                 description="• Nothing is currently in the queue.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -311,8 +311,8 @@ class Music(commands.Cog):
         for index, track in enumerate(player.queue[start:end], start=start):
             queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
 
-        embed = nextcord.Embed(
-            colour=nextcord.Color.green(),
+        embed = discord.Embed(
+            colour=discord.Color.green(),
             description=f'**{len(player.queue)} tracks**\n\n{queue_list}'
         )
         embed.set_footer(text=f'Viewing page {page}/{pages}')
@@ -324,17 +324,17 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
-        embed= nextcord.Embed(
+        embed= discord.Embed(
             title = player.current.title,
             url = f"https://youtube.com/watch?v={player.current.identifier}",
-            colour = nextcord.Colour.green()
+            colour = discord.Colour.green()
         )
         await ctx.send(embed=embed)
 
@@ -344,10 +344,10 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.queue:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Queued", 
                 description="• Nothing is currently in the queue.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
@@ -357,9 +357,9 @@ class Music(commands.Cog):
         index = index - 1
         removed = player.queue.pop(index)
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             description = 'Removed **' + removed.title + f'** from the queue - [{ctx.author.mention}]',
-            colour = nextcord.Colour.green()
+            colour = discord.Colour.green()
         )
         await ctx.send(embed=embed)
 
@@ -369,18 +369,18 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
         player.shuffle = not player.shuffle
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             description = '🔀 | Shuffle ' + ('enabled' if player.shuffle else 'disabled') + f' - [{ctx.author.mention}]',
-            colour = nextcord.Colour.green()
+            colour = discord.Colour.green()
         )
         await ctx.send(embed=embed)
 
@@ -390,18 +390,18 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing.", 
-                color=nextcord.Color.green()
+                color=discord.Color.green()
             )
             return await ctx.send(embed=embed)
 
         player.repeat = not player.repeat
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             description = '🔁 | Repeat ' + ('enabled' if player.repeat else 'disabled') + f' - [{ctx.author.mention}]',
-            colour = nextcord.Colour.green()
+            colour = discord.Colour.green()
         )
         await ctx.send(embed=embed)
 

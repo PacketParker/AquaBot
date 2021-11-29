@@ -1,6 +1,6 @@
 import time
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from datetime import datetime
 from aiohttp import request
 
@@ -14,80 +14,51 @@ class Information(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        """ Pong! """
+        "Pong! 🏓"
         before = time.monotonic()
         before_ws = int(round(self.bot.latency * 1000, 1))
         ping = (time.monotonic() - before) * 1000
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = f"🏓 WS: {before_ws}ms  |  REST: {int(ping)}ms",
-            colour = nextcord.Colour.yellow()
+            colour = discord.Colour.yellow()
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
 
     @ping.error
     async def ping_error(self, ctx, error):
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             colour = color,
             title = "→ Error!",
             description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     async def invite(self, ctx):
-        embed = nextcord.Embed(
-            colour = nextcord.Colour.blurple(),
-            title = "Invite me to your server!",
-            description = "[Click here to add](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot)"
+        "Get the invite link for the bot and official server"
+        embed = discord.Embed(
+            title = "Invites",
+            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
         )
-        embed.set_thumbnail(url = self.bot.user.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
-
-
-    @commands.command()
-    async def join(self, ctx):
-        embed = nextcord.Embed(
-            colour = nextcord.Colour.blurple(),
-            title = "Join our support server!",
-            description = "[Click here to join](https://discord.gg/fAD3jcexzM)"
-        )
-        embed.set_thumbnail(url = self.bot.user.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     async def serverinfo(self, ctx):
+        "Get information related to the current server. i.e. creation date, roles, etc."
         guild = ctx.guild
-        embed = nextcord.Embed(
-            color=nextcord.Colour.red(),
+        embed = discord.Embed(
+            color=discord.Colour.red(),
             title=f"→ Server Info For {guild.name}",
             description="\n— "
                         "\n➤ Shows all information about a guild."
                         "\n➤The information will be listed below!"
                         "\n —"
         )
-        regions = {
-            "us_west": ":flag_us: — USA West",
-            "us_east": ":flag_us: — USA East",
-            "us_central": ":flag_us: — USA Central",
-            "us_south": ":flag_us: — USA South",
-            "sydney": ":flag_au: — Sydney",
-            "eu_west": ":flag_eu: — Europe West",
-            "eu_east": ":flag_eu: — Europe East",
-            "eu_central": ":flag_eu: — Europe Central",
-            "singapore": ":flag_sg: — Singapore",
-            "russia": ":flag_ru: — Russia",
-            "southafrica": ":flag_za:  — South Africa",
-            "japan": ":flag_jp: — Japan",
-            "brazil": ":flag_br: — Brazil",
-            "india": ":flag_in: — India",
-            "hongkong": ":flag_hk: — Hong Kong",
-        }
+
         verifications = {
             "none": "<:white_circle:625695417782239234> — No Verification",
             "low": "<:green_circle:625541294525251643> — Low Verification",
@@ -102,7 +73,6 @@ class Information(commands.Cog):
         embed.add_field(name="• Guild owner ID: ", value=guild.owner_id)
         embed.add_field(name="• Guild made in: ", value=guild.created_at.strftime("%A %d, %B %Y"))
         embed.add_field(name="• Channels count: ", value=len(guild.channels))
-        embed.add_field(name="• Guild region: ", value=regions[guild.region.name])
         embed.add_field(name="• Guild verification: ", value=verifications[guild.verification_level.name])
         embed.add_field(name="• Member count: ", value=f"{guild.member_count}")
         embed.add_field(name="• Nitro boosters: ", value=guild.premium_subscription_count or "No Nitro Boosters!")
@@ -112,22 +82,36 @@ class Information(commands.Cog):
 
     @serverinfo.error
     async def serverinfo_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
+
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
-    @commands.command(aliases=['userinfo'])
-    async def whois(self, ctx, *, member: nextcord.Member = None):
+    @commands.command()
+    async def whois(self, 
+        ctx, 
+        member: discord.Member=commands.Option(description="Member whose information you want")
+    ):
+        "Send account information for the given user"
         if member is None:
             member = ctx.author
 
-        embed = nextcord.Embed(
-            color=nextcord.Colour.magenta(),
+        embed = discord.Embed(
+            color=discord.Colour.magenta(),
             title=f"→ User Information For {member}",
             description="— "
                         "\n➤ Shows all information about a user. "
@@ -173,13 +157,10 @@ class Information(commands.Cog):
 
 
     @whois.error
-    async def whois_error(self, ctx, error, member: nextcord.Member = None):
+    async def whois_error(self, ctx, error, member: discord.Member=None):
         if isinstance(error, commands.CommandInvokeError):
-            if member is None:
-                member = ctx.author
-
-            embed = nextcord.Embed(
-                color=nextcord.Colour.magenta(),
+            embed = discord.Embed(
+                color=discord.Colour.magenta(),
                 title=f"→ User Information For {member}",
                 description="— "
                             "\n➤ You have too many roles, because of this we have removed that function. "
@@ -220,43 +201,47 @@ class Information(commands.Cog):
             await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BadArgument):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 color=color,
                 title="→ Invalid Member!",
                 description=f"• Please mention a valid member! Example: `{ctx.prefix}whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
         elif isinstance(error, commands.MissingRequiredArgument):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 color=color,
                 title="→ Invalid Argument!",
                 description=f"• Please put a valid option! Example: `{ctx.prefix}whois @user`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
         elif isinstance(error, (commands.UserNotFound, commands.MemberNotFound)):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Member Not Found!",
                 description = f"• Member {error.argument} was not found."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Error!",
                 description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     async def botinfo(self, ctx):
-        embed = nextcord.Embed(
-            color=nextcord.Colour.magenta(),
+        "Get information about the bot. i.e. creator, creation data, etc."
+        embed = discord.Embed(
+            color=discord.Colour.magenta(),
             title=f"→ Bot Information",
             description="— "
                         "\n➤ Shows information about the bot. "
@@ -276,14 +261,15 @@ class Information(commands.Cog):
 
     @commands.command()
     async def track(self, ctx):
+        "Send current amount of servers the bot is in"
         guilds = len(self.bot.guilds)
         members = len(self.bot.users)
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "→ Here are my stats!",
             description="— "
                         "\n➤ Information below "
                         "\n —",
-            colour = nextcord.Colour.random()
+            colour = discord.Colour.random()
         )
         embed.add_field(name="• Amount of Servers: ", value=f"{guilds:,}", inline=False),
         embed.add_field(name="• Amount of Members: ", value=f"{members:,}", inline=False),
@@ -294,10 +280,11 @@ class Information(commands.Cog):
 
     @commands.command()
     async def vote(self, ctx):
-        embed = nextcord.Embed(
+        "Get link to vote for the bot on top.gg"
+        embed = discord.Embed(
             title = "→ Vote for me on top.gg!",
             description = "[Click here to vote](https://top.gg/bot/889027125275922462)",
-            colour = nextcord.Colour.blurple()
+            colour = discord.Colour.blurple()
         )
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
@@ -306,38 +293,17 @@ class Information(commands.Cog):
 
     @commands.command()
     async def covid(self, ctx):
-        URL = "https://disease.sh/v3/covid-19/all"
+        "Get current global Covid-19 data"
+        embed = discord.Embed(
+            title = "World COVID-19 Data",
+            description = "Data is updated once every 5 minutes",
+            colour = 0x000000
+        )
 
-        async with request("GET", URL, headers={}) as response:
-            if response.status == 200:
-                data = await response.json()
-                cases = data["cases"]
-                deaths = data["deaths"]
-                recovered = data["recovered"]
-                active = data["active"]
-                countries = data["affectedCountries"]
+        for key in ctx.bot.covid_dict:
+            embed.add_field(name = f"{key}", value = f"{ctx.bot.covid_dict[key]:,}", inline=True)
 
-                embed = nextcord.Embed(
-                    title = "World COVID-19 Data",
-                    colour = 0x000000
-                )
-
-                embed.add_field(name=":microbe: Total cases", value=f"{cases:,}", inline=True)
-                embed.add_field(name=":skull_crossbones: Total deaths", value=f"{deaths:,}", inline=True)
-                embed.add_field(name=":syringe: Total recovered", value=f"{recovered:,}", inline=True)
-                embed.add_field(name=":radioactive: Total active cases", value=f"{active:,}", inline=True)
-                embed.add_field(name=":map: Total affected countries", value=f"{countries:,}", inline=True)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await ctx.send(embed=embed)
-
-            else:
-                embed = nextcord.Embed(
-                    title = f"API returned a {response.status} status.",
-                    description = "Please try again later.",
-                    colour = color
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
 
 
 def setup(bot):

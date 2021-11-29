@@ -1,5 +1,5 @@
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 import math
 import asyncio
 from datetime import datetime
@@ -20,7 +20,7 @@ class messageCount(commands.Cog):
             return
 
         self.bot.multiplier = 2
-        guild_id = message.author.guild.id
+        guild_id = message.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
@@ -48,11 +48,15 @@ class messageCount(commands.Cog):
         await self.bot.db.commit()
 
 
-    @commands.command(aliases = ['setlvl'])
+    @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def setlevel(self, ctx: commands.Context, *, channel_name: nextcord.TextChannel):
+    async def setlvl(self, 
+        ctx: commands.Context, 
+        channel: discord.TextChannel=commands.Option(description="Channel where you want level up messages to be sent")
+    ):
+        "Set a channel for level up messages to be sent"
         guild_id = ctx.author.guild.id
-        channel = channel_name
+        channel = channel
         channel_id = channel.id
 
         cursor = await self.bot.db.execute("UPDATE level_channel SET channel_id = ? WHERE guild_id = ?", (channel_id, guild_id))
@@ -62,7 +66,7 @@ class messageCount(commands.Cog):
             cursor = await self.bot.db.execute("INSERT INTO level_channel (channel_id, guild_id) VALUES(?, ?)", (channel_id, guild_id))
             await self.bot.db.commit()
 
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             title = "Level Channel Changed -",
             description = f"<#{channel_id}> has been assigned as the level-up message channel for {ctx.author.guild.name}",
         )
@@ -70,38 +74,49 @@ class messageCount(commands.Cog):
         await ctx.send(embed=embed)
 
 
-    @setlevel.error
+    @setlvl.error
     async def setlvl_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
                 description="• You are missing the `manage channels` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     @commands.has_permissions(administrator=True)
     async def lvlreset(self, ctx):
+        "Reset all levels in your server"
         guild_id = ctx.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -109,25 +124,25 @@ class messageCount(commands.Cog):
             if data:
                 channel_id = data[0]
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
                     description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await ctx.send(embed=embed)
+                return await ctx.send(embed=embed, ephemeral=True)
                 
         if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
                 description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
+            return await ctx.send(embed=embed, ephemeral=True)
 
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 color=0xa3a3ff, 
                 title = ":warning: ALERT :warning: ", 
                 description=f"{ctx.author.mention}, are you sure you want to delete the levels for everyone in this server? y/n",
@@ -141,7 +156,7 @@ class messageCount(commands.Cog):
 
             msg = await self.bot.wait_for('message', check=lambda message:message.author == ctx.author and message.channel.id == ctx.channel.id)
             if msg.content in a:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title=f"All levels have just been DELETED!", 
                     description=f"Levels deleted by: {ctx.author.name}#{ctx.author.discriminator}",
                     color=0xa3a3ff
@@ -151,7 +166,7 @@ class messageCount(commands.Cog):
                 await ctx.send(embed=embed)
 
             elif msg.content in b:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title = ":red_circle: NOTICE :red_circle:", 
                     description = f"All levels were NOT deleted!",
                     color=0xa3a3ff
@@ -160,7 +175,7 @@ class messageCount(commands.Cog):
                 await ctx.send(embed=embed)
 
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title = ":red_circle: NOTICE :red_circle:", 
                     description = "All levels were NOT deleted!",
                     color=0xa3a3ff
@@ -172,35 +187,46 @@ class messageCount(commands.Cog):
     @lvlreset.error
     async def lvlreset_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
                 description="• You are missing the `administrator` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `administrator` permission. \nAsk an admin to fix this issue."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
-    async def dellevel(self, ctx, NULL:int = None):
+    async def dellevel(self, ctx):
+        "Remove the channel assigned from sending level up messages"
         guild_id = ctx.author.guild.id
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
@@ -208,54 +234,65 @@ class messageCount(commands.Cog):
                 await self.bot.db.execute(f"DELETE FROM level_channel WHERE guild_id = ?", (guild_id,))
                 await self.bot.db.commit()
 
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     title = "Leveling Channel Deleted -",
                     description = f"The level channel for {ctx.author.guild.name} has been deleted.",
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
                 await ctx.send(embed=embed)
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
                     description = f"• No leveling channel has been setup, therefore I can not delete any channel."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await ctx.send(embed=embed)
+                return await ctx.send(embed=embed, ephemeral=True)
 
 
     @dellevel.error
     async def dellevel_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
                 description="• You are missing the `manage channels` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     @commands.has_permissions(manage_channels=True)
     async def lvlchannel(self, ctx):
+        "See the channel currently assigned to send level up messages to"
         guild_id = ctx.author.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -263,25 +300,25 @@ class messageCount(commands.Cog):
             if data:
                 channel_id = data[0]
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
                     description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await ctx.send(embed=embed)
+                return await ctx.send(embed=embed, ephemeral=True)
                 
         if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
                 description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
+            return await ctx.send(embed=embed, ephemeral=True)
 
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 title = f"Leveling Channel For {ctx.author.guild.name}",
                 description= f'<#{channel_id}>'
             )
@@ -292,69 +329,81 @@ class messageCount(commands.Cog):
     @lvlchannel.error
     async def lvlchannel_error(self, ctx, error):
         if isinstance(error, commands.MissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Missing Permissions!",
                 description="• You are missing the `manage channels` permission."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
+
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
                 description = "• I am missing `manage channels` permission. \nAsk an admin to fix this issue."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
             
         if isinstance(error, commands.CommandInvokeError):
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
                 description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
+            return await ctx.send(embed=embed, ephemeral=True)
+
         else:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Error!",
                 description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed)
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command(aliases=["lvl"])
-    async def level(self, ctx, member: nextcord.Member=None):
+    async def level(self, 
+        ctx,
+        member: discord.Member=commands.Option(description="Member whose level you want to see")
+    ):
+        "See the current level for the given member"
         self.bot.multiplier = 1
         guild_id = ctx.guild.id
-
-        if member is None: member = ctx.author
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
             data = await cursor.fetchone()
             if data:
                 channel_id = data[0]
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
                     description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await ctx.send(embed=embed)
+                return await ctx.send(embed=embed, ephemeral=True)
                 
         if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
                 description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
+            return await ctx.send(embed=embed, ephemeral=True)
 
         else:
             # get user exp
@@ -376,7 +425,7 @@ class messageCount(commands.Cog):
 
             lvl_percentage = ((exp-current_lvl_exp) / (next_lvl_exp-current_lvl_exp)) * 100
 
-            embed = nextcord.Embed(title=f"Stats for {member.name}", colour=nextcord.Colour.gold())
+            embed = discord.Embed(title=f"Stats for {member.name}", colour=discord.Colour.gold())
             embed.add_field(name="Level", value=str(lvl))
             embed.add_field(name="Exp", value=f"{exp}/{next_lvl_exp}")
             embed.add_field(name="Rank", value=f"{rank}/{ctx.guild.member_count}")
@@ -387,17 +436,28 @@ class messageCount(commands.Cog):
 
     @level.error
     async def level_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        if isinstance(error, commands.MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Missing Required Argument!",
+                description = f"• {error}"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
+
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
     @commands.command()
     async def lvlboard(self, ctx): 
+        "See the current leaderboard for leveling in your server"
         guild_id = ctx.guild.id
 
         async with self.bot.db.execute("SELECT channel_id FROM level_channel WHERE guild_id = ?", (guild_id,)) as cursor:
@@ -405,22 +465,22 @@ class messageCount(commands.Cog):
             if data:
                 channel_id = data[0]
             else:
-                embed = nextcord.Embed(
+                embed = discord.Embed(
                     colour = color,
                     title = "→ Leveling Not Setup!",
                     description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
                 )
                 embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await ctx.send(embed=embed)
+                return await ctx.send(embed=embed, ephemeral=True)
                 
         if channel_id == None or 0 and not data:
-            embed = nextcord.Embed(
+            embed = discord.Embed(
                 colour = color,
                 title = "→ Leveling Not Setup!",
                 description = f"• Leveling for this server has not been setup. Ask an admin to set it up by running the `{ctx.prefix}setlevel` command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await ctx.send(embed=embed)
+            return await ctx.send(embed=embed, ephemeral=True)
 
         else:
             buttons = {}
@@ -432,7 +492,7 @@ class messageCount(commands.Cog):
             index = 1
             entries_per_page = 10
 
-            embed = nextcord.Embed(title=f"Leaderboard Page {current}", description="", colour=nextcord.Colour.gold())
+            embed = discord.Embed(title=f"Leaderboard Page {current}", description="", colour=discord.Colour.gold())
             msg = await ctx.send(embed=embed)
 
             for button in buttons:
@@ -468,13 +528,13 @@ class messageCount(commands.Cog):
 
     @lvlboard.error
     async def lvlboard_error(self, ctx, error):
-        embed = nextcord.Embed(
+        embed = discord.Embed(
             colour = color,
             title = "→ Error!",
             description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, ephemeral=True)
 
 
 def setup(bot):

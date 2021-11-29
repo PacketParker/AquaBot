@@ -1,5 +1,5 @@
-from nextcord.ext import commands
-import nextcord
+from discord.ext import commands
+import discord
 
 log_channel_id = 889293946801516554
 
@@ -31,7 +31,7 @@ class Count(commands.Cog):
                     await self.bot.db.commit()
 
 
-    @commands.command()
+    @commands.command(slash_command=False)
     @commands.is_owner()
     async def count(self, ctx):
         async with self.bot.db.execute("SELECT count FROM counter WHERE bot_id = ?", (self.bot.user.id,)) as cursor:
@@ -39,16 +39,6 @@ class Count(commands.Cog):
             count = data[0]
 
         await ctx.send(f"{count:,}")
-
-
-    @count.error
-    async def count_error(self, ctx, error):
-        embed = nextcord.Embed(
-            colour = color,
-            title = "→ You Are Not The Owner!",
-            description = f"• You can not run that command because you are not the bot owner."
-        )
-        await ctx.send(embed=embed)
 
 
 def setup(bot):

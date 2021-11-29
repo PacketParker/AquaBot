@@ -3,15 +3,13 @@ import os
 import random
 from typing import List, Tuple, Union
 
-import nextcord
-from nextcord.ext import commands
+import discord
+from discord.ext import commands
 from utils.card import Card
 from utils.helpers import *
 from PIL import Image
 from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 from utils.economy import Database
-
-import aiosqlite
 
 Entry = tuple[int, int]
 
@@ -25,7 +23,7 @@ class Blackjack(commands.Cog):
     async def check_bet(
         self,
         ctx: commands.Context,
-        bet: int=DEFAULT_BET,
+        bet
     ):
         bet = int(bet)
         if bet <= 0:
@@ -84,8 +82,12 @@ class Blackjack(commands.Cog):
         return sum
 
 
-    @commands.command(aliases = ["bj"])
-    async def blackjack(self, ctx: commands.Context, bet: int=DEFAULT_BET):
+    @commands.command()
+    async def blackjack(self, 
+        ctx: commands.Context, 
+        bet: int=commands.Option(description="Amount you would like to bet")
+    ):
+        "Bet your money on a blackjack game vs. the dealer"
         if f"{ctx.author.id}.png" in os.listdir("tables"):
             await ctx.send(f"{ctx.author.mention}, you must finish the game you have started before beginning a new one.")
 
@@ -105,19 +107,19 @@ class Blackjack(commands.Cog):
             player_score = self.calc_hand(player_hand)
             dealer_score = self.calc_hand(dealer_hand)
 
-            async def out_table(**kwargs) -> nextcord.Message:
+            async def out_table(**kwargs) -> discord.Message:
                 self.output(ctx.author.id, dealer_hand, player_hand)
                 embed = make_embed(**kwargs)
-                file = nextcord.File(
+                file = discord.File(
                     f"tables/{ctx.author.id}.png", filename=f"{ctx.author.id}.png"
                 )
                 embed.set_image(url=f"attachment://{ctx.author.id}.png")
-                msg: nextcord.Message = await ctx.send(file=file, embed=embed)
+                msg: discord.Message = await ctx.send(file=file, embed=embed)
                 return msg
             
             def check(
-                reaction: nextcord.Reaction,
-                user: Union[nextcord.Member, nextcord.User]
+                reaction: discord.Reaction,
+                user: Union[discord.Member, discord.User]
             ) -> bool:
                 return all((
                     str(reaction.emoji) in ("🇸", "🇭"),  # correct emoji
@@ -189,9 +191,9 @@ class Blackjack(commands.Cog):
                     result = ("You win!", 'won')
 
             color = (
-                nextcord.Color.red() if result[1] == 'lost'
-                else nextcord.Color.green() if result[1] == 'won'
-                else nextcord.Color.blue()
+                discord.Color.red() if result[1] == 'lost'
+                else discord.Color.green() if result[1] == 'won'
+                else discord.Color.blue()
             )
             try:
                 await msg.delete()

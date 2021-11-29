@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 from pathlib import Path
 import yaml
-from nextcord import Color, Embed
+from discord import Color, Embed
 
 class InsufficientFundsException(Exception):
     def __init__(self) -> None:
