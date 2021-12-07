@@ -5,9 +5,6 @@ from utils.helpers import *
 from utils.helpers import InsufficientFundsException
 import sqlite3
 
-log_channel_id = 889293946801516554
-
-black = 0x000000
 color = 0xc48af
 
 class Economy:
@@ -27,7 +24,6 @@ class Economy:
         if bet > current:
             raise InsufficientFundsException()
             
-
 #BEGIN CODE FOR RANK PURCHASING
 
 class AfterRankPurchase(discord.ui.View):

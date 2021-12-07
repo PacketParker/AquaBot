@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from datetime import datetime
-
 from discord.ext.commands.errors import CommandInvokeError, MissingRequiredArgument
 
 log_channel_id = 889293946801516554

@@ -1,7 +1,6 @@
 import discord
-from discord.errors import NotFound
 from discord.ext import commands
-from discord.ext.commands.errors import CommandInvokeError, UserNotFound
+from discord.ext.commands.errors import CommandInvokeError
 from utils.economy import Database
 from utils.helpers import *
 

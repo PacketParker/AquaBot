@@ -2,9 +2,7 @@ import time
 import discord
 from discord.ext import commands
 from datetime import datetime
-from aiohttp import request
 
-black = 0x000000
 color = 0xc48aff
 
 class Information(commands.Cog):
@@ -24,6 +22,7 @@ class Information(commands.Cog):
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await ctx.send(embed=embed)
+
 
     @ping.error
     async def ping_error(self, ctx, error):

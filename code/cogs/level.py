@@ -4,11 +4,7 @@ import math
 import asyncio
 from datetime import datetime
 
-log_channel_id = 889293946801516554
-
-black = 0x000000
 color = 0xc48aff
-
 
 class messageCount(commands.Cog):
     def __init__(self, bot):

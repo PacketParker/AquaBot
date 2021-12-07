@@ -1,9 +1,7 @@
 from discord.ext import commands
 import discord
-import asyncio
 from datetime import datetime
 
-log_channel_id = 889293946801516554
 color = 0xc48aff
 
 class ContactView(discord.ui.View):

@@ -3,7 +3,6 @@ import discord
 import lavalink
 from discord.ext import commands
 import math
-import time
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -67,7 +66,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
 class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-'''
+
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(895812096456011786)
@@ -422,6 +421,6 @@ class Music(commands.Cog):
         )
         await ctx.send(embed=embed)
 
-'''
+
 def setup(bot):
     bot.add_cog(Music(bot))

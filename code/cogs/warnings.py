@@ -4,9 +4,6 @@ from datetime import datetime
 
 from discord.ext.commands.errors import MemberNotFound, MissingRequiredArgument
 
-log_channel_id = 889293946801516554
-
-black = 0x000000
 color = 0xc48aff
 
 class Warnings(commands.Cog):

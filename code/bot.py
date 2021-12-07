@@ -22,8 +22,6 @@ from decimal import *
     #Change token in main file andi n config.yml
     #Add main bots token to line 74 of music.py
 
-log_channel_id = 889293946801516554
-
 async def initialise():
     await bot.wait_until_ready()
     bot.db = await aiosqlite.connect("database/data.db")
@@ -280,8 +278,8 @@ async def new(ctx):
     "See all of the new changes in the bot"
     embed = discord.Embed(
         title = "Change Log",
-        description = "Here is everything that has changed on the 12/10 update \n *Note - in order to get slash commands working in you server, you must reinvite the bot with the new link provided in the `invite` command",
-        colour = discord.Colour.greyple()
+        description = "Here is everything that has changed on the 12/7 update \n *Note - in order to get slash commands working in you server, you must reinvite the bot with the new link provided in the `invite` command",
+        colour = discord.Colour.og_blurple()
     )
 
     embed.add_field(name = "Slash Commands", value = "All commands have now been transfered to work in both message style commands, and the new slash commands option. This change is due to the upcoming transfer to slash commands that discord is forcing developers into come April 2022. All command that require user input - any text that the user inputs after the command itself, like $play (song name) - will only be available in the slash command format after the April deadline. I have gone ahead and transfered ALL commands over to slash commands, however, in order to help you get used to the new format.", inline=True)
