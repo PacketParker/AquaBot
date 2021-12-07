@@ -41,7 +41,7 @@ class Information(commands.Cog):
         "Get the invite link for the bot and official server"
         embed = discord.Embed(
             title = "Invites",
-            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
+            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
         )
         await ctx.send(embed=embed, ephemeral=True)
 
@@ -302,6 +302,8 @@ class Information(commands.Cog):
 
         for key in ctx.bot.covid_dict:
             embed.add_field(name = f"{key}", value = f"{ctx.bot.covid_dict[key]:,}", inline=True)
+
+        embed.set_footer(text="Information provided from:  https://disease.sh/v3/covid-19/all")
 
         await ctx.send(embed=embed)
 

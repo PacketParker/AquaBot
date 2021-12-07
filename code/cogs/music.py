@@ -3,6 +3,7 @@ import discord
 import lavalink
 from discord.ext import commands
 import math
+import time
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -69,7 +70,7 @@ class Music(commands.Cog):
 '''
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
-            bot.lavalink = lavalink.Client(self.bot.user.id)
+            bot.lavalink = lavalink.Client(895812096456011786)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
 
         lavalink.add_event_hook(self.track_hook)
@@ -134,9 +135,13 @@ class Music(commands.Cog):
 
 
     @commands.command(aliases=['p'])
-    async def play(self, ctx, *, query: str):
+    async def play(self, 
+        ctx, 
+        name: str=commands.Option(description="Name or link of the song you want to play")
+    ):
+        "Play a song from your favorite music provider"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
-        query = query.strip('<>')
+        query = name.strip('<>')
 
         # Check if the user input might be a URL. If it isn't, we can Lavalink do a YouTube search for it instead.
         # SoundCloud searching is possible by prefixing "scsearch:" instead.
@@ -177,7 +182,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def stop(self, ctx):
-        """ Disconnects the player from the voice channel and clears its queue. """
+        "Disconnects the bot from the voice channel and clears the queue"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
@@ -205,6 +210,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def clear(self, ctx):
+        "Clear the current queue of songs"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_connected:
@@ -228,6 +234,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def skip(self, ctx):
+        "Skips the song that is currently playing"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if player.is_playing:
@@ -249,6 +256,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def pause(self, ctx):
+        "Pauses the song that is currently playing"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if player.is_playing:
@@ -270,6 +278,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def resume(self, ctx):
+        "Resumes the paused song"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if player.is_playing:
@@ -291,6 +300,7 @@ class Music(commands.Cog):
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx, page: int = 1):
+        "See the current queue of songs"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.queue:
@@ -321,6 +331,7 @@ class Music(commands.Cog):
 
     @commands.command(name="np", aliases=['nowplaying'])
     async def now_playing(self,ctx):
+        "Show what song is currently playing"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:
@@ -340,7 +351,11 @@ class Music(commands.Cog):
 
 
     @commands.command()
-    async def remove(self, ctx, index: int):
+    async def remove(self, 
+        ctx, 
+        number: int=commands.Option(description="Queue number of the song you want to remove")
+    ):
+        "Removes the specified song from the queue"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.queue:
@@ -351,10 +366,10 @@ class Music(commands.Cog):
             )
             return await ctx.send(embed=embed)
 
-        if index > len(player.queue) or index < 1:
+        if number > len(player.queue) or number < 1:
             return await ctx.send('Index has to be >=1 and <=queue size')
 
-        index = index - 1
+        index = number - 1
         removed = player.queue.pop(index)
 
         embed = discord.Embed(
@@ -366,6 +381,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def shuffle(self, ctx):
+        "Plays the songs in the queue in a randomized order, until turned off"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:
@@ -387,6 +403,7 @@ class Music(commands.Cog):
 
     @commands.command()
     async def repeat(self, ctx):
+        "Repeats the song that is currently played, until turned off"
         player = self.bot.lavalink.player_manager.get(ctx.guild.id)
 
         if not player.is_playing:

@@ -39,4 +39,3 @@ def make_embed(title=None, description=None, color=None, author=None,
     if footer: embed.set_footer(text=footer)
     else: embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
     return embed
-

@@ -2,8 +2,7 @@ import discord
 from discord.ext import commands
 from utils.economy import Database
 from utils.helpers import *
-from PIL import Image
-from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
+from utils.helpers import InsufficientFundsException
 import sqlite3
 
 log_channel_id = 889293946801516554
@@ -27,6 +26,7 @@ class Economy:
         current = (await self.economy.get_entry(user_id))[1]
         if bet > current:
             raise InsufficientFundsException()
+            
 
 #BEGIN CODE FOR RANK PURCHASING
 
@@ -83,9 +83,9 @@ class ConfirmRankPurchase(discord.ui.View):
 
         async with self.bot.db.execute("SELECT rank_name, rank_int FROM profile WHERE user_id = ?", (user_id,)) as cursor:
             try:
+                await self.check.check_bet(user_id, self.bet)
                 await self.bot.db.execute("INSERT INTO profile (user_id, rank_name, rank_int) VALUES(?,?,?)", (user_id, self.rank_name, self.rank_int))
                 await self.bot.db.commit()
-                await self.check.check_bet(user_id, self.bet)
                 await self.economy.add_money(user_id, self.bet*-1)
 
                 embed = discord.Embed(
@@ -101,6 +101,16 @@ class ConfirmRankPurchase(discord.ui.View):
                 embed = discord.Embed(
                     title = "Rank Already Owned",
                     description = f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
+                    color = discord.Color.random()
+                )
+
+                view = RankView(self.bot)
+                return await interaction.response.edit_message(embed=embed, view=view)
+
+            except InsufficientFundsException:
+                embed = discord.Embed(
+                    title = "Not Enough Money",
+                    description = f"You do not have enough money to make that purchase, come back once you've earned some more money.",
                     color = discord.Color.random()
                 )
 
@@ -151,7 +161,7 @@ class RankDropdown(discord.ui.Select):
 
         ]
 
-        super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
+        super().__init__(placeholder='Choose a rank...', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
         if self.values[0] == 'Copper III':
@@ -325,7 +335,7 @@ class RankDropdown(discord.ui.Select):
         if self.values[0] == 'Platinum III':
             embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Platinum III`rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                description = "If you are sure you would like to purchase the `Platinum III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
                 colour = discord.Colour.random()
             )
 
@@ -381,7 +391,7 @@ class RankDropdown(discord.ui.Select):
         if self.values[0] == 'Champion':
             embed = discord.Embed(
                 title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Champion`rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                description = "If you are sure you would like to purchase the `Champion` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
                 colour = discord.Colour.random()
             )
 
@@ -428,7 +438,10 @@ class RankView(discord.ui.View):
         await interaction.message.delete()
 
 
-class RankShopDropdown(discord.ui.Select):
+##END RANK AND BEGIN PROFILE AND OTHER MAIN SHOP VIEWING
+
+
+class ShopDropdown(discord.ui.Select):
     def __init__(self, bot):
         self.bot = bot
 
@@ -437,7 +450,6 @@ class RankShopDropdown(discord.ui.Select):
         ]
 
         super().__init__(placeholder='Choose a category...', min_values=1, max_values=1, options=options)
-
 
     async def callback(self, interaction: discord.Interaction):
         user_id = interaction.user.id
@@ -531,7 +543,23 @@ class RankShopDropdown(discord.ui.Select):
                 else:
                     champion = "Champion"
             else:
-                return
+                copper_iii = "Copper III"
+                copper_ii = "Copper II"
+                copper_i = "Copper I"
+                bronze_iii = "Bronze III"
+                bronze_ii = "Bronze II"
+                bronze_i = "Bronze I"
+                silver_iii = "Silver III"
+                silver_ii = "Silver II"
+                silver_i = "Silver I"
+                gold_iii = "Gold III"
+                gold_ii = "Gold II"
+                gold_i = "Gold I"
+                platinum_iii = "Platinum III"
+                platinum_ii = "Platinum II"
+                platinum_i = "Platinum I"
+                diamond = "Diamond"
+                champion = "Champion"
 
         if self.values[0] == 'Ranks':
             embed = discord.Embed(
@@ -573,7 +601,7 @@ class ShopView(discord.ui.View):
         super().__init__(timeout=timeout)
         self.economy = Database(bot)
         self.bot = bot
-        self.add_item(RankShopDropdown(bot))
+        self.add_item(ShopDropdown(bot))
 
 
     @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)
@@ -604,7 +632,9 @@ class ShopView(discord.ui.View):
     async def delete(self, button: discord.ui.Button, interaction: discord.Interaction):
         await interaction.message.delete()
 
+
 #BEGIN CODE FOR PROFILE VIEWING
+
 
 class Profile(commands.Cog):
     def __init__(self, bot):
