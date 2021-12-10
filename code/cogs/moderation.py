@@ -3,8 +3,6 @@ from discord.ext import commands
 from datetime import datetime
 from discord.ext.commands.errors import CommandInvokeError, MissingRequiredArgument
 
-log_channel_id = 889293946801516554
-
 yellow = 0xffc400
 color = 0xc48aff
 
@@ -20,7 +18,6 @@ class Moderation(commands.Cog):
         amount: int=commands.Option(description="Amount of messages to delete")
     ):
         "Delete the specified number of messages from the channel"
-        log = self.bot.get_channel(log_channel_id)
         if amount == None:
             embed = discord.Embed(
                 colour = color,
@@ -40,16 +37,6 @@ class Moderation(commands.Cog):
         else:
             await ctx.channel.purge(limit=amount+1)
             await ctx.send("Messages Deleted", ephemeral=True)
-
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**{ctx.author} has run the purge command in {ctx.channel.name}**",
-                    colour = yellow
-                )
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await log.send(embed=embed)
 
 
     @purge.error
@@ -72,7 +59,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        if isinstance(error, commands.BotMissingPermissions):
+        if isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -100,7 +87,6 @@ class Moderation(commands.Cog):
         reason: str=commands.Option(description="Reason for kicking the member")
     ):
         "Kick a member from your server"
-        log = self.bot.get_channel(log_channel_id)
 
         if member == None:
             embed = discord.Embed(
@@ -127,19 +113,6 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**User {member} has been kicked for {reason}**",
-                    colour = yellow
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
-
     
     @kick.error
     async def kick_error(self, ctx, error):
@@ -161,16 +134,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        if isinstance(error, CommandInvokeError):
-            embed = discord.Embed(
-                colour = color,
-                title = "→ Missing Permissions!",
-                description="• You do not have the required permissions to kick the member."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed, ephemeral=True)
-
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -206,7 +170,6 @@ class Moderation(commands.Cog):
         reason: str=commands.Option(description="Reason you want to ban the member")
     ):
         "Ban a member from your server"
-        log = self.bot.get_channel(log_channel_id)
 
         if member == None:
             embed = discord.Embed(
@@ -233,19 +196,6 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**User {member} has been banned for {reason}**",
-                    colour = discord.Colour.red()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
-
 
     @ban.error
     async def ban_error(self, ctx, error):
@@ -254,15 +204,6 @@ class Moderation(commands.Cog):
                 colour = color,
                 title = "→ Missing Permissions!",
                 description="• You are missing the `ban members` permission."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed, ephemeral=True)
-        
-        if isinstance(error, CommandInvokeError):
-            embed = discord.Embed(
-                colour = color,
-                title = "→ Missing Permissions!",
-                description="• You do not have the required permissions to ban the member."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
@@ -276,7 +217,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -312,7 +253,6 @@ class Moderation(commands.Cog):
         reason: str=commands.Option(description="Reason you want to softban a member")
     ):
         "Ban and then immediately unban a member"
-        log = self.bot.get_channel(log_channel_id)
 
         if member == None:
             embed = discord.Embed(
@@ -337,19 +277,6 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**User {member} has been soft-banned with no given reason**",
-                    colour = discord.Colour.orange()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
-
         elif reason != None and member != None:
             await member.ban(reason=reason)
             await member.unban()
@@ -364,19 +291,6 @@ class Moderation(commands.Cog):
 
             await ctx.send(embed=embed)
 
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**User {member} has been soft-banned for {reason}**",
-                    colour = discord.Colour.orange()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
-
 
     @softban.error
     async def softban_error(self, ctx, error):
@@ -389,16 +303,7 @@ class Moderation(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        if isinstance(error, CommandInvokeError):
-            embed = discord.Embed(
-                colour = color,
-                title = "→ Missing Permissions!",
-                description="• You do not have the required permissions to softban the member."
-            )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await ctx.send(embed=embed, ephemeral=True)
-
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",

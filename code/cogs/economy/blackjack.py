@@ -11,7 +11,7 @@ from PIL import Image
 from utils.helpers import DEFAULT_PREFIX, InsufficientFundsException
 from utils.economy import Database
 
-Entry = tuple[int, int]
+Entry = Tuple[int, int]
 
 color = 0xc48aff
 

@@ -5,7 +5,6 @@ from datetime import datetime
 
 from utils.helpers import *
 
-log_channel_id = 889293946801516554
 color = 0xc48aff
 
 class Mute_(commands.Cog):
@@ -50,7 +49,7 @@ class Mute_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -132,7 +131,7 @@ class Mute_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -228,10 +227,9 @@ class Mute_(commands.Cog):
     async def tempmute(self, 
         ctx, 
         member: discord.Member=commands.Option(description="Member to be muted"), 
-        time: str and int=commands.Option(description="Amount of time. EX: 5 days, or 2 hours")
+        time: str and int=commands.Option(description="Amount of time in hours")
     ): 
         "Mute a user for a specified amount of time"
-        log = self.bot.get_channel(log_channel_id)
         if member == None:
             embed = discord.Embed(
                 colour = color,
@@ -262,32 +260,11 @@ class Mute_(commands.Cog):
                 colour = discord.Colour.red()
             )
 
-            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'\u200b', inline=False)
             embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
-
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                minutes = time * 3600
-                guild_id = ctx.author.guild.id
-                async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-                    data = await cursor.fetchone()
-                    role_id = data[0]
-                role_name = ctx.guild.get_role(role_id)
-                role = discord.utils.get(ctx.guild.roles, name=f"{role_name}")
-                await member.add_roles(role)
-                embed = discord.Embed(
-                    title = f"**User {member} has been muted for {time} hours.**",
-                    colour = discord.Colour.red()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
 
             if minutes:
                 await asyncio.sleep(minutes)
@@ -350,7 +327,6 @@ class Mute_(commands.Cog):
         reason: str=commands.Option(description="Reason for muting the user")
     ): 
         "Mutes a user for an indefinite amount of time"
-        log = self.bot.get_channel(log_channel_id)
         if member == None:
             embed = discord.Embed(
                 colour = color,
@@ -372,24 +348,11 @@ class Mute_(commands.Cog):
                 colour = discord.Colour.red()
             )
 
-            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'\u200b', inline=False)
             embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
-
-            if ctx.guild.id == 889027208964874240:
-                log = self.bot.get_channel(log_channel_id)
-                embed = discord.Embed(
-                    title = f"**User {member} has been muted for {reason}.**",
-                    colour = discord.Colour.red()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
 
 
     @mute.error
@@ -456,7 +419,6 @@ class Mute_(commands.Cog):
             await ctx.send(embed=embed, ephemeral=True)
         
         elif member != None:
-            log = self.bot.get_channel(log_channel_id)
             guild_id = ctx.author.guild.id
             async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
                 data = await cursor.fetchone()
@@ -467,24 +429,12 @@ class Mute_(commands.Cog):
                 title = f"**User {member} has been unmuted.**",
                 colour = discord.Colour.green()
             )
-            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
+            embed.add_field(name=f'This command was issued by {ctx.author}', value = f'\u200b', inline=False)
             embed.set_thumbnail(url = member.avatar.url)
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await ctx.send(embed=embed)
             await member.remove_roles(role)
-
-            if ctx.guild.id == 889027208964874240:
-                embed = discord.Embed(
-                    title = f"**User {member} has been unmuted.**",
-                    colour = discord.Colour.green()
-                )
-
-                embed.add_field(name=f'This command was issued by {ctx.author}', value = f'This has been logged to {log.mention}', inline=False)
-                embed.set_thumbnail(url = ctx.author.avatar.url)
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
-                await log.send(embed=embed)
 
 
     @unmute.error
@@ -507,7 +457,7 @@ class Mute_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",

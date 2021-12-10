@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord.ext.commands.errors import MissingRequiredArgument
 from utils.helpers import *
 from datetime import datetime
 
@@ -31,14 +32,6 @@ class Crypto(commands.Cog):
         ticker: str=commands.Option(description="Ticker for crypto you want expanded information on")
     ):
         "Send more information on a certain cryptocurrency"
-        if ticker == None:
-            embed = discord.Embed(
-                colour = color,
-                title = "→ No Ticker Provided!",
-                description=f"• You must provide a ticker in order to use this command. Example: `{ctx.prefix}crypto btc`"
-            )
-            await ctx.send(embed=embed)
-
         ticker = str(ticker)
 
         if ticker.lower() == "btc":
@@ -304,13 +297,21 @@ class Crypto(commands.Cog):
 
     @crypto.error
     async def crypto_error(self, ctx, error):
-        embed = discord.Embed(
-            colour = color,
-            title = "→ Error!",
-            description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
-        )
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await ctx.send(embed=embed, ephemeral=True)
+        if isinstance(error, MissingRequiredArgument):
+            embed = discord.Embed(
+                colour = color,
+                title = "→ No Ticker Provided!",
+                description=f"• You must provide a ticker in order to use this command. Example: `{ctx.prefix}crypto btc`"
+            )
+            await ctx.send(embed=embed)
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Error!",
+                description = f"• An error occured, try running `{ctx.prefix}help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `{ctx.prefix}contact`"
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await ctx.send(embed=embed, ephemeral=True)
 
 
 def setup(bot: commands.Bot):

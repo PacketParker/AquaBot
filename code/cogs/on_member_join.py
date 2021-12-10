@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 
-log_channel_id = 889293946801516554
 color = 0xc48aff
 
 class Join_(commands.Cog):
@@ -46,7 +45,7 @@ class Join_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -119,7 +118,7 @@ class Join_(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",

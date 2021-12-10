@@ -1,6 +1,5 @@
 import random
 import aiosqlite
-from functools import wraps
 from typing import Tuple, List
 
 Entry = Tuple[int, int]

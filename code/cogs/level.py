@@ -90,7 +90,7 @@ class messageCount(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -200,7 +200,7 @@ class messageCount(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
@@ -266,7 +266,7 @@ class messageCount(commands.Cog):
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await ctx.send(embed=embed, ephemeral=True)
 
-        elif isinstance(error, commands.BotMissingPermissions):
+        elif isinstance(error, commands.CommandInvokeError):
             embed = discord.Embed(
                 colour = color,
                 title = "→ Bot Missing Permissions!",
