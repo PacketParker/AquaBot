@@ -285,9 +285,10 @@ async def new(ctx):
     embed.add_field(name = "Slash Commands", value = "All commands have now been transfered to work in both message style commands, and the new slash commands option. This change is due to the upcoming transfer to slash commands that discord is forcing developers into come April 2022. All command that require user input - any text that the user inputs after the command itself, like $play (song name) - will only be available in the slash command format after the April deadline. I have gone ahead and transfered ALL commands over to slash commands, however, in order to help you get used to the new format.", inline=True)
     embed.add_field(name = "Shop", value = "A shop has also been added, which is viewable under the `shop` command. Currently you are able to buy global ranks through the bot, however, there will be more things added soon. For any suggestion, feel free to join the official support server - link available through the `invite` command - and ping the owner with your suggestion.", inline=True)
     embed.add_field(name = "Crypto", value = "A new feature has been added to view the current prices of the top 20 cryptocurrencies, this is available through the `prices` command. You can also see more in depth information (currently only the 24 hour change percentage) through the `crypto` command. As with the shop, suggestions are encouraged, so please join the official support server with the `invite` command, and ping the owner with you suggestions.", inline=False)
-    embed.add_field(name = "\u200b", value = "\u200b", inline=False)
     embed.add_field(name = "Bugs", value = "As always we've worked hard to make sure all of the bugs have been ironed out, however, if you find any bug please report it to us in the official support server.", inline=True)
+    embed.add_field(name = "12/20 - Small Update", value = "Blackjack earnings have been doubled, have fun.", inline=False)
     embed.add_field(name = "\u200b", value = "Thank you all for using Aqua Bot!", inline=False)
+
 
     await ctx.send(embed=embed)
 

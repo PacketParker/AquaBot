@@ -91,6 +91,7 @@ class Blackjack(commands.Cog):
         if f"{ctx.author.id}.png" in os.listdir("tables"):
             await ctx.send(f"{ctx.author.mention}, you must finish the game you have started before beginning a new one.")
 
+
         else:
             await self.check_bet(ctx, bet)
             deck = [Card(suit, num) for num in range(2,15) for suit in Card.suits]
@@ -134,8 +135,7 @@ class Blackjack(commands.Cog):
                 player_score = self.calc_hand(player_hand)
                 dealer_score = self.calc_hand(dealer_hand)
                 if player_score == 21:  # win condition
-                    bet = int(bet*1.5)
-                    await self.economy.add_money(ctx.author.id, bet)
+                    await self.economy.add_money(ctx.author.id, bet*2)
                     result = ("Blackjack!", 'won')
                     break
                 elif player_score > 21:  # losing condition
@@ -179,7 +179,7 @@ class Blackjack(commands.Cog):
                     await self.economy.add_money(ctx.author.id, bet*-1)
                     result = ('Dealer blackjack', 'lost')
                 elif dealer_score > 21:
-                    await self.economy.add_money(ctx.author.id, bet)
+                    await self.economy.add_money(ctx.author.id, bet*2)
                     result = ("Dealer busts", 'won')
                 elif dealer_score == player_score:
                     result = ("Tie!", 'kept')
@@ -187,7 +187,7 @@ class Blackjack(commands.Cog):
                     await self.economy.add_money(ctx.author.id, bet*-1)
                     result = ("You lose!", 'lost')
                 elif dealer_score < player_score:
-                    await self.economy.add_money(ctx.author.id, bet)
+                    await self.economy.add_money(ctx.author.id, bet*2)
                     result = ("You win!", 'won')
 
             color = (
@@ -199,13 +199,23 @@ class Blackjack(commands.Cog):
                 await msg.delete()
             except:
                 pass
+
+            if result[1] == 'won':
+                description=(
+                    f"**You won ${bet*2}**\nYour hand: {player_score}\n" +
+                    f"Dealer's hand: {dealer_score}"
+                )
+
+            elif result[1] == 'lost':
+                description=(
+                    f"**You lost ${bet}**\nYour hand: {player_score}\n" +
+                    f"Dealer's hand: {dealer_score}"
+                )
+
             msg = await out_table(
                 title=result[0],
                 color=color,
-                description=(
-                    f"**You {result[1]} ${bet}**\nYour hand: {player_score}\n" +
-                    f"Dealer's hand: {dealer_score}"
-                )
+                description=description
             )
             os.remove(f'./tables/{ctx.author.id}.png')
 
