@@ -202,13 +202,13 @@ class Blackjack(commands.Cog):
 
             if result[1] == 'won':
                 description=(
-                    f"**You won ${bet*2}**\nYour hand: {player_score}\n" +
+                    f"**You won ${bet*2:,}**\nYour hand: {player_score}\n" +
                     f"Dealer's hand: {dealer_score}"
                 )
 
             elif result[1] == 'lost':
                 description=(
-                    f"**You lost ${bet}**\nYour hand: {player_score}\n" +
+                    f"**You lost ${bet:,}**\nYour hand: {player_score}\n" +
                     f"Dealer's hand: {dealer_score}"
                 )
 
