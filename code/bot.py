@@ -5,10 +5,6 @@ from utils.helpers import *
 import aiosqlite
 import asyncio
 
-import hmac
-import hashlib
-import time
-import base64
 import requests
 import asyncio
 from aiohttp import request
@@ -18,9 +14,8 @@ from decimal import *
 
 
 #BEFORE UPLOAD TO MAIN BOT FOLLOW THESE STEPS:
-    #Change prefix in main file and in config.yml
-    #Change token in main file andi n config.yml
-    #Add main bots token to line 74 of music.py
+    #Change prefix and token in config.yml
+    #Add bot id to line 72 in music.py
 
 async def initialise():
     await bot.wait_until_ready()
@@ -94,29 +89,8 @@ for filename in os.listdir('./cogs/economy'):
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
 
-
-api_key = "ca75c18a5eb09f6d3e2b691f176fcbb2dc46c0f3226818a1f5f5e026939303be"
-secret = "83f9a8c0a33b9a6c652c6b8342beb43050c69b2cfea13664de3f438e7333fb9df527ad60a311515947b6bd58752c50542f53144edd3c3442e317bdece2234cd9"
-
-nonce = int(time.time() * 1000)
 base_url = "https://dev-api.shrimpy.io"
 request_path = "/v1/exchanges/binance/ticker"
-
-method = "GET"
-prehash_string = ''.join([request_path, method, str(nonce), ('')])
-
-secret_key = base64.b64decode(secret)
-prehash_string = prehash_string.encode('ascii')
-
-signature = hmac.new(secret_key, prehash_string, hashlib.sha256)
-signature_b64 = base64.b64encode(signature.digest()).decode('utf-8')
-
-headers = {
-    'Content-Type': 'application/json',
-    'DEV-SHRIMPY-KEY': api_key,
-    'DEV-SHRIMPY-API-NONCE': str(nonce),
-    'DEV-SHRIMPY-API-SIGNATURE': signature_b64
-}
 
 bot.price_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0, 
     'Solana (SOL)':0, 'Cardano (ADA)':0, 'XRP (XRP)':0, 'Polkadot (DOT)':0,
@@ -135,8 +109,7 @@ bot.price_change_dict = {'bitcoin_change':0, 'ethereum_change':0, 'binance_coin_
 @tasks.loop(seconds=60)
 async def update_crypto():
     response = requests.get(
-        base_url + request_path,
-        headers = headers
+        base_url + request_path
     )
 
     try:
@@ -296,5 +269,5 @@ async def new(ctx):
 update_covid.start()
 update_crypto.start()
 bot.loop.create_task(initialise())
-bot.run("ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.N3JAvRe0ZlmYL-KTLCGTXRuCnvE")
+bot.run(TOKEN)
 asyncio.run(bot.db.close())
