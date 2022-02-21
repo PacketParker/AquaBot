@@ -5,7 +5,7 @@
 <br>
 
 ## [Invite Me!](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands)
-## [Join out Support Server](https://discord.gg/fAD3jcexzM)
+## [Join our Support Server](https://discord.gg/fAD3jcexzM)
 
 <br>
 
