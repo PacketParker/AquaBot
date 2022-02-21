@@ -24,4 +24,4 @@
 - [BotDesignerList.com](https://botdesignerlist.com/bot/25EnvmwRXjsDgeJjHMs8)
 - [YourBotList.com](https://yourbotlist.com/bot/889027125275922462)
 
-##### *Note - Aqua Bot has currently ceased development as I have run out of ideas/energy to continue its production. However, it is still up-and-running and it would be awesome if you helped it grow. Recommendations for the bot are still welcomed and appreciated. Thank you.
+##### **Note - Aqua Bot has currently ceased development as I have run out of ideas/energy to continue its production. However, it is still up-and-running and it would be awesome if you helped it grow. Recommendations for the bot are still welcomed and appreciated. Thank you.*
