@@ -1,7 +1,7 @@
 bot:
-  token: ODk1ODEyMDk2NDU2MDExNzg2.YV-ABw.4qfj5XRc_URr2XJa7INSla-qqN0
+  token: YOUR_BOT_TOKEN
   owner_ids:
-    - 455221909257453577
+    - USER_ID_FOR_THE_BOT_OWNER/OWNERS
   prefix: ^
   default_bet: 125
   bonus_multiplier: 20 # bonus = default_bet * multiplier
