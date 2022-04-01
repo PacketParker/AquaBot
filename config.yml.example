@@ -1,0 +1,4 @@
+bot:
+  token: YOUR-BOT-TOKEN
+  prefix: BOT-PREFIX (This will be removed soon, due to slash commands)
+  bonus_cooldown: 2 # Bonus every x hours

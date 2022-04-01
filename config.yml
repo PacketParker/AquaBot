@@ -1,8 +1,0 @@
-bot:
-  token: YOUR_BOT_TOKEN
-  owner_ids:
-    - USER_ID_FOR_THE_BOT_OWNER/OWNERS
-  prefix: ^
-  default_bet: 125
-  bonus_multiplier: 20 # bonus = default_bet * multiplier
-  bonus_cooldown: 2 # Bonus every x hours
