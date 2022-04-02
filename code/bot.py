@@ -110,7 +110,7 @@ async def on_message(message):
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     await bot.wait_until_ready()
-    await bot.tree.sync(guild = discord.Object(id = 891743644938297395))
+    await bot.tree.sync()
 
 bot.run(TOKEN)
 asyncio.run(bot.db.close())
