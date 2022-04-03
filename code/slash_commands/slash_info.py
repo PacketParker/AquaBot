@@ -88,7 +88,6 @@ class slash_information(commands.Cog):
             await interaction.response.send_message(embed=embed)
 
 
-
     @app_commands.command()
     async def botinfo(
         self, 
@@ -107,7 +106,7 @@ class slash_information(commands.Cog):
         ping = (time.monotonic() - before) * 1000
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.add_field(name="• Bot Creator: ", value="Fiji#3608"),
-        embed.add_field(name="• Ping: ", value = f"{int(ping)}ms"),
+        embed.add_field(name="• Servers: ", value = f"{len(self.bot.guilds):,}"),
         embed.add_field(name="• Account name: ", value=str(self.bot.user.name))
         embed.add_field(name="• Discord ID: ", value=str(self.bot.user.id))
         embed.add_field(name="• Bot created at: ", value=self.bot.user.created_at.strftime("%A %d, %B %Y.")),
@@ -128,27 +127,6 @@ class slash_information(commands.Cog):
             description = "[Click here to vote](https://top.gg/bot/889027125275922462)",
             colour = discord.Colour.blurple()
         )
-        embed.set_thumbnail(url = self.bot.user.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await interaction.response.send_message(embed=embed)
-
-
-    @app_commands.command()
-    async def track(
-        self, 
-        interaction: discord.Interaction
-    ):
-        "Send current amount of servers the bot is in"
-
-        guilds = len(self.bot.guilds)
-        embed = discord.Embed(
-            title = "→ Here are my stats!",
-            description="— "
-                        "\n➤ Information below "
-                        "\n —",
-            colour = discord.Colour.random()
-        )
-        embed.add_field(name="• Amount of Servers: ", value=f"{guilds:,}", inline=False)
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await interaction.response.send_message(embed=embed)

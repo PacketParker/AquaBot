@@ -1,3 +1,4 @@
+from xml.dom.minidom import Attr
 import discord
 from discord.ext import commands
 import math
@@ -15,7 +16,7 @@ class slash_level(commands.Cog):
     async def on_message(self, message):
         if not message.guild:
             return
-
+            
         if message.author == self.bot.user:
             return
 

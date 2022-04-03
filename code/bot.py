@@ -56,15 +56,16 @@ class MyBot(commands.Bot):
             if ext.endswith('.py'):
                 await self.load_extension(f'slash_commands.{ext[:-3]}')
 
+
 bot = MyBot()
 bot.remove_command('help')
 
-@bot.event
+@bot.listen()
 async def on_message(message):
-    if message.author.bot is True:
+    if not message.guild:
         return
 
-    if not message.guild:
+    if message.author.bot is True:
         return
 
     prefix = await get_prefix(bot, message)
@@ -106,11 +107,11 @@ async def on_message(message):
         )
         await message.reply(embed=embed)
 
+
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
-    await bot.wait_until_ready()
-    await bot.tree.sync()
+
 
 bot.run(TOKEN)
 asyncio.run(bot.db.close())

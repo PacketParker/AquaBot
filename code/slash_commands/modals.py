@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 from discord import app_commands
+from reader import BUG_CHANNEL_ID, FEEDBACK_CHANNEL_ID
 
 color = 0xc48aff
 
@@ -11,7 +12,7 @@ class bug_report(discord.ui.Modal, title='Report a bug'):
 
     name = discord.ui.TextInput(
         label='Discord name & tag', 
-        placeholder='EX: Fiji#3608...',
+        placeholder='EX: Bob#0001...',
     )
     command = discord.ui.TextInput(
         label='Command with error',
@@ -28,7 +29,7 @@ class bug_report(discord.ui.Modal, title='Report a bug'):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(f'Thanks for your bug report. We will get back to you as soon as possible', ephemeral=True)
-        channel = self.bot.get_channel(952349683945205760)
+        channel = self.bot.get_channel(BUG_CHANNEL_ID)
 
         embed = discord.Embed(
             title = "Bug Report",
@@ -67,7 +68,7 @@ class feedback_form(discord.ui.Modal, title='Give feedback about Aqua Bot'):
 
     async def on_submit(self, interaction: discord.Interaction):
         await interaction.response.send_message(f'Thank you for your feedback. We love hearing from users!', ephemeral=True)
-        channel = self.bot.get_channel(952349715767373844)
+        channel = self.bot.get_channel(FEEDBACK_CHANNEL_ID)
 
         embed = discord.Embed(
             title = "Bot Feedback",
