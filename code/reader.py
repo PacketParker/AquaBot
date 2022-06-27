@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 import yaml
-import discord
 
 class InsufficientFundsException(Exception):
     def __init__(self) -> None:
@@ -18,6 +17,5 @@ TOKEN = config.get('token')
 DEFAULT_PREFIX = config.get('prefix')
 B_COOLDOWN = config.get('bonus_cooldown')
 SERVER_ID = config.get('test_server_id')
-TEST_SERVER_ID = discord.Object(id=SERVER_ID)
 BUG_CHANNEL_ID = config.get('bug_channel_id')
 FEEDBACK_CHANNEL_ID = config.get('feedback_channel_id')

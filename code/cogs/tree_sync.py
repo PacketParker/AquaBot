@@ -1,11 +1,5 @@
-from multiprocessing.sharedctypes import Value
 from discord.ext import commands
-import discord
-from reader import TEST_SERVER_ID
-from discord.ext.commands import Greedy
 from discord import Object
-from typing import Optional, Literal
-from discord import app_commands
 
 class tree_sync(commands.Cog):
     def __init__(self, bot):

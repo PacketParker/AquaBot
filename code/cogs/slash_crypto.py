@@ -207,7 +207,7 @@ class slash_crypto(commands.Cog):
         )
         embed.add_field(name = "Current Price -", value = f"${price_dict.get(currency):,}")
         embed.add_field(name = "24 Hour Change -", value = f"{price_change_dict.get(connection):,}%")
-        file = discord.File(f"./utils/crypto_icons/{icon_name}.png", filename = f"{icon_name}.png")
+        file = discord.File(f"./code/utils/crypto_icons/{icon_name}.png", filename = f"{icon_name}.png")
         embed.set_thumbnail(url = f"attachment://{icon_name}.png")
 
         await interaction.response.send_message(embed=embed, file=file)

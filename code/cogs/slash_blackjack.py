@@ -124,9 +124,9 @@ class slash_blackjack(commands.Cog):
         bet: int
     ):
         "Bet your money on a blackjack game vs. the dealer"
-
+        
         if f"{interaction.user.id}.png" in os.listdir("./code/players/tables"):
-            await interaction.response.send_message(f"{interaction.user.mention}, you must finish the game you have started before beginning a new one.", ephemeral=True)
+            await interaction.response.send_message(f"{interaction.user.mention}, It appears you have a game already running in this server or another, please finish that game before starting a new one.", ephemeral=True)
 
         else:
             await self.check_bet(interaction, bet)
@@ -145,7 +145,7 @@ class slash_blackjack(commands.Cog):
             dealer_score = self.calc_hand(dealer_hand)
 
             async def out_table(**kwargs) -> discord.Interaction:
-                self.output(interaction.user.id, dealer_hand, player_hand)
+                self.output(f'{interaction.user.id}', dealer_hand, player_hand)
                 embed = discord.Embed(**kwargs)
                 file = discord.File(
                     f"./code/players/tables/{interaction.user.id}.png", filename=f"{interaction.user.id}.png"

@@ -9,7 +9,7 @@ class HelpDropdown(discord.ui.Select):
     def __init__(self):
 
         options = [
-            discord.SelectOption(label='Economy', description='add, profile, shop, blackjack, slots, coinflip, leaderboard', emoji="💰"),
+            discord.SelectOption(label='Economy', description='add, profile, shop, blackjack, slots, leaderboard', emoji="💰"),
             discord.SelectOption(label='Moderation', description='mute, tempmute, unmute, kick, ban, softban, purge', emoji="<:moderation:893273273385754686>"),
             discord.SelectOption(label='Info', description='prices, crypto, covid, invite, track, userinfo, botinfo, vote, bug, feedback', emoji="ℹ️"),
             discord.SelectOption(label='Music (BETA)', description='play, skip, queue, remove, stop, clear, repeat, shuffle, nowplaying, pause, remove', emoji='🎵'),
@@ -29,9 +29,8 @@ class HelpDropdown(discord.ui.Select):
 
             embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you $2,500. Can be run every 2 hours", inline=False)
             embed.add_field(name = "**Shop**", value = f"**Usage: `/shop`**\nGives you the shop menus so that you can buy items", inline=False)
-            embed.add_field(name = "**🃏 - Blackjack**", value = f"**Usage: `/blackjack <bet>`**\nIf no bet is given, the deafult bet of $125 will be placed", inline=False)
-            embed.add_field(name = "**🎰 - Slots**", value = f"**Usage: `/slots <bet>`**\nIf no bet is given, the default bet of $125 will be placed.", inline=False)
-            embed.add_field(name = "**🪙 - Coinflip**", value = f"**Usage: `/coinflip <bet>`**\nHeads means you win, tails means you lose. If no bet is given, the default bet of $125 will be placed.", inline=False)
+            embed.add_field(name = "**🃏 - Blackjack**", value = f"**Usage: `/blackjack <bet>`**\nAllows you to play blackjack with the amount of money bet", inline=False)
+            embed.add_field(name = "**🎰 - Slots**", value = f"**Usage: `/slots <bet>`**\nTake your chances on the slots with a bet of your choice.", inline=False)
             embed.add_field(name = "**💵 - Profile**", value = f"**Usage: `/profile <member>`**\nShows the amount of money and ranks that a user has", inline=False),
             embed.add_field(name = "**🏅 - Leaderboard**", value = f"**Usage: `/leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
@@ -135,7 +134,7 @@ class HelpView(discord.ui.View):
         super().__init__(timeout=timeout)
         self.value = None
         self.add_item(HelpDropdown())
-        url = "https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands"
+        url = "https://discord.com/api/oauth2/authorize?client_id=990827650572501073&permissions=1101726608470&scope=bot%20applications.commands"
         self.add_item(discord.ui.Button(label="Invite Me", url=url, row=2))
 
     @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)

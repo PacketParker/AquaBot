@@ -36,7 +36,7 @@ class slash_information(commands.Cog):
         "Get the invite link for the bot and official server"
         embed = discord.Embed(
             title = "Invites",
-            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
+            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=990827650572501073&permissions=1101726608470&scope=bot%20applications.commands) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
         )
 
         await interaction.response.send_message(embed=embed)

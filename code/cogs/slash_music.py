@@ -68,6 +68,7 @@ class slash_music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(self.bot.user.id)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
@@ -143,7 +144,12 @@ class slash_music(commands.Cog):
         results = await player.node.get_tracks(query)
 
         if not results or not results['tracks']:
-            return await interaction.response.send_message('Nothing found!')
+            query = f'scsearch:{query}'
+
+            results = await player.node.get_tracks(query)
+
+            if not results or not results['tracks']:
+                return await interaction.response.send_message('Nothing found!')
 
         embed = discord.Embed(color=discord.Color.green())
 

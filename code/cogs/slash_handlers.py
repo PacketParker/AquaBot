@@ -23,12 +23,30 @@ class slash_handlers(commands.Cog):
         elif isinstance(error, AttributeError):
             return
 
+        elif isinstance(error, InsufficientFundsException):
+            embed = discord.Embed(
+                title = "→ Insufficient Funds!",
+                description = f"• You do not have enough money to use that command. You can use `/add` to add more money. You can also check your current balance with `/profile`",
+                colour = color
+            )
+
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
         elif isinstance(error, discord.app_commands.errors.MissingPermissions):
             embed = discord.Embed(
                 title = "→ Missing Permissions!",
                 description = f"• {error}",
                 colour = color
             )
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        elif isinstance(error, discord.app_commands.errors.BotMissingPermissions):
+            embed = discord.Embed(
+                title = "→ Bot Missing Permissions!",
+                description = f"• {error}",
+                colour = color
+            )
+
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, discord.app_commands.errors.CommandOnCooldown) and interaction.command.name != "slots":
@@ -54,29 +72,43 @@ class slash_handlers(commands.Cog):
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif isinstance(error, InsufficientFundsException):
+        elif isinstance(error, UnboundLocalError):
+            await interaction.response.send_message(f"{interaction.user.mention}, your game timed out, no money was lost or gained.", ephemeral=True)
+
+        elif isinstance(error, discord.errors.Forbidden) and interaction.command.name in ('kick', 'ban', 'softban'):
             embed = discord.Embed(
-                title = "→ Insufficient Funds!",
-                description = f"• You do not have enough money to use that command. You can use `/add` to add more money. You can also check your current balance with `/money`",
+                title = "→ Forbidden!",
+                description = f"• Moderation actions cannot be performed on the bot, or on members above the bot (like owners or administrators), please try again on users below me.",
                 colour = color
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif isinstance(error, UnboundLocalError):
-            await interaction.response.send_message(f"{interaction.user.mention}, your game timed out, no money was lost or gained.", ephemeral=True)
-            
-        elif not UnboundLocalError or InsufficientFundsException or AttributeError or ZeroDivisionError or CommandNotFound:
+        elif isinstance(error, discord.errors.Forbidden) and interaction.command.name in ('mute', 'tempmute', 'unmute'):
             embed = discord.Embed(
-                colour = color,
-                title = "→ Error!",
-                description = f"• An error occured, try running `/help` to see how to use the command. \nIf you believe this is an error, please contact the bot developer through `/bug`"
+                title = "→ Forbidden!",
+                description = f"• I cannot mute or unmute members with a role that is above mine. Please double check that my roles are listed above your servers muted role.",
+                colour = color
             )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
-        elif isinstance(error, discord.app_commands.errors.BotMissingPermissions):
-            await interaction.response.send_message(f"Bot missing permissions \n{error}")
+
+        elif isinstance(error, discord.errors.Forbidden) and interaction.command.name == 'purge':
+            embed = discord.Embed(
+                title = "→ Permissions!",
+                description = f"• It appears im missing the `manage messages` permissions needed to be able to run the `purge` command..",
+                colour = color
+            )
+
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        else:
+            raise error
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        return
 
 
 async def setup(bot: commands.Bot):
