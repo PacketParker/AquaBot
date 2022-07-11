@@ -7,12 +7,6 @@ from discord import app_commands
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
-class VoiceConnectionError(commands.CommandError):
-    """Custom Exception class for connection errors."""
-
-class InvalidVoiceChannel(VoiceConnectionError):
-    """Exception for cases of invalid Voice Channels."""
-
 class LavalinkVoiceClient(discord.VoiceClient):
     """
     This is the preferred way to handle external voice sending
@@ -50,9 +44,9 @@ class LavalinkVoiceClient(discord.VoiceClient):
                 }
         await self.lavalink.voice_update_handler(lavalink_data)
 
-    async def connect(self, *, timeout: float, reconnect: bool) -> None:
+    async def connect(self, *, timeout: float, reconnect: bool, self_deaf: bool = True, self_mute: bool = False) -> None:
         self.lavalink.player_manager.create(guild_id=self.channel.guild.id)
-        await self.channel.guild.change_voice_state(channel=self.channel)
+        await self.channel.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
 
     async def disconnect(self, *, force: bool) -> None:
         player = self.lavalink.player_manager.get(self.channel.guild.id)
@@ -78,6 +72,15 @@ class slash_music(commands.Cog):
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
         self.bot.lavalink._event_hooks.clear()
+
+    async def ensure_before(self, interaction):
+        """ Command before-invoke handler. """
+        guild_check = interaction.guild is not None
+
+        if guild_check:
+            await self.ensure_voice(interaction)
+
+        return guild_check
 
     async def ensure_voice(self, interaction: discord.Interaction):
         """ This check ensures that the bot and command author are in the same voicechannel. """
@@ -113,15 +116,6 @@ class slash_music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
 
-    async def guild_check(self, interaction):
-        guild_check = interaction.guild is not None
-
-        if guild_check:
-            await self.ensure_voice(interaction)
-        
-        else:
-            return guild_check
-
 
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")
@@ -131,8 +125,7 @@ class slash_music(commands.Cog):
         name: str
     ):
         "Play a song from your favorite music provider"
-        await self.guild_check(interaction)
-
+        await self.ensure_before(interaction)
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
         query = name.strip('<>')
 
@@ -175,8 +168,6 @@ class slash_music(commands.Cog):
         if not player.is_playing:
             await player.play()
 
-        await interaction.guild.change_voice_state(channel = interaction.user.voice.channel, self_deaf=True)
-
 
     @app_commands.command()
     async def stop(
@@ -184,7 +175,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Disconnects the bot from the voice channel and clears the queue"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -217,7 +208,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Clear the current queue of songs"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -246,7 +237,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Skips the song that is currently playing"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -273,7 +264,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction    
     ):
         "Pauses the song that is currently playing"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -300,7 +291,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Resumes the paused song"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -329,7 +320,7 @@ class slash_music(commands.Cog):
         page: int = 1
     ):
         "See the current queue of songs"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -365,7 +356,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Show what song is currently playing"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -393,7 +384,7 @@ class slash_music(commands.Cog):
         number: int
     ):
         "Removes the specified song from the queue"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -424,7 +415,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Plays the songs in the queue in a randomized order, until turned off"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
@@ -451,7 +442,7 @@ class slash_music(commands.Cog):
         interaction: discord.Interaction
     ):
         "Repeats the song that is currently played, until turned off"
-        await self.guild_check(interaction)
+        await self.ensure_before(interaction)
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 

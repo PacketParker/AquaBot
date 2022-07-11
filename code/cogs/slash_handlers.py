@@ -11,7 +11,7 @@ class slash_handlers(commands.Cog):
         self.bot = bot
         bot.tree.on_error = self.on_error
 
-    async def on_error(self, interaction: discord.Interaction, command, error):
+    async def on_error(self, interaction: discord.Interaction, error):
         error = getattr(error, 'original', error)
 
         if isinstance(error, CommandNotFound):
