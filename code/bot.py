@@ -39,15 +39,12 @@ async def get_prefix(bot, message):
             prefix = DEFAULT_PREFIX
             return prefix
 
-intents = discord.Intents.default()
-intents.voice_states = True
-
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(
         command_prefix=get_prefix,
         activity = discord.Game(name="Ping Me For Help!"),
-        intents = intents
+        intents = discord.Intents.defa
         )
 
     async def setup_hook(self):
