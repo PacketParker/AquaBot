@@ -117,6 +117,20 @@ class slash_music(commands.Cog):
             await guild.voice_client.disconnect(force=True)
 
 
+    @commands.Cog.listener()
+    async def on_voice_state_update(self, member, before, after):
+        if before.channel and member == self.bot.user:
+            if after.channel is None:
+                    player = self.bot.lavalink.player_manager.get(member.guild.id)
+                    player.queue.clear()
+                    await player.stop()
+                    guild = member.guild
+                    try:
+                        await guild.voice_client.disconnect(force=True)
+                    except AttributeError:
+                        pass
+
+
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")
     async def play(
@@ -201,6 +215,7 @@ class slash_music(commands.Cog):
             color=discord.Color.green()
         )
         await interaction.response.send_message(embed=embed)
+
 
     @app_commands.command()
     async def clear(
