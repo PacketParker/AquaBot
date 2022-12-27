@@ -1,20 +1,20 @@
 import bisect
 import os
 import random
-
 import discord
 from discord.ext import commands
-from schema import Database
+from economy_schema import Database
 from PIL import Image
 from reader import InsufficientFundsException
 from discord import app_commands
 
 color = 0xc48aff
 
-class slash_slots(commands.Cog):
+class Slots(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.economy = Database(bot)
+
 
     async def check_bet(
         self,
@@ -27,7 +27,6 @@ class slash_slots(commands.Cog):
         current = (await self.economy.get_entry(interaction.user.id))[1]
         if bet > current:
             raise InsufficientFundsException()
-
 
     #Usage: slots [bet]
     @app_commands.command()
@@ -120,5 +119,6 @@ class slash_slots(commands.Cog):
         file.close()
         os.remove(f'./code/players/reels/{interaction.user.id}.gif')
 
+
 async def setup(bot: commands.Bot):
-    await bot.add_cog(slash_slots(bot))
+    await bot.add_cog(Slots(bot))

@@ -4,6 +4,7 @@ from discord import app_commands
 from typing import Literal
 from decimal import Decimal
 import requests
+from reader import APIKEY
 
 color = 0xc48aff
 
@@ -47,7 +48,7 @@ connect_change_dict = {'Bitcoin (BTC)':'bitcoin_change', 'Ethereum (ETH)':'ether
     'Bitcoin Cash (BCH)':'bitcoin_cash_change', 'VeChain (VET)':'vechain_change', 
     'Stellar (XLM)':'stellar_change', 'Internet Computer (ICP)':'internet_computer_change'}
 
-class slash_crypto(commands.Cog):
+class Crypto(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
 
@@ -57,30 +58,30 @@ class slash_crypto(commands.Cog):
     @tasks.loop(seconds=60)
     async def update_crypto(self):
         response = requests.get(
-            'https://dev-api.shrimpy.io/v1/exchanges/binance/ticker'
+            f'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,SOL,ADA,XRP,DOT,DOGE,AVAX,SHIB,LUNA,LTC,UNI,LINK,MATIC,ALGO,BCH,VET,XLM,ICP&tsyms=USD&api_key={APIKEY}'
         )
 
         try:
-            btc_price = float(response.json()[1].get('priceUsd'))
-            eth_price = float(response.json()[0].get('priceUsd'))
-            bnb_price = float(response.json()[3].get('priceUsd'))
-            sol_price = float(response.json()[176].get('priceUsd'))
-            ada_price = float(response.json()[64].get('priceUsd'))
-            xrp_price = float(response.json()[41].get('priceUsd'))
-            dot_price = float(response.json()[222].get('priceUsd'))
-            doge_price = float(response.json()[143].get('priceUsd'))
-            avax_price = float(response.json()[250].get('priceUsd'))
-            shib_price = Decimal(response.json()[362].get('priceUsd'))
-            luna_price = float(response.json()[226].get('priceUsd'))
-            ltc_price = float(response.json()[2].get('priceUsd'))
-            uni_price = float(response.json()[240].get('priceUsd'))
-            link_price = float(response.json()[20].get('priceUsd'))
-            matic_price = float(response.json()[135].get('priceUsd'))
-            algo_price = float(response.json()[142].get('priceUsd'))
-            bch_price = float(response.json()[162].get('priceUsd'))
-            vet_price = float(response.json()[121].get('priceUsd'))
-            xlm_price = float(response.json()[67].get('priceUsd'))
-            icp_price = float(response.json()[364].get('priceUsd'))
+            btc_price = float(response.json()['RAW']['BTC']['USD']['PRICE'])
+            eth_price = float(response.json()['RAW']['ETH']['USD']['PRICE'])
+            bnb_price = float(response.json()['RAW']['BNB']['USD']['PRICE'])
+            sol_price = float(response.json()['RAW']['SOL']['USD']['PRICE'])
+            ada_price = float(response.json()['RAW']['ADA']['USD']['PRICE'])
+            xrp_price = float(response.json()['RAW']['XRP']['USD']['PRICE'])
+            dot_price = float(response.json()['RAW']['DOT']['USD']['PRICE'])
+            doge_price = float(response.json()['RAW']['DOGE']['USD']['PRICE'])
+            avax_price = float(response.json()['RAW']['AVAX']['USD']['PRICE'])
+            shib_price = Decimal(response.json()['RAW']['SHIB']['USD']['PRICE'])
+            luna_price = float(response.json()['RAW']['LUNA']['USD']['PRICE'])
+            ltc_price = float(response.json()['RAW']['LTC']['USD']['PRICE'])
+            uni_price = float(response.json()['RAW']['UNI']['USD']['PRICE'])
+            link_price = float(response.json()['RAW']['LINK']['USD']['PRICE'])
+            matic_price =float(response.json()['RAW']['MATIC']['USD']['PRICE'])
+            algo_price = float(response.json()['RAW']['ALGO']['USD']['PRICE'])
+            bch_price = float(response.json()['RAW']['BCH']['USD']['PRICE'])
+            vet_price = float(response.json()['RAW']['VET']['USD']['PRICE'])
+            xlm_price = float(response.json()['RAW']['XLM']['USD']['PRICE'])
+            icp_price = float(response.json()['RAW']['ICP']['USD']['PRICE'])
         except TypeError:
             btc_price = 0
             eth_price = 0
@@ -104,26 +105,26 @@ class slash_crypto(commands.Cog):
             icp_price = 0
 
         try:
-            btc_change = float(response.json()[1].get('percentChange24hUsd'))
-            eth_change = float(response.json()[0].get('percentChange24hUsd'))
-            bnb_change = float(response.json()[3].get('percentChange24hUsd'))
-            sol_change = float(response.json()[176].get('percentChange24hUsd'))
-            ada_change = float(response.json()[64].get('percentChange24hUsd'))
-            xrp_change = float(response.json()[41].get('percentChange24hUsd'))
-            dot_change = float(response.json()[222].get('percentChange24hUsd'))
-            doge_change = float(response.json()[143].get('percentChange24hUsd'))
-            avax_change = float(response.json()[250].get('percentChange24hUsd'))
-            shib_change = float(response.json()[362].get('percentChange24hUsd'))
-            luna_change = float(response.json()[226].get('percentChange24hUsd'))
-            ltc_change = float(response.json()[2].get('percentChange24hUsd'))
-            uni_change = float(response.json()[240].get('percentChange24hUsd'))
-            link_change = float(response.json()[20].get('percentChange24hUsd'))
-            matic_change = float(response.json()[135].get('percentChange24hUsd'))
-            algo_change = float(response.json()[142].get('percentChange24hUsd'))
-            bch_change = float(response.json()[162].get('percentChange24hUsd'))
-            vet_change = float(response.json()[121].get('percentChange24hUsd'))
-            xlm_change = float(response.json()[67].get('percentChange24hUsd'))
-            icp_change = float(response.json()[364].get('percentChange24hUsd'))
+            btc_change = float(response.json()['RAW']['BTC']['USD']['CHANGEPCT24HOUR'])
+            eth_change = float(response.json()['RAW']['ETH']['USD']['CHANGEPCT24HOUR'])
+            bnb_change = float(response.json()['RAW']['BNB']['USD']['CHANGEPCT24HOUR'])
+            sol_change = float(response.json()['RAW']['SOL']['USD']['CHANGEPCT24HOUR'])
+            ada_change = float(response.json()['RAW']['ADA']['USD']['CHANGEPCT24HOUR'])
+            xrp_change = float(response.json()['RAW']['XRP']['USD']['CHANGEPCT24HOUR'])
+            dot_change = float(response.json()['RAW']['DOT']['USD']['CHANGEPCT24HOUR'])
+            doge_change = float(response.json()['RAW']['DOGE']['USD']['CHANGEPCT24HOUR'])
+            avax_change = float(response.json()['RAW']['AVAX']['USD']['CHANGEPCT24HOUR'])
+            shib_change = float(response.json()['RAW']['SHIB']['USD']['CHANGEPCT24HOUR'])
+            luna_change = float(response.json()['RAW']['LUNA']['USD']['CHANGEPCT24HOUR'])
+            ltc_change = float(response.json()['RAW']['LTC']['USD']['CHANGEPCT24HOUR'])
+            uni_change = float(response.json()['RAW']['UNI']['USD']['CHANGEPCT24HOUR'])
+            link_change = float(response.json()['RAW']['LINK']['USD']['CHANGEPCT24HOUR'])
+            matic_change = float(response.json()['RAW']['MATIC']['USD']['CHANGEPCT24HOUR'])
+            algo_change = float(response.json()['RAW']['ALGO']['USD']['CHANGEPCT24HOUR'])
+            bch_change = float(response.json()['RAW']['BCH']['USD']['CHANGEPCT24HOUR'])
+            vet_change =  float(response.json()['RAW']['VET']['USD']['CHANGEPCT24HOUR'])
+            xlm_change = float(response.json()['RAW']['XLM']['USD']['CHANGEPCT24HOUR'])
+            icp_change = float(response.json()['RAW']['ICP']['USD']['CHANGEPCT24HOUR'])
         except TypeError:
             btc_change = 0
             eth_change = 0
@@ -148,7 +149,7 @@ class slash_crypto(commands.Cog):
 
         update_price_dict = {'Bitcoin (BTC)':round(btc_price, 2), 'Ethereum (ETH)':round(eth_price, 2), 'Binance Coin (BNB)':round(bnb_price, 2), 
         'Solana (SOL)':round(sol_price, 2), 'Cardano (ADA)':round(ada_price, 2), 'XRP (XRP)':round(xrp_price, 2), 'Polkadot (DOT)':round(dot_price, 2),
-        'Dogecoin (DOGE)':round(doge_price, 4), 'Avalanche (AVAX)':round(avax_price, 2), 'SHIBA INU (SHIB)':shib_price, 
+        'Dogecoin (DOGE)':round(doge_price, 3), 'Avalanche (AVAX)':round(avax_price, 2), 'SHIBA INU (SHIB)':round(shib_price, 8), 
         'Terra (LUNA)':round(luna_price, 2), 'Litecoin (LTC)':round(ltc_price, 2), 'Uniswap (UNI)':round(uni_price, 2), 'Chainlink (LINK)':round(link_price, 2),
         'Polygon (MATIC)':round(matic_price, 2), 'Algorand (ALGO)':round(algo_price, 2), 'Bitcoin Cash (BCH)':round(bch_price, 2), 
         'VeChain (VET)':round(vet_price, 2), 'Stellar (XLM)':round(xlm_price, 2), 'Internet Computer (ICP)':round(icp_price, 2)}
@@ -178,7 +179,7 @@ class slash_crypto(commands.Cog):
         )
 
         for key in price_dict:
-            embed.add_field(name = f"{key}", value = f"{price_dict[key]:,}", inline=True)
+            embed.add_field(name = f"{key}", value = f"```{price_dict[key]:,}```", inline=True)
 
         await interaction.response.send_message(embed=embed)
 
@@ -214,4 +215,4 @@ class slash_crypto(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_crypto(bot))
+    await bot.add_cog(Crypto(bot))

@@ -2,4 +2,4 @@
 
 # Aqua Bot
 
-## Aqua Bot is no longer under development and has been turned off. Thank you for those who used the bot. Feel free to use this open-sourced repository for any reason, like running your own bot, or learning Discord.py 2.0.
+## Aqua Bot is a great multipurpose Discord bot that offers music with compatibility for YouTube and Soundcloud, gambling, an economy system, and even more features. Invite Aqua Bot now by clicking [here]('https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands')

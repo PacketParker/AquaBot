@@ -58,7 +58,7 @@ class LavalinkVoiceClient(discord.VoiceClient):
         self.cleanup()
 
 
-class slash_music(commands.Cog):
+class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -129,6 +129,9 @@ class slash_music(commands.Cog):
                         await guild.voice_client.disconnect(force=True)
                     except AttributeError:
                         pass
+
+        if before.channel is None and after.channel is not None:
+            await member.edit(deafen=True)
 
 
     @app_commands.command()
@@ -479,4 +482,4 @@ class slash_music(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_music(bot))
+    await bot.add_cog(Music(bot))

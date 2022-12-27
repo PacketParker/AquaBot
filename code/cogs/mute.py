@@ -3,10 +3,11 @@ import asyncio
 from discord.ext import commands
 from datetime import datetime
 from discord import app_commands
+from bot import CONNECTION
 
 color = 0xc48aff
 
-class slash_mute(commands.Cog):
+class Mute(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -25,16 +26,20 @@ class slash_mute(commands.Cog):
         role = role_name
         role_id = role.id
 
-        cursor = await self.bot.db.execute("UPDATE mute SET role_id = ? WHERE guild_id = ?", (role_id, guild_id))
-        await self.bot.db.commit()
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+        role_id = cur.fetchone()
+        if role_id != None:
+            cur.execute("UPDATE mute SET role_id = %s WHERE guild_id = %s", (role.id, guild_id))
+            CONNECTION.commit()
 
-        if cursor.rowcount == 0:
-            cursor = await self.bot.db.execute("INSERT INTO mute (role_id, guild_id) VALUES(?, ?)", (role_id, guild_id))
-            await self.bot.db.commit()
+        else:
+            cur.execute("INSERT INTO mute (role_id, guild_id) VALUES(%s, %s)", (role.id, guild_id))
+            CONNECTION.commit()
 
         embed = discord.Embed(
             title = "Mute Role Changed -",
-            description = f"<@&{role_id}> has been assigned as the mute role for {interaction.user.guild.name}",
+            description = f"<@&{role.id}> has been assigned as the mute role for {interaction.user.guild.name}",
         )
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await interaction.response.send_message(embed=embed)
@@ -49,26 +54,27 @@ class slash_mute(commands.Cog):
         "Delete the role set to be given to muted users"
 
         guild_id = interaction.user.guild.id
-        async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-            data = await cursor.fetchone()
-            if data:
-                await self.bot.db.execute(f"DELETE FROM mute WHERE guild_id = ?", (guild_id,))
-                await self.bot.db.commit()
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+        data = cur.fetchone()
+        if data:
+            cur.execute("DELETE FROM mute WHERE guild_id = %s", (guild_id,))
+            CONNECTION.commit()
 
-                embed = discord.Embed(
-                    title = "Mute Role Deleted -",
-                    description = f"The mute role for {interaction.user.guild.name} has been deleted.",
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await interaction.response.send_message(embed=embed)
-            else:
-                embed = discord.Embed(
-                    colour = color,
-                    title = "→ Mute Role Not Set!",
-                    description = f"• The mute role is not set, therefore there is no role I can delete."
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await interaction.response.send_message(embed=embed, ephemeral=True)
+            embed = discord.Embed(
+                title = "Mute Role Deleted -",
+                description = f"The mute role for {interaction.user.guild.name} has been deleted.",
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed)
+        else:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Mute Role Not Set!",
+                description = f"• The mute role is not set, therefore there is no role I can delete."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
     @app_commands.command()
@@ -80,24 +86,25 @@ class slash_mute(commands.Cog):
         "See the current role set for when users are muted"
 
         guild_id = interaction.user.guild.id
-        async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-            data = await cursor.fetchone()
-            if data:
-                role_id = data[0]
-                embed = discord.Embed(
-                    title = f"Mute role for {interaction.user.guild.name}",
-                    description= f'<@&{role_id}>'
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await interaction.response.send_message(embed=embed)
-            
-            else:
-                embed = discord.Embed(
-                    title = f"→ Mute Role Not Set!",
-                    description= f'The mute role has not yet been set. Ask an admin to set it up using `/setmute`'
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                await interaction.response.send_message(embed=embed, ephemeral=True)
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+        data = cur.fetchone()
+        if data:
+            role_id = data[0]
+            embed = discord.Embed(
+                title = f"Mute role for {interaction.user.guild.name}",
+                description= f'<@&{role_id}>'
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed)
+        
+        else:
+            embed = discord.Embed(
+                title = f"→ Mute Role Not Set!",
+                description= f'The mute role has not yet been set. Ask an admin to set it up using `/setmute`'
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
     @app_commands.command()
@@ -114,9 +121,10 @@ class slash_mute(commands.Cog):
 
         try:
             guild_id = interaction.user.guild.id
-            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-                data = await cursor.fetchone()
-                role_id = data[0]
+            cur = CONNECTION.cursor()
+            cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+            data = cur.fetchone()
+            role_id = data[0]
             role_name = interaction.user.guild.get_role(role_id)
             role = discord.utils.get(interaction.user.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
@@ -158,9 +166,10 @@ class slash_mute(commands.Cog):
 
         try:
             guild_id = interaction.user.guild.id
-            async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-                data = await cursor.fetchone()
-                role_id = data[0]
+            cur = CONNECTION.cursor()
+            cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+            data = cur.fetchone()
+            role_id = data[0]
             role_name = interaction.user.guild.get_role(role_id)
             role = discord.utils.get(interaction.user.guild.roles, name=f"{role_name}")
             await member.add_roles(role)
@@ -196,9 +205,10 @@ class slash_mute(commands.Cog):
         "Unmute a specified member"
         
         guild_id = interaction.user.guild.id
-        async with self.bot.db.execute("SELECT role_id FROM mute WHERE guild_id = ?", (guild_id,)) as cursor:
-            data = await cursor.fetchone()
-            role_id = data[0]
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+        data = cur.fetchone()
+        role_id = data[0]
         role_name = interaction.user.guild.get_role(role_id)
         role = discord.utils.get(interaction.user.guild.roles, name=f"{role_name}")
         embed = discord.Embed(
@@ -214,4 +224,4 @@ class slash_mute(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_mute(bot))
+    await bot.add_cog(Mute(bot))

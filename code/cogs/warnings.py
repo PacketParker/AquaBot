@@ -2,10 +2,11 @@ import discord
 from discord.ext import commands
 from datetime import datetime
 from discord import app_commands
+from bot import CONNECTION
 
 color = 0xc48aff
 
-class slash_warnings(commands.Cog):
+class Warnings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -28,8 +29,9 @@ class slash_warnings(commands.Cog):
         warn_time = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
         warned_by = interaction.user.id
 
-        await self.bot.db.execute("INSERT OR IGNORE INTO warnings (warn_id, guild_id, user_id, warning, warn_time, warned_by) VALUES (?,?,?,?,?,?)", (warn_id, guild_id, user_id, reason, warn_time, warned_by))
-        await self.bot.db.commit()
+        cur = CONNECTION.cursor()
+        cur.execute("INSERT INTO warnings (warn_id, guild_id, user_id, warning, warn_time, warned_by) VALUES (%s, %s, %s, %s, %s, %s)", (warn_id, guild_id, user_id, reason, warn_time, warned_by))
+        CONNECTION.commit()
 
         embed = discord.Embed(
             title = f"{member.name}#{member.discriminator} Has Been Warned -",
@@ -42,7 +44,6 @@ class slash_warnings(commands.Cog):
     
 
     @app_commands.command()
-    
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(member='The member whose warnings you want to see')
     async def warnings(
@@ -55,20 +56,20 @@ class slash_warnings(commands.Cog):
         guild_id = interaction.user.guild.id
         user_id = member.id
 
-        async with self.bot.db.execute("SELECT warning FROM warnings WHERE guild_id = ? AND user_id = ?", (guild_id, user_id)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                warnings = data[0]
-            else:
-                embed = discord.Embed(
-                    colour = color,
-                    title = "→ User has no warnings!",
-                    description = f"• {member.mention} has not been warned in the past, or all of their warnings have been deleted."
-                )
-                embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-                return await interaction.response.send_message(embed=embed)
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT * FROM warnings WHERE guild_id = %s AND user_id = %s", (guild_id, user_id))
+        data = cur.fetchall()
+
+        if data:
+            embed = discord.Embed(
+                title = f"**Warnings For - {member.name}#{member.discriminator}**",
+                color = 0xffe75c
+            )
+            for data in data:
+                embed.add_field(name = f"Warning Reason - \"{data[3]}\" | ID = {data[0]}", value = f"Warned By: <@{data[5]}> | Warned At: {data[4]}\n", inline=False)
                 
-        if warnings == None or 0 and not data and member != None:
+            await interaction.response.send_message(embed=embed)
+        else:
             embed = discord.Embed(
                 colour = color,
                 title = "→ User has no warnings!",
@@ -76,23 +77,9 @@ class slash_warnings(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await interaction.response.send_message(embed=embed)
-
-        else:
-            async with self.bot.db.execute("SELECT * FROM warnings WHERE guild_id = ? AND user_id = ?", (guild_id, user_id)) as cursor:
-                data = await cursor.fetchall()
-
-                embed = discord.Embed(
-                    title = f"**Warnings For - {member.name}#{member.discriminator}**",
-                    color = 0xffe75c
-                )
-                for data in data:
-                    embed.add_field(name = f"Warning Reason - \"{data[3]}\" | ID = {data[0]}", value = f"Warned By: <@{data[5]}> | Warned At: {data[4]}\n", inline=False)
-                    
-                await interaction.response.send_message(embed=embed)
-
+            
 
     @app_commands.command()
-    
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(id='ID of the warning you would like to delete')
     async def delwarn(
@@ -102,12 +89,13 @@ class slash_warnings(commands.Cog):
     ):  
         "Delete a warning from a user with the warning ID"
 
-        async with self.bot.db.execute("SELECT warn_id FROM warnings WHERE warn_id = ?", (id,)) as cursor:
-            data = await cursor.fetchone()
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT warn_id FROM warnings WHERE warn_id = %s", (id,))
+        data = cur.fetchone()
 
         if data:
-            await self.bot.db.execute(f"DELETE FROM warnings WHERE warn_id = ?", (id,))
-            await self.bot.db.commit()
+            cur.execute("DELETE FROM warnings WHERE warn_id = %s", (id,))
+            CONNECTION.commit()
 
             embed = discord.Embed(
                 title = "Warning Deleted -",
@@ -130,4 +118,4 @@ class slash_warnings(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_warnings(bot))
+    await bot.add_cog(Warnings(bot))

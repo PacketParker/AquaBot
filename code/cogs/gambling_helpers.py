@@ -1,12 +1,12 @@
 import discord
 from discord.ext import commands
-from schema import Database
+from economy_schema import Database
 from reader import B_COOLDOWN
 from discord import app_commands
 
 color = 0xc48aff
 
-class slash_gambling_helpers(commands.Cog):
+class GamblingHelpers(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
         self.economy = Database(bot)
@@ -57,4 +57,4 @@ class slash_gambling_helpers(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(slash_gambling_helpers(bot))
+    await bot.add_cog(GamblingHelpers(bot))

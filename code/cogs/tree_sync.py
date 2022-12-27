@@ -1,9 +1,10 @@
 from discord.ext import commands
 from discord import Object
 
-class tree_sync(commands.Cog):
+class TreeSync(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
 
     @commands.command()
     @commands.dm_only()
@@ -27,5 +28,6 @@ class tree_sync(commands.Cog):
         else:
             await ctx.author.send("That is not a valid guild ID")
 
+
 async def setup(bot):
-	await bot.add_cog(tree_sync(bot))
+	await bot.add_cog(TreeSync(bot))

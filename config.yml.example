@@ -1,6 +1,11 @@
 bot:
-  token: YOUR-BOT-TOKEN
-  prefix: BOT-PREFIX (This will be removed soon, due to slash commands)
-  bonus_cooldown: 2 //Bonus every x hours
-  bug_channel_id: ID-OF-THE-BUG-REPORTS-CHANNEL //for the /bug command
-  feedback_channel_id: ID-OF-THE-FEEDBACK-CHANNEL //for the /feedback command
+  token: 
+  bonus_cooldown: INT IN HOURS
+  bug_channel_id: BUG CHANNEL ID (/bug)
+  feedback_channel_id: FEEDBACK CHANNEL ID (/feedback)
+  apikey: API KEY FOR CRYPTOCOMPARE
+  username: 
+  password: 
+  host: 
+  port: 
+  database: 

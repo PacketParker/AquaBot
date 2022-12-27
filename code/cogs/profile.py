@@ -1,9 +1,10 @@
 import discord
 from discord.ext import commands
-from schema import Database
+from economy_schema import Database
 import sqlite3
 from discord import app_commands
 from reader import InsufficientFundsException
+from bot import CONNECTION
 
 color = 0xc48af
 
@@ -39,13 +40,14 @@ class AfterRankPurchase(discord.ui.View):
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
 
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ', '.join([str(i[0]) for i in data])
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ', '.join([str(i[0]) for i in data])
 
-            else:
-                names = "No ranks"
+        else:
+            names = "No ranks"
 
         embed = discord.Embed(
             title = "Shop",
@@ -73,41 +75,41 @@ class ConfirmRankPurchase(discord.ui.View):
     async def yes(self, interaction: discord.Interaction, button: discord.ui.Button):
         user_id = interaction.user.id
 
-        async with self.bot.db.execute("SELECT rank_name, rank_int FROM profile WHERE user_id = ?", (user_id,)) as cursor:
-            try:
-                await self.check.check_bet(user_id, self.bet)
-                await self.bot.db.execute("INSERT INTO profile (user_id, rank_name, rank_int) VALUES(?,?,?)", (user_id, self.rank_name, self.rank_int))
-                await self.bot.db.commit()
-                await self.economy.add_money(user_id, self.bet*-1)
+        cur = CONNECTION.cursor()
+        try:
+            await self.check.check_bet(user_id, self.bet)
+            cur.execute("INSERT INTO profile (user_id, rank_name, rank_int) VALUES(%s,%s,%s)", (user_id, self.rank_name, self.rank_int))
+            CONNECTION.commit()
+            await self.economy.add_money(user_id, self.bet*-1)
 
-                embed = discord.Embed(
-                    title = "Purchase Successful",
-                    description = f"Your purchase was successful. In order to purchase more items, please click the main page button below.",
-                    color = discord.Color.random()
-                )
+            embed = discord.Embed(
+                title = "Purchase Successful",
+                description = f"Your purchase was successful. In order to purchase more items, please click the main page button below.",
+                color = discord.Color.random()
+            )
 
-                view = AfterRankPurchase(self.bot)
-                await interaction.response.edit_message(embed=embed, view=view)
+            view = AfterRankPurchase(self.bot)
+            await interaction.response.edit_message(embed=embed, view=view)
 
-            except sqlite3.IntegrityError:
-                embed = discord.Embed(
-                    title = "Rank Already Owned",
-                    description = f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
-                    color = discord.Color.random()
-                )
+        except sqlite3.IntegrityError:
+            embed = discord.Embed(
+                title = "Rank Already Owned",
+                description = f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
+                color = discord.Color.random()
+            )
 
-                view = RankView(self.bot)
-                return await interaction.response.edit_message(embed=embed, view=view)
+            view = RankView(self.bot)
+            return await interaction.response.edit_message(embed=embed, view=view)
 
-            except InsufficientFundsException:
-                embed = discord.Embed(
-                    title = "Not Enough Money",
-                    description = f"You do not have enough money to make that purchase, come back once you've earned some more money.",
-                    color = discord.Color.random()
-                )
+        except InsufficientFundsException:
+            embed = discord.Embed(
+                title = "Not Enough Money",
+                description = f"You do not have enough money to make that purchase, come back once you've earned some more money.",
+                color = discord.Color.random()
+            )
 
-                view = RankView(self.bot)
-                return await interaction.response.edit_message(embed=embed, view=view)
+            view = RankView(self.bot)
+            return await interaction.response.edit_message(embed=embed, view=view)
 
 
     @discord.ui.button(label='No', style=discord.ButtonStyle.red, row=2)
@@ -409,13 +411,15 @@ class RankView(discord.ui.View):
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
 
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ', '.join([str(i[0]) for i in data])
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ', '.join([str(i[0]) for i in data])
 
-            else:
-                names = "No ranks"
+        else:
+            names = "No ranks"
+
         embed = discord.Embed(
             title = "Shop",
             description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
@@ -441,113 +445,114 @@ class ShopDropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         user_id = interaction.user.id
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ([str(i[0]) for i in data])
-                
-                if "Copper III" in names:
-                    copper_iii = "~~Copper III~~ - OWNED"
-                else:
-                    copper_iii = "Copper III"
-
-                if "Copper II" in names:
-                    copper_ii = "~~Copper II~~ - OWNED"
-                else:
-                    copper_ii = "Copper II"
-
-                if "Copper I" in names:
-                    copper_i = "~~Copper I~~ - OWNED"
-                else:
-                    copper_i = "Copper I"
-
-                if "Bronze III" in names:
-                    bronze_iii = "~~Bronze III~~ - OWNED"
-                else:
-                    bronze_iii = "Bronze III"
-
-                if "Bronze II" in names:
-                    bronze_ii = "~~Bronze II~~ - OWNED"
-                else:
-                    bronze_ii = "Bronze II"
-
-                if "Bronze I" in names:
-                    bronze_i = "~~Bronze I~~ - OWNED"
-                else:
-                    bronze_i = "Bronze I"
-
-                if "Silver III" in names:
-                    silver_iii = "~~Silver III~~ - OWNED"
-                else:
-                    silver_iii = "Silver III"
-
-                if "Silver II" in names:
-                    silver_ii = "~~Silver II~~ - OWNED"
-                else:
-                    silver_ii = "Silver II"
-
-                if "Silver I" in names:
-                    silver_i = "~~Silver I~~ - OWNED"
-                else:
-                    silver_i = "Silver I"
-
-                if "Gold III" in names:
-                    gold_iii = "~~Gold III~~ - OWNED"
-                else:
-                    gold_iii = "Gold III"
-
-                if "Gold II" in names:
-                    gold_ii = "~~Gold II~~ - OWNED"
-                else:
-                    gold_ii = "Gold II"
-
-                if "Gold I" in names:
-                    gold_i = "~~Gold I~~ - OWNED"
-                else:
-                    gold_i = "Gold I"
-
-                if "Platinum III" in names:
-                    platinum_iii = "~~Platinum III~~ - OWNED"
-                else:
-                    platinum_iii = "Platinum III"
-
-                if "Platinum II" in names:
-                    platinum_ii = "~~Platinum II~~ - OWNED"
-                else:
-                    platinum_ii = "Platinum II"
-
-                if "Platinum I" in names:
-                    platinum_i = "~~Platinum I~~ - OWNED"
-                else:
-                    platinum_i = "Platinum I"
-
-                if "Diamond" in names:
-                    diamond = "~~Diamond~~ - OWNED"
-                else:
-                    diamond = "Diamond"
-
-                if "Champion" in names:
-                    champion = "~~Champion~~ - OWNED"
-                else:
-                    champion = "Champion"
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ([str(i[0]) for i in data])
+            
+            if "Copper III" in names:
+                copper_iii = "~~Copper III~~ - OWNED"
             else:
                 copper_iii = "Copper III"
+
+            if "Copper II" in names:
+                copper_ii = "~~Copper II~~ - OWNED"
+            else:
                 copper_ii = "Copper II"
+
+            if "Copper I" in names:
+                copper_i = "~~Copper I~~ - OWNED"
+            else:
                 copper_i = "Copper I"
+
+            if "Bronze III" in names:
+                bronze_iii = "~~Bronze III~~ - OWNED"
+            else:
                 bronze_iii = "Bronze III"
+
+            if "Bronze II" in names:
+                bronze_ii = "~~Bronze II~~ - OWNED"
+            else:
                 bronze_ii = "Bronze II"
+
+            if "Bronze I" in names:
+                bronze_i = "~~Bronze I~~ - OWNED"
+            else:
                 bronze_i = "Bronze I"
+
+            if "Silver III" in names:
+                silver_iii = "~~Silver III~~ - OWNED"
+            else:
                 silver_iii = "Silver III"
+
+            if "Silver II" in names:
+                silver_ii = "~~Silver II~~ - OWNED"
+            else:
                 silver_ii = "Silver II"
+
+            if "Silver I" in names:
+                silver_i = "~~Silver I~~ - OWNED"
+            else:
                 silver_i = "Silver I"
+
+            if "Gold III" in names:
+                gold_iii = "~~Gold III~~ - OWNED"
+            else:
                 gold_iii = "Gold III"
+
+            if "Gold II" in names:
+                gold_ii = "~~Gold II~~ - OWNED"
+            else:
                 gold_ii = "Gold II"
+
+            if "Gold I" in names:
+                gold_i = "~~Gold I~~ - OWNED"
+            else:
                 gold_i = "Gold I"
+
+            if "Platinum III" in names:
+                platinum_iii = "~~Platinum III~~ - OWNED"
+            else:
                 platinum_iii = "Platinum III"
+
+            if "Platinum II" in names:
+                platinum_ii = "~~Platinum II~~ - OWNED"
+            else:
                 platinum_ii = "Platinum II"
+
+            if "Platinum I" in names:
+                platinum_i = "~~Platinum I~~ - OWNED"
+            else:
                 platinum_i = "Platinum I"
+
+            if "Diamond" in names:
+                diamond = "~~Diamond~~ - OWNED"
+            else:
                 diamond = "Diamond"
+
+            if "Champion" in names:
+                champion = "~~Champion~~ - OWNED"
+            else:
                 champion = "Champion"
+        else:
+            copper_iii = "Copper III"
+            copper_ii = "Copper II"
+            copper_i = "Copper I"
+            bronze_iii = "Bronze III"
+            bronze_ii = "Bronze II"
+            bronze_i = "Bronze I"
+            silver_iii = "Silver III"
+            silver_ii = "Silver II"
+            silver_i = "Silver I"
+            gold_iii = "Gold III"
+            gold_ii = "Gold II"
+            gold_i = "Gold I"
+            platinum_iii = "Platinum III"
+            platinum_ii = "Platinum II"
+            platinum_i = "Platinum I"
+            diamond = "Diamond"
+            champion = "Champion"
 
         if self.values[0] == 'Ranks':
             embed = discord.Embed(
@@ -598,13 +603,14 @@ class ShopView(discord.ui.View):
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
 
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ', '.join([str(i[0]) for i in data])
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ', '.join([str(i[0]) for i in data])
 
-            else:
-                names = "No ranks"
+        else:
+            names = "No ranks"
 
         embed = discord.Embed(
             title = "Shop",
@@ -619,7 +625,7 @@ class ShopView(discord.ui.View):
 #BEGIN CODE FOR PROFILE VIEWING
 
 
-class slash_profile(commands.Cog):
+class Profile(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.economy = Database(bot)
@@ -638,13 +644,14 @@ class slash_profile(commands.Cog):
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
 
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ', '.join([str(i[0]) for i in data])
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ', '.join([str(i[0]) for i in data])
 
-            else:
-                names = "No ranks"
+        else:
+            names = "No ranks"
 
         embed = discord.Embed(
             title = f"Profile For - {await self.bot.fetch_user(user_id)}",
@@ -668,13 +675,14 @@ class slash_profile(commands.Cog):
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
 
-        async with self.bot.db.execute("SELECT rank_name FROM profile WHERE user_id = ? ORDER BY rank_int DESC", (user_id,)) as cursor:
-            data = await cursor.fetchall()
-            if data:
-                names = ', '.join([str(i[0]) for i in data])
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT rank_name FROM profile WHERE user_id = %s ORDER BY rank_int DESC", (user_id,))
+        data = cur.fetchall()
+        if data:
+            names = ', '.join([str(i[0]) for i in data])
 
-            else:
-                names = "No ranks"
+        else:
+            names = "No ranks"
 
         embed = discord.Embed(
             title = "Shop",
@@ -688,4 +696,4 @@ class slash_profile(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_profile(bot))
+    await bot.add_cog(Profile(bot))

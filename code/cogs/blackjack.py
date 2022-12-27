@@ -6,7 +6,7 @@ from typing import List, Tuple
 import discord
 from discord.ext import commands
 from PIL import Image
-from schema import Database
+from economy_schema import Database
 from discord import app_commands
 from reader import InsufficientFundsException
 
@@ -51,7 +51,7 @@ class Card:
         return str(self)
     
 
-class slash_blackjack(commands.Cog):
+class Blackjack(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.economy = Database(bot)
@@ -154,8 +154,8 @@ class slash_blackjack(commands.Cog):
                 try:
                     msg = await interaction.response.send_message(file=file, embed=embed)
                 except:
-                    msg = await interaction.edit_original_message(attachments=[file], embed=embed)
-                    reac = await interaction.original_message()
+                    msg = await interaction.edit_original_response(attachments=[file], embed=embed)
+                    reac = await interaction.original_response()
                     await reac.clear_reactions()
                 return msg
         
@@ -167,11 +167,11 @@ class slash_blackjack(commands.Cog):
                 dealer_score = self.calc_hand(dealer_hand)
                 if player_score == 21:  # win condition
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = ("Blackjack!", 'won')
+                    result = (f"Blackjack! - you win ${bet*2}", 'won')
                     break
                 elif player_score > 21:  # losing condition
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = ("Player busts", 'lost')
+                    result = (f"Player busts - you lose ${bet}", 'lost')
                     break
                 msg = await out_table(
                     title="Your Turn",
@@ -179,7 +179,7 @@ class slash_blackjack(commands.Cog):
                         f"Dealer's hand: {dealer_score}"
                 )
 
-                reac = await interaction.original_message()
+                reac = await interaction.original_response()
                 await reac.add_reaction("🇭")
                 await reac.add_reaction("🇸")
                 
@@ -212,18 +212,18 @@ class slash_blackjack(commands.Cog):
 
                 if dealer_score == 21:  # winning/losing conditions
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = ('Dealer blackjack', 'lost')
+                    result = (f"Dealer blackjack - you lose ${bet}", 'lost')
                 elif dealer_score > 21:
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = ("Dealer busts", 'won')
+                    result = (f"Dealer busts - you win ${bet*2}", 'won')
                 elif dealer_score == player_score:
-                    result = ("Tie!", 'kept')
+                    result = (f"Tie - you keep your money", 'kept')
                 elif dealer_score > player_score:
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = ("You lose!", 'lost')
+                    result = (f"You lose ${bet}", 'lost')
                 elif dealer_score < player_score:
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = ("You win!", 'won')
+                    result = (f"You win ${bet*2}", 'won')
 
             color = (
                 discord.Color.red() if result[1] == 'lost'
@@ -246,10 +246,9 @@ class slash_blackjack(commands.Cog):
             msg = await out_table(
                 title=result[0],
                 color=color,
-                description=description
             )
             os.remove(f'./code/players/tables/{interaction.user.id}.png')
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(slash_blackjack(bot))
+    await bot.add_cog(Blackjack(bot))

@@ -6,7 +6,7 @@ from discord import app_commands
 
 color = 0xc48aff
 
-class slash_information(commands.Cog):
+class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -33,10 +33,10 @@ class slash_information(commands.Cog):
         self, 
         interaction: discord.Interaction
     ):
-        "Get the invite link for the bot and official server"
+        "Get the invite link for the bot"
         embed = discord.Embed(
-            title = "Invites",
-            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=990827650572501073&permissions=1101726608470&scope=bot%20applications.commands) \nHere's the invite for the [Official Support Server](https://discord.gg/fAD3jcexzM)"
+            title = "Invite Me To Your Server!",
+            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands)"
         )
 
         await interaction.response.send_message(embed=embed)
@@ -110,7 +110,7 @@ class slash_information(commands.Cog):
         embed.add_field(name="• Account name: ", value=str(self.bot.user.name))
         embed.add_field(name="• Discord ID: ", value=str(self.bot.user.id))
         embed.add_field(name="• Bot created at: ", value=self.bot.user.created_at.strftime("%A %d, %B %Y.")),
-        embed.add_field(name="• Aqau Bot Code: ", value="[GitHub Link](https://github.com/Fiji05/AquaBot)")
+        embed.add_field(name="• Aqua Bot Code: ", value="[GitHub Link](https://github.com/Fiji05/AquaBot)")
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
         await interaction.response.send_message(embed=embed)
 
@@ -132,29 +132,24 @@ class slash_information(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-    @app_commands.command()
-    async def new(
-        self, 
-        interaction: discord.Interaction
-    ):
-        "See all of the new changes in the bot"
+    # @app_commands.command()
+    # async def new(
+    #     self, 
+    #     interaction: discord.Interaction
+    # ):
+    #     "See all of the new changes in the bot"
         
-        embed = discord.Embed(
-            title = "Change Log - 4/1/2022",
-            description = "***Note - in order to get slash commands working in you server, you must reinvite the bot with the new link provided in the `/invite` command**",
-            colour = discord.Colour.og_blurple()
-        )
+    #     embed = discord.Embed(
+    #         title = "Change Log - ",
+    #         description = "",
+    #         colour = discord.Colour.og_blurple()
+    #     )
 
-        embed.add_field(name = "Slash Commands", value = "All commands are now restricted to exclusively slash commands. Message commands using the normal bot prefix will no longer work, for any help, please do `/help` and make sure to choose the command from Aqua Bot.", inline=True)
-        embed.add_field(name = "Money vs. Profile", value = "The `money` command has been removed in favor of the `profile` command, which will show current monetary balance as well as purchased ranks.", inline=True)
-        embed.add_field(name = "Bug Fixes", value = "The errors within the `blackjack` and `slots` slash commands have been fixed, all commands now work under the slash command style.", inline=False)
-        embed.add_field(name = "Bugs", value = "As always we've worked hard to make sure all of the bugs have been ironed out, however, if you find any bug please fill out a form using `/bug`.", inline=True)
-        embed.add_field(name = "Feedback", value = "Feedback is always welcome and encouraged. A feedback form can be submitted to the bot developer through the `/feedback` command.")
-        embed.add_field(name = "\u200b", value = "Thank you all for using Aqua Bot!", inline=False)
+    #     embed.add_field(name = "", value = "", inline=True)
 
 
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+    #     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
-    await bot.add_cog(slash_information(bot))
+    await bot.add_cog(Info(bot))

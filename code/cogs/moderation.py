@@ -6,7 +6,7 @@ from discord import app_commands
 yellow = 0xffc400
 color = 0xc48aff
 
-class slash_moderation(commands.Cog):
+class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -111,4 +111,4 @@ class slash_moderation(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_moderation(bot))
+    await bot.add_cog(Moderation(bot))

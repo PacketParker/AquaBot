@@ -5,7 +5,7 @@ from reader import BUG_CHANNEL_ID, FEEDBACK_CHANNEL_ID
 
 color = 0xc48aff
 
-class bug_report(discord.ui.Modal, title='Report a bug'):
+class BugReport(discord.ui.Modal, title='Report a bug'):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
@@ -42,14 +42,14 @@ class bug_report(discord.ui.Modal, title='Report a bug'):
         await channel.send(embed=embed)
 
 
-class feedback_form(discord.ui.Modal, title='Give feedback about Aqua Bot'):
+class FeedbackForm(discord.ui.Modal, title='Give feedback about Aqua Bot'):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot
 
     name = discord.ui.TextInput(
         label='Discord name & tag', 
-        placeholder='EX: Fiji#3608...',
+        placeholder='EX: Bob#0001...',
     )
     positive = discord.ui.TextInput(
         label='What do you like about the bot?',
@@ -81,20 +81,20 @@ class feedback_form(discord.ui.Modal, title='Give feedback about Aqua Bot'):
         await channel.send(embed=embed)
 
 
-class modals(commands.Cog):
+class Modals(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command()
     async def bug(self, interaction: discord.Interaction):
         "Send a bug report to the developer"
-        await interaction.response.send_modal(bug_report(self.bot))
+        await interaction.response.send_modal(BugReport(self.bot))
 
 
     @app_commands.command()
     async def feedback(self, interaction: discord.Interaction):
         "Send bot feeback to the developer"
-        await interaction.response.send_modal(feedback_form(self.bot))
+        await interaction.response.send_modal(FeedbackForm(self.bot))
 
 async def setup(bot):
-	await bot.add_cog(modals(bot))
+	await bot.add_cog(Modals(bot))

@@ -6,7 +6,7 @@ import requests
 covid_dict = {':microbe: Total cases':0, ':skull_crossbones: Total deaths':0, 
     ':syringe: Total recovered':0, ':radioactive: Total active cases':0, ':map: Total affected countries':0}
 
-class slash_covid(commands.Cog):
+class Covid(commands.Cog):
     def __init__(self, bot):
         self.bot = bot 
     
@@ -53,7 +53,7 @@ class slash_covid(commands.Cog):
         )
 
         for key in covid_dict:
-            embed.add_field(name = f"{key}", value = f"{covid_dict[key]:,}", inline=True)
+            embed.add_field(name = f"{key}", value = f"```{covid_dict[key]:,}```", inline=True)
 
         embed.set_footer(text="Information provided from:  https://disease.sh/v3/covid-19/all")
 
@@ -61,4 +61,4 @@ class slash_covid(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(slash_covid(bot))
+    await bot.add_cog(Covid(bot))
