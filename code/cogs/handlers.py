@@ -1,7 +1,6 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands.errors import *
-from datetime import datetime
 from reader import InsufficientFundsException
 
 color = 0xc48aff

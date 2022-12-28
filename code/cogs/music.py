@@ -130,9 +130,6 @@ class Music(commands.Cog):
                     except AttributeError:
                         pass
 
-        if before.channel is None and after.channel is not None:
-            await member.edit(deafen=True)
-
 
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")

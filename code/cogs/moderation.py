@@ -21,6 +21,14 @@ class Moderation(commands.Cog):
         amount: int
     ):
         "Delete the specified number of messages from the channel"
+        
+        if amount < 1:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ Amount Too Small!",
+                description="• You sent an amount smaller than 1. Sorry, but you can only delete 1 or more messages at a time."
+            )
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         if amount > 100:
             embed = discord.Embed(
@@ -28,11 +36,11 @@ class Moderation(commands.Cog):
                 title = "→ Amount Too Large!",
                 description="• You sent an amount larger than 100. Sorry, but you can only delete 100 messages at a time."
             )
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         else:
             await interaction.channel.purge(limit=amount+1)
-            await interaction.response.send_message(f"{amount} messages deleted")
+            await interaction.response.send_message(f"{amount} {'messages' if amount > 1 else 'message'} deleted")
 
 
     @app_commands.default_permissions(kick_members=True)

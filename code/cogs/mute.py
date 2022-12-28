@@ -1,7 +1,7 @@
 import discord
 import asyncio
-from discord.ext import commands
-from datetime import datetime
+from discord.ext import commands, tasks
+from datetime import datetime, timedelta
 from discord import app_commands
 from bot import CONNECTION
 
@@ -10,6 +10,29 @@ color = 0xc48aff
 class Mute(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+
+    def cog_load(self):
+        self.mute_check.start()
+
+    @tasks.loop(seconds=60)
+    async def mute_check(self):
+        cur = CONNECTION.cursor()
+        cur.execute("SELECT * FROM tempmute WHERE time < %s", (datetime.now(),))
+        data = cur.fetchall()
+        for row in data:
+            try:
+                guild_id = row[0]
+                user_id = row[1]
+                role_id = row[2]
+                guild = await self.bot.fetch_guild(guild_id)
+                user = await guild.fetch_member(user_id)
+                role = guild.get_role(role_id)
+                await user.remove_roles(role)
+                cur.execute("DELETE FROM tempmute WHERE guild_id = %s AND user_id = %s", (guild_id, user_id))
+                CONNECTION.commit()
+            except:
+                pass
 
 
     @app_commands.default_permissions(manage_roles=True)
@@ -103,8 +126,9 @@ class Mute(commands.Cog):
         
         else:
             embed = discord.Embed(
-                title = f"→ Mute Role Not Set!",
-                description= f'The mute role has not yet been set. Ask an admin to set it up using `/setmute`'
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -122,6 +146,22 @@ class Mute(commands.Cog):
         time: int
     ): 
         "Mute a user for a specified amount of time"
+
+        if time > 2147483647:
+            embed = discord.Embed(
+                title = "→ Invalid Time!",
+                description = f"• You must specify a time less than 2147483647."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        if time < 1:
+            embed = discord.Embed(
+                title = "→ Invalid Time!",
+                description = f"• You must specify a time greater than 0."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         try:
             guild_id = interaction.user.guild.id
@@ -143,10 +183,19 @@ class Mute(commands.Cog):
 
             await interaction.response.send_message(embed=embed)
 
-            await asyncio.sleep(time*3600)
-            await member.remove_roles(role)
+            cur = CONNECTION.cursor()
+            cur.execute("INSERT INTO tempmute (guild_id, user_id, role_id, time) VALUES (%s, %s, %s, %s)", (guild_id, member.id, role.id, (datetime.now()+timedelta(hours=time))))
+            CONNECTION.commit()
         
         except TypeError:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except AttributeError:
             embed = discord.Embed(
                 colour = color,
                 title = "→ No Role Set!",
@@ -197,6 +246,14 @@ class Mute(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await interaction.response.send_message(embed=embed, ephemeral=True)
+        except AttributeError:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
     @app_commands.default_permissions(manage_roles=True)
@@ -210,24 +267,42 @@ class Mute(commands.Cog):
     ):
         "Unmute a specified member"
         
-        guild_id = interaction.user.guild.id
-        cur = CONNECTION.cursor()
-        cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
-        data = cur.fetchone()
-        role_id = data[0]
-        role_name = interaction.user.guild.get_role(role_id)
-        role = discord.utils.get(interaction.user.guild.roles, name=f"{role_name}")
-        embed = discord.Embed(
-            title = f"**User {member} has been unmuted.**",
-            colour = discord.Colour.green()
-        )
-        embed.add_field(name=f'This command was issued by {interaction.user}', value = f'\u200b', inline=False)
-        embed.set_thumbnail(url = member.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        try:
+            guild_id = interaction.user.guild.id
+            cur = CONNECTION.cursor()
+            cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
+            data = cur.fetchone()
+            role_id = data[0]
+            role_name = interaction.user.guild.get_role(role_id)
+            role = discord.utils.get(interaction.user.guild.roles, name=f"{role_name}")
+            embed = discord.Embed(
+                title = f"**User {member} has been unmuted.**",
+                colour = discord.Colour.green()
+            )
+            embed.add_field(name=f'This command was issued by {interaction.user}', value = f'\u200b', inline=False)
+            embed.set_thumbnail(url = member.avatar.url)
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
-        await interaction.response.send_message(embed=embed)
-        await member.remove_roles(role)
+            await interaction.response.send_message(embed=embed)
+            await member.remove_roles(role)
 
+        except TypeError:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        except AttributeError:
+            embed = discord.Embed(
+                colour = color,
+                title = "→ No Role Set!",
+                description = f"• It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
+            )
+            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        
 
 async def setup(bot):
     await bot.add_cog(Mute(bot))

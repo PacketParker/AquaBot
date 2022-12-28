@@ -129,29 +129,29 @@ class RankDropdown(discord.ui.Select):
         self.bot = bot
 
         options = [
-            discord.SelectOption(label='Copper III', description="1,000", emoji = "<:copper_3:908535582534299688>"),
-            discord.SelectOption(label='Copper II', description="2,000", emoji = "<:copper_2:908535594714558524>"),
-            discord.SelectOption(label='Copper I', description="3,000", emoji = "<:copper_1:908535605644918895>"),
+            discord.SelectOption(label='Copper III', description="100,000", emoji = "<:copper_3:908535582534299688>"),
+            discord.SelectOption(label='Copper II', description="200,000", emoji = "<:copper_2:908535594714558524>"),
+            discord.SelectOption(label='Copper I', description="300,000", emoji = "<:copper_1:908535605644918895>"),
 
-            discord.SelectOption(label='Bronze III', description="10,000", emoji = "<:bronze_3:908535616650760222>"),
-            discord.SelectOption(label='Bronze II', description="20,000", emoji = "<:bronze_2:908535628503863296>"),
-            discord.SelectOption(label='Bronze I', description="30,000", emoji = "<:bronze_1:908535639606198292>"),
+            discord.SelectOption(label='Bronze III', description="100,000,000", emoji = "<:bronze_3:908535616650760222>"),
+            discord.SelectOption(label='Bronze II', description="200,000,000", emoji = "<:bronze_2:908535628503863296>"),
+            discord.SelectOption(label='Bronze I', description="300,000,000", emoji = "<:bronze_1:908535639606198292>"),
 
-            discord.SelectOption(label='Silver III', description="100,000", emoji = "<:silver_3:908535654667911168>"),
-            discord.SelectOption(label='Silver II', description="200,000", emoji = "<:silver_2:908535667263434782>"),
-            discord.SelectOption(label='Silver I', description="300,000", emoji = "<:silver_1:908535680064442398>"),
+            discord.SelectOption(label='Silver III', description="100,000,000,000", emoji = "<:silver_3:908535654667911168>"),
+            discord.SelectOption(label='Silver II', description="200,000,000,000", emoji = "<:silver_2:908535667263434782>"),
+            discord.SelectOption(label='Silver I', description="300,000,000,000", emoji = "<:silver_1:908535680064442398>"),
 
-            discord.SelectOption(label='Gold III', description="1,000,000", emoji = "<:gold_3:908535691137388554>"),
-            discord.SelectOption(label='Gold II', description="2,000,000", emoji = "<:gold_2:908535705154764870>"),
-            discord.SelectOption(label='Gold I', description="3,000,000", emoji = "<:gold_1:908535742224027758>"),
+            discord.SelectOption(label='Gold III', description="100,000,000,000,000", emoji = "<:gold_3:908535691137388554>"),
+            discord.SelectOption(label='Gold II', description="200,000,000,000,000", emoji = "<:gold_2:908535705154764870>"),
+            discord.SelectOption(label='Gold I', description="300,000,000,000,000", emoji = "<:gold_1:908535742224027758>"),
 
-            discord.SelectOption(label='Platinum III', description="10,000,000", emoji = "<:platinum_3:908535751900282880>"),
-            discord.SelectOption(label='Platinum II', description="20,000,000", emoji = "<:platinum_2:908535764629999656>"),
-            discord.SelectOption(label='Platinum I', description="30,000,000", emoji = "<:platinum_1:908535773689679932>"),
+            discord.SelectOption(label='Platinum III', description="100,000,000,000,000,000", emoji = "<:platinum_3:908535751900282880>"),
+            discord.SelectOption(label='Platinum II', description="200,000,000,000,000,000", emoji = "<:platinum_2:908535764629999656>"),
+            discord.SelectOption(label='Platinum I', description="300,000,000,000,000,000", emoji = "<:platinum_1:908535773689679932>"),
 
-            discord.SelectOption(label='Diamond', description="1,000,000,000,000", emoji = "<:diamond:908535791700037702>"),
+            discord.SelectOption(label='Diamond', description="123,456,789,000,000,000,000", emoji = "<:diamond:908535791700037702>"),
 
-            discord.SelectOption(label='Champion', description="1,000,000,000,000,000", emoji = "<:champion:908535801338540042>"),
+            discord.SelectOption(label='Champion', description="999,999,999,999,999,999,999,999,999", emoji = "<:champion:908535801338540042>"),
 
         ]
 
@@ -167,7 +167,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 1
             rank_name = 'Copper III'
-            bet = 1000
+            bet = 100000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -181,7 +181,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 2
             rank_name = 'Copper II'
-            bet = 2000
+            bet = 200000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -195,7 +195,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 3
             rank_name = 'Copper I'
-            bet = 3000
+            bet = 300000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -209,7 +209,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 4
             rank_name = 'Bronze III'
-            bet = 10000
+            bet = 100000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -223,7 +223,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 5
             rank_name = 'Bronze II'
-            bet = 20000
+            bet = 200000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -237,7 +237,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 6
             rank_name = 'Bronze I'
-            bet = 30000
+            bet = 300000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -251,7 +251,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 7
             rank_name = 'Silver III'
-            bet = 100000
+            bet = 100000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -265,7 +265,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 8
             rank_name = 'Silver II'
-            bet = 200000
+            bet = 200000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -279,7 +279,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 9
             rank_name = 'Silver I'
-            bet = 300000
+            bet = 300000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -293,7 +293,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 10
             rank_name = 'Gold III'
-            bet = 1000000
+            bet = 100000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -307,7 +307,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 11
             rank_name = 'Gold II'
-            bet = 2000000
+            bet = 200000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -321,7 +321,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 12
             rank_name = 'Gold I'
-            bet = 3000000
+            bet = 300000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -335,7 +335,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 13
             rank_name = 'Platinum III'
-            bet = 10000000
+            bet = 100000000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -349,7 +349,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 14
             rank_name = 'Platinum II'
-            bet = 20000000
+            bet = 200000000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -363,7 +363,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 15
             rank_name = 'Platinum I'
-            bet = 30000000
+            bet = 300000000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -377,7 +377,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 16
             rank_name = 'Diamond'
-            bet = 1000000000000
+            bet = 123456789000000000000
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -391,7 +391,7 @@ class RankDropdown(discord.ui.Select):
 
             rank_value = 17
             rank_name = 'Champion'
-            bet = 1000000000000000
+            bet = 999999999999999999999999999
 
             view = ConfirmRankPurchase(self.bot, bet, rank_value, rank_name)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -561,29 +561,29 @@ class ShopDropdown(discord.ui.Select):
                 colour = discord.Colour.random()
             )
 
-            embed.add_field(name = f"{copper_iii}", value = f"1,000", inline=True)
-            embed.add_field(name = f"{copper_ii}", value = f"2,000", inline=True)
-            embed.add_field(name = f"{copper_i}", value = f"3,000", inline=True)
+            embed.add_field(name = f"{copper_iii}", value = f"```100,000```", inline=True)
+            embed.add_field(name = f"{copper_ii}", value = f"```200,000```", inline=True)
+            embed.add_field(name = f"{copper_i}", value = f"```300,000```", inline=True)
 
-            embed.add_field(name = f"{bronze_iii}", value = f"10,000", inline=True)
-            embed.add_field(name = f"{bronze_ii}", value = f"20,000", inline=True)
-            embed.add_field(name = f"{bronze_i}", value = f"30,000", inline=True)
+            embed.add_field(name = f"{bronze_iii}", value = f"```100,000,000```", inline=True)
+            embed.add_field(name = f"{bronze_ii}", value = f"```200,000,000```", inline=True)
+            embed.add_field(name = f"{bronze_i}", value = f"```300,000,000```", inline=True)
 
-            embed.add_field(name = f"{silver_iii}", value = f"100,000", inline=True)
-            embed.add_field(name = f"{silver_ii}", value = f"200,000", inline=True)
-            embed.add_field(name = f"{silver_i}", value = f"300,000", inline=True)
+            embed.add_field(name = f"{silver_iii}", value = f"```100,000,000,000\n(100 bil.)```", inline=True)
+            embed.add_field(name = f"{silver_ii}", value = f"```200,000,000,000\n(200 bil.)```", inline=True)
+            embed.add_field(name = f"{silver_i}", value = f"```300,000,000,000\n(300 bil.)```", inline=True)
 
-            embed.add_field(name = f"{gold_iii}", value = f"1,000,000", inline=True)
-            embed.add_field(name = f"{gold_ii}", value = f"2,000,000", inline=True)
-            embed.add_field(name = f"{gold_i}", value = f"3,000,000", inline=True)
+            embed.add_field(name = f"{gold_iii}", value = f"```100,000,000,000,\n000  (100 tril.)```", inline=True)
+            embed.add_field(name = f"{gold_ii}", value = f"```200,000,000,000,\n000  (200 tril.)```", inline=True)
+            embed.add_field(name = f"{gold_i}", value = f"```300,000,000,000,\n000  (300 tril.)```", inline=True)
 
-            embed.add_field(name = f"{platinum_iii}", value = f"10,000,000", inline=True)
-            embed.add_field(name = f"{platinum_ii}", value = f"20,000,000", inline=True)
-            embed.add_field(name = f"{platinum_i}", value = f"30,000,000", inline=True)
+            embed.add_field(name = f"{platinum_iii}", value = f"```100,000,000,000,000,000  (100 quad.)```", inline=True)
+            embed.add_field(name = f"{platinum_ii}", value = f"```200,000,000,000,000,000  (200 quad.)```", inline=True)
+            embed.add_field(name = f"{platinum_i}", value = f"```300,000,000,000,000,000  (300 quad.)```", inline=True)
             
-            embed.add_field(name = f"{diamond}", value = f"1,000,000,000,000", inline=True)
+            embed.add_field(name = f"{diamond}", value = f"```123,456,789,000,000,000,000\n(<123 quint.)```", inline=True)
 
-            embed.add_field(name = f"{champion}", value = f"1,000,000,000,000,000", inline=True)
+            embed.add_field(name = f"{champion}", value = f"```999,999,999,999,999,999,999,\n999,999 (<999 sept.)```", inline=True)
 
             view = RankView(self.bot)
             await interaction.response.edit_message(embed=embed, view=view)
