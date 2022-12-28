@@ -15,6 +15,27 @@ price_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0,
     'Polygon (MATIC)':0, 'Algorand (ALGO)':0, 'Bitcoin Cash (BCH)':0, 
     'VeChain (VET)':0, 'Stellar (XLM)':0, 'Internet Computer (ICP)':0}
 
+mktcap_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0, 
+    'Solana (SOL)':0, 'Cardano (ADA)':0, 'XRP (XRP)':0, 'Polkadot (DOT)':0,
+    'Dogecoin (DOGE)':0, 'Avalanche (AVAX)':0, 'SHIBA INU (SHIB)':0, 
+    'Terra (LUNA)':0, 'Litecoin (LTC)':0, 'Uniswap (UNI)':0, 'Chainlink (LINK)':0,
+    'Polygon (MATIC)':0, 'Algorand (ALGO)':0, 'Bitcoin Cash (BCH)':0, 
+    'VeChain (VET)':0, 'Stellar (XLM)':0, 'Internet Computer (ICP)':0}
+
+high_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0, 
+    'Solana (SOL)':0, 'Cardano (ADA)':0, 'XRP (XRP)':0, 'Polkadot (DOT)':0,
+    'Dogecoin (DOGE)':0, 'Avalanche (AVAX)':0, 'SHIBA INU (SHIB)':0, 
+    'Terra (LUNA)':0, 'Litecoin (LTC)':0, 'Uniswap (UNI)':0, 'Chainlink (LINK)':0,
+    'Polygon (MATIC)':0, 'Algorand (ALGO)':0, 'Bitcoin Cash (BCH)':0, 
+    'VeChain (VET)':0, 'Stellar (XLM)':0, 'Internet Computer (ICP)':0}
+
+low_dict = {'Bitcoin (BTC)':0, 'Ethereum (ETH)':0, 'Binance Coin (BNB)':0, 
+    'Solana (SOL)':0, 'Cardano (ADA)':0, 'XRP (XRP)':0, 'Polkadot (DOT)':0,
+    'Dogecoin (DOGE)':0, 'Avalanche (AVAX)':0, 'SHIBA INU (SHIB)':0, 
+    'Terra (LUNA)':0, 'Litecoin (LTC)':0, 'Uniswap (UNI)':0, 'Chainlink (LINK)':0,
+    'Polygon (MATIC)':0, 'Algorand (ALGO)':0, 'Bitcoin Cash (BCH)':0, 
+    'VeChain (VET)':0, 'Stellar (XLM)':0, 'Internet Computer (ICP)':0}
+
 price_change_dict = {'bitcoin_change':0, 'ethereum_change':0, 'binance_change':0, 
     'solana_change':0, 'cardano_change':0, 'xrp_change':0, 'polkadot_change':0,
     'dogecoin_change':0, 'avalanche_change':0, 'shiba_change':0, 
@@ -37,16 +58,6 @@ connect_icon_dict = {'Bitcoin (BTC)':'bitcoin', 'Ethereum (ETH)':'ethereum',
     'Litecoin (LTC)':'litecoin', 'Uniswap (UNI)':'uniswap', 'Chainlink (LINK)':'chainlink',
     'Polygon (MATIC)':'polygon', 'Algorand (ALGO)':'algorand', 'Bitcoin Cash (BCH)':'bitcoin_cash', 
     'VeChain (VET)':'vechain', 'Stellar (XLM)':'stellar', 'Internet Computer (ICP)':'internet_computer'}
-
-connect_change_dict = {'Bitcoin (BTC)':'bitcoin_change', 'Ethereum (ETH)':'ethereum_change', 
-    'Binance Coin (BNB)':'binance_change', 'Solana (SOL)':'solana_change', 
-    'Cardano (ADA)':'cardano_change', 'XRP (XRP)':'xrp_change', 'Polkadot (DOT)':'polkadot_change',
-    'Dogecoin (DOGE)':'dogecoin_change', 'Avalanche (AVAX)':'avalanche_change', 
-    'SHIBA INU (SHIB)':'shiba_change', 'Terra (LUNA)':'terra_change', 'Litecoin (LTC)':'litecoin_change', 
-    'Uniswap (UNI)':'uniswap_change', 'Chainlink (LINK)':'chainlink_change',
-    'Polygon (MATIC)':'polygon_change', 'Algorand (ALGO)':'algorand_change', 
-    'Bitcoin Cash (BCH)':'bitcoin_cash_change', 'VeChain (VET)':'vechain_change', 
-    'Stellar (XLM)':'stellar_change', 'Internet Computer (ICP)':'internet_computer_change'}
 
 class Crypto(commands.Cog):
     def __init__(self, bot):
@@ -147,6 +158,136 @@ class Crypto(commands.Cog):
             xlm_change = 0
             icp_change = 0
 
+        try:
+            btc_high = float(response.json()['RAW']['BTC']['USD']['HIGH24HOUR'])
+            eth_high = float(response.json()['RAW']['ETH']['USD']['HIGH24HOUR'])
+            bnb_high = float(response.json()['RAW']['BNB']['USD']['HIGH24HOUR'])
+            sol_high = float(response.json()['RAW']['SOL']['USD']['HIGH24HOUR'])
+            ada_high = float(response.json()['RAW']['ADA']['USD']['HIGH24HOUR'])
+            xrp_high = float(response.json()['RAW']['XRP']['USD']['HIGH24HOUR'])
+            dot_high = float(response.json()['RAW']['DOT']['USD']['HIGH24HOUR'])
+            doge_high = float(response.json()['RAW']['DOGE']['USD']['HIGH24HOUR'])
+            avax_high = float(response.json()['RAW']['AVAX']['USD']['HIGH24HOUR'])
+            shib_high = float(response.json()['RAW']['SHIB']['USD']['HIGH24HOUR'])
+            luna_high = float(response.json()['RAW']['LUNA']['USD']['HIGH24HOUR'])
+            ltc_high = float(response.json()['RAW']['LTC']['USD']['HIGH24HOUR'])
+            uni_high = float(response.json()['RAW']['UNI']['USD']['HIGH24HOUR'])
+            link_high = float(response.json()['RAW']['LINK']['USD']['HIGH24HOUR'])
+            matic_high = float(response.json()['RAW']['MATIC']['USD']['HIGH24HOUR'])
+            algo_high = float(response.json()['RAW']['ALGO']['USD']['HIGH24HOUR'])
+            bch_high = float(response.json()['RAW']['BCH']['USD']['HIGH24HOUR'])
+            vet_high =  float(response.json()['RAW']['VET']['USD']['HIGH24HOUR'])
+            xlm_high = float(response.json()['RAW']['XLM']['USD']['HIGH24HOUR'])
+            icp_high = float(response.json()['RAW']['ICP']['USD']['HIGH24HOUR'])
+        except TypeError:
+            btc_high = 0
+            eth_high = 0
+            bnb_high = 0
+            sol_high = 0
+            ada_high = 0
+            xrp_high = 0
+            dot_high = 0
+            doge_high = 0
+            avax_high = 0
+            shib_high = 0
+            luna_high = 0
+            ltc_high = 0
+            uni_high = 0
+            link_high = 0
+            matic_high = 0
+            algo_high = 0
+            bch_high = 0
+            vet_high = 0
+            xlm_high = 0
+            icp_high = 0
+
+        try:
+            btc_low = float(response.json()['RAW']['BTC']['USD']['LOW24HOUR'])
+            eth_low = float(response.json()['RAW']['ETH']['USD']['LOW24HOUR'])
+            bnb_low = float(response.json()['RAW']['BNB']['USD']['LOW24HOUR'])
+            sol_low = float(response.json()['RAW']['SOL']['USD']['LOW24HOUR'])
+            ada_low = float(response.json()['RAW']['ADA']['USD']['LOW24HOUR'])
+            xrp_low = float(response.json()['RAW']['XRP']['USD']['LOW24HOUR'])
+            dot_low = float(response.json()['RAW']['DOT']['USD']['LOW24HOUR'])
+            doge_low = float(response.json()['RAW']['DOGE']['USD']['LOW24HOUR'])
+            avax_low = float(response.json()['RAW']['AVAX']['USD']['LOW24HOUR'])
+            shib_low = float(response.json()['RAW']['SHIB']['USD']['LOW24HOUR'])
+            luna_low = float(response.json()['RAW']['LUNA']['USD']['LOW24HOUR'])
+            ltc_low = float(response.json()['RAW']['LTC']['USD']['LOW24HOUR'])
+            uni_low = float(response.json()['RAW']['UNI']['USD']['LOW24HOUR'])
+            link_low = float(response.json()['RAW']['LINK']['USD']['LOW24HOUR'])
+            matic_low = float(response.json()['RAW']['MATIC']['USD']['LOW24HOUR'])
+            algo_low = float(response.json()['RAW']['ALGO']['USD']['LOW24HOUR'])
+            bch_low = float(response.json()['RAW']['BCH']['USD']['LOW24HOUR'])
+            vet_low =  float(response.json()['RAW']['VET']['USD']['LOW24HOUR'])
+            xlm_low = float(response.json()['RAW']['XLM']['USD']['LOW24HOUR'])
+            icp_low = float(response.json()['RAW']['ICP']['USD']['LOW24HOUR'])
+        except TypeError:
+            btc_low = 0
+            eth_low = 0
+            bnb_low = 0
+            sol_low = 0
+            ada_low = 0
+            xrp_low = 0
+            dot_low = 0
+            doge_low = 0
+            avax_low = 0
+            shib_low = 0
+            luna_low = 0
+            ltc_low = 0
+            uni_low = 0
+            link_low = 0
+            matic_low = 0
+            algo_low = 0
+            bch_low = 0
+            vet_low = 0
+            xlm_low = 0
+            icp_low = 0
+
+        try:
+            btc_mktcap = float(response.json()['RAW']['BTC']['USD']['MKTCAP'])
+            eth_mktcap = float(response.json()['RAW']['ETH']['USD']['MKTCAP'])
+            bnb_mktcap = float(response.json()['RAW']['BNB']['USD']['MKTCAP'])
+            sol_mktcap = float(response.json()['RAW']['SOL']['USD']['MKTCAP'])
+            ada_mktcap = float(response.json()['RAW']['ADA']['USD']['MKTCAP'])
+            xrp_mktcap = float(response.json()['RAW']['XRP']['USD']['MKTCAP'])
+            dot_mktcap = float(response.json()['RAW']['DOT']['USD']['MKTCAP'])
+            doge_mktcap = float(response.json()['RAW']['DOGE']['USD']['MKTCAP'])
+            avax_mktcap = float(response.json()['RAW']['AVAX']['USD']['MKTCAP'])
+            shib_mktcap = float(response.json()['RAW']['SHIB']['USD']['MKTCAP'])
+            luna_mktcap = float(response.json()['RAW']['LUNA']['USD']['MKTCAP'])
+            ltc_mktcap = float(response.json()['RAW']['LTC']['USD']['MKTCAP'])
+            uni_mktcap = float(response.json()['RAW']['UNI']['USD']['MKTCAP'])
+            link_mktcap = float(response.json()['RAW']['LINK']['USD']['MKTCAP'])
+            matic_mktcap = float(response.json()['RAW']['MATIC']['USD']['MKTCAP'])
+            algo_mktcap = float(response.json()['RAW']['ALGO']['USD']['MKTCAP'])
+            bch_mktcap = float(response.json()['RAW']['BCH']['USD']['MKTCAP'])
+            vet_mktcap =  float(response.json()['RAW']['VET']['USD']['MKTCAP'])
+            xlm_mktcap = float(response.json()['RAW']['XLM']['USD']['MKTCAP'])
+            icp_mktcap = float(response.json()['RAW']['ICP']['USD']['MKTCAP'])
+        except TypeError:
+            btc_mktcap = 0
+            eth_mktcap = 0
+            bnb_mktcap = 0
+            sol_mktcap = 0
+            ada_mktcap = 0
+            xrp_mktcap = 0
+            dot_mktcap = 0
+            doge_mktcap = 0
+            avax_mktcap = 0
+            shib_mktcap = 0
+            luna_mktcap = 0
+            ltc_mktcap = 0
+            uni_mktcap = 0
+            link_mktcap = 0
+            matic_mktcap = 0
+            algo_mktcap = 0
+            bch_mktcap = 0
+            vet_mktcap = 0
+            xlm_mktcap = 0
+            icp_mktcap = 0
+
+
         update_price_dict = {'Bitcoin (BTC)':round(btc_price, 2), 'Ethereum (ETH)':round(eth_price, 2), 'Binance Coin (BNB)':round(bnb_price, 2), 
         'Solana (SOL)':round(sol_price, 2), 'Cardano (ADA)':round(ada_price, 2), 'XRP (XRP)':round(xrp_price, 2), 'Polkadot (DOT)':round(dot_price, 2),
         'Dogecoin (DOGE)':round(doge_price, 3), 'Avalanche (AVAX)':round(avax_price, 2), 'SHIBA INU (SHIB)':round(shib_price, 8), 
@@ -154,15 +295,40 @@ class Crypto(commands.Cog):
         'Polygon (MATIC)':round(matic_price, 2), 'Algorand (ALGO)':round(algo_price, 2), 'Bitcoin Cash (BCH)':round(bch_price, 2), 
         'VeChain (VET)':round(vet_price, 2), 'Stellar (XLM)':round(xlm_price, 2), 'Internet Computer (ICP)':round(icp_price, 2)}
 
-        update_price_change_dict = {'bitcoin_change':round(btc_change, 2), 'ethereum_change':round(eth_change, 2), 'binance_change':round(bnb_change, 2), 
-        'solana_change':round(sol_change, 2), 'cardano_change':round(ada_change, 2), 'xrp_change':round(xrp_change, 2), 'polkadot_change':round(dot_change, 2),
-        'dogecoin_change':round(doge_change, 2), 'avalanche_change':round(avax_change, 2), 'shiba_change':round(shib_change, 2), 
-        'terra_change':round(luna_change, 2), 'litecoin_change':round(ltc_change, 2), 'uniswap_change':round(uni_change, 2), 'chainlink_change':round(link_change, 2),
-        'polygon_change':round(matic_change, 2), 'algorand_change':round(algo_change, 2), 'bitcoin_cash_change':round(bch_change, 2), 
-        'vechain_change':round(vet_change, 2), 'stellar_change':round(xlm_change, 2), 'internet_computer_change':round(icp_change, 2)}
+        update_price_change_dict = {'Bitcoin (BTC)':round(btc_change, 2), 'Ethereum (ETH)':round(eth_change, 2), 'Binance Coin (BNB)':round(bnb_change, 2), 
+        'Solana (SOL)':round(sol_change, 2), 'Cardano (ADA)':round(ada_change, 2), 'XRP (XRP)':round(xrp_change, 2), 'Polkadot (DOT)':round(dot_change, 2),
+        'Dogecoin (DOGE)':round(doge_change, 2), 'Avalanche (AVAX)':round(avax_change, 2), 'SHIBA INU (SHIB)':round(shib_change, 2), 
+        'Terra (LUNA)':round(luna_change, 2), 'Litecoin (LTC)':round(ltc_change, 2), 'Uniswap (UNI)':round(uni_change, 2), 'Chainlink (LINK)':round(link_change, 2),
+        'Polygon (MATIC)':round(matic_change, 2), 'Algorand (ALGO)':round(algo_change, 2), 'Bitcoin Cash (BCH)':round(bch_change, 2), 
+        'VeChain (VET)':round(vet_change, 2), 'Stellar (XLM)':round(xlm_change, 2), 'Internet Computer (ICP)':round(icp_change, 2)}
+
+        update_high_dict = {'Bitcoin (BTC)':round(btc_high, 2), 'Ethereum (ETH)':round(eth_high, 2), 'Binance Coin (BNB)':round(bnb_high, 2), 
+        'Solana (SOL)':round(sol_high, 2), 'Cardano (ADA)':round(ada_high, 2), 'XRP (XRP)':round(xrp_high, 2), 'Polkadot (DOT)':round(dot_high, 2),
+        'Dogecoin (DOGE)':round(doge_high, 3), 'Avalanche (AVAX)':round(avax_high, 2), 'HIBA INU (SHIB)':round(shib_high, 8), 
+        'Terra (LUNA)':round(luna_high, 2), 'Litecoin (LTC)':round(ltc_high, 2), 'Uniswap (UNI)':round(uni_high, 2), 'Chainlink (LINK)':round(link_high, 2),
+        'Polygon (MATIC)':round(matic_high, 2), 'Algorand (ALGO)':round(algo_high, 2), 'Bitcoin Cash (BCH)':round(bch_high, 2), 
+        'VeChain (VET)':round(vet_high, 2), 'Stellar (XLM)':round(xlm_high, 2), 'Internet Computer (ICP)':round(icp_high, 2)}
+
+        update_low_dict = {'Bitcoin (BTC)':round(btc_low, 2), 'Ethereum (ETH)':round(eth_low, 2), 'Binance Coin (BNB)':round(bnb_low, 2), 
+        'Solana (SOL)':round(sol_low, 2), 'Cardano (ADA)':round(ada_low, 2), 'XRP (XRP)':round(xrp_low, 2), 'Polkadot (DOT)':round(dot_low, 2),
+        'Dogecoin (DOGE)':round(doge_low, 3), 'Avalanche (AVAX)':round(avax_low, 2), 'HIBA INU (SHIB)':round(shib_low, 8), 
+        'Terra (LUNA)':round(luna_low, 2), 'Litecoin (LTC)':round(ltc_low, 2), 'Uniswap (UNI)':round(uni_low, 2), 'Chainlink (LINK)':round(link_low, 2),
+        'Polygon (MATIC)':round(matic_low, 2), 'Algorand (ALGO)':round(algo_low, 2), 'Bitcoin Cash (BCH)':round(bch_low, 2), 
+        'VeChain (VET)':round(vet_low, 2), 'Stellar (XLM)':round(xlm_low, 2), 'Internet Computer (ICP)':round(icp_low, 2)}
+
+        update_mktcap_dict = {'Bitcoin (BTC)':round(btc_mktcap, 2), 'Ethereum (ETH)':round(eth_mktcap, 2), 'Binance Coin (BNB)':round(bnb_mktcap, 2), 
+        'Solana (SOL)':round(sol_mktcap, 2), 'Cardano (ADA)':round(ada_mktcap, 2), 'XRP (XRP)':round(xrp_mktcap, 2), 'Polkadot (DOT)':round(dot_mktcap, 2),
+        'Dogecoin (DOGE)':round(doge_mktcap, 2), 'Avalanche (AVAX)':round(avax_mktcap, 2), 'HIBA INU (SHIB)':round(shib_mktcap, 2), 
+        'Terra (LUNA)':round(luna_mktcap, 2), 'Litecoin (LTC)':round(ltc_mktcap, 2), 'Uniswap (UNI)':round(uni_mktcap, 2), 'Chainlink (LINK)':round(link_mktcap, 2),
+        'Polygon (MATIC)':round(matic_mktcap, 2), 'Algorand (ALGO)':round(algo_mktcap, 2), 'Bitcoin Cash (BCH)':round(bch_mktcap, 2), 
+        'VeChain (VET)':round(vet_mktcap, 2), 'Stellar (XLM)':round(xlm_mktcap, 2), 'Internet Computer (ICP)':round(icp_mktcap, 2)}
+
 
         price_dict.update(update_price_dict)
         price_change_dict.update(update_price_change_dict)
+        high_dict.update(update_high_dict)
+        low_dict.update(update_low_dict)
+        mktcap_dict.update(update_mktcap_dict)
 
 
     @app_commands.command()
@@ -179,7 +345,7 @@ class Crypto(commands.Cog):
         )
 
         for key in price_dict:
-            embed.add_field(name = f"{key}", value = f"```{price_dict[key]:,}```", inline=True)
+            embed.add_field(name = f"{key}", value = f"```${price_dict[key]:,}```", inline=True)
 
         await interaction.response.send_message(embed=embed)
 
@@ -197,7 +363,6 @@ class Crypto(commands.Cog):
     ):
         "Send more information on a certain cryptocurrency"
 
-        connection = connect_change_dict.get(currency)
         icon_name = connect_icon_dict.get(currency)
         color = connect_color_dict.get(currency)
 
@@ -206,8 +371,11 @@ class Crypto(commands.Cog):
             description = "Information is updated every 60 seconds",
             colour = color
         )
-        embed.add_field(name = "Current Price -", value = f"${price_dict.get(currency):,}")
-        embed.add_field(name = "24 Hour Change -", value = f"{price_change_dict.get(connection):,}%")
+        embed.add_field(name = "Current Price -", value = f"```${price_dict.get(currency):,}```", inline=True)
+        embed.add_field(name = "24 Hour Change -", value = f"```{price_change_dict.get(currency):,}%```", inline=True)
+        embed.add_field(name = "24 Hour High -", value = f"```${high_dict.get(currency):,}```", inline=False)
+        embed.add_field(name = "24 Hour Low -", value = f"```${low_dict.get(currency):,}```", inline=True)
+        embed.add_field(name = "Market Cap -", value = f"```${mktcap_dict.get(currency):,}```", inline=False)
         file = discord.File(f"./code/utils/crypto_icons/{icon_name}.png", filename = f"{icon_name}.png")
         embed.set_thumbnail(url = f"attachment://{icon_name}.png")
 
