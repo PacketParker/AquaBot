@@ -12,6 +12,7 @@ class Mute(commands.Cog):
         self.bot = bot
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(role_name='Name of your servers muted role')
@@ -45,6 +46,7 @@ class Mute(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     async def delmute(
@@ -77,6 +79,7 @@ class Mute(commands.Cog):
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     async def muterole(
@@ -107,6 +110,7 @@ class Mute(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(member='Name of the member you want to temporarily mute')
@@ -152,6 +156,7 @@ class Mute(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(member='Name of the member you want to mute')
@@ -194,6 +199,7 @@ class Mute(commands.Cog):
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+    @app_commands.default_permissions(manage_roles=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(member='Name of the member you want to unmute')

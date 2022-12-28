@@ -11,6 +11,7 @@ class Moderation(commands.Cog):
         self.bot = bot
 
 
+    @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(amount='Number of messages you would like deleted')
@@ -34,6 +35,7 @@ class Moderation(commands.Cog):
             await interaction.response.send_message(f"{amount} messages deleted")
 
 
+    @app_commands.default_permissions(kick_members=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(kick_members=True)
     @app_commands.describe(member='Member you would like to kick')
@@ -59,6 +61,7 @@ class Moderation(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
+    @app_commands.default_permissions(ban_members=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(ban_members=True)
     @app_commands.describe(member='Member you would like to ban')
@@ -84,6 +87,7 @@ class Moderation(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
+    @app_commands.default_permissions(kick_members=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(kick_members=True)
     @app_commands.describe(member='Member you would like to softban')

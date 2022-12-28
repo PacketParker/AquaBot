@@ -11,6 +11,7 @@ class Warnings(commands.Cog):
         self.bot = bot
 
 
+    @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(member='The member you would like to warn')
@@ -43,6 +44,7 @@ class Warnings(commands.Cog):
         await interaction.response.send_message(embed=embed)    
     
 
+    @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(member='The member whose warnings you want to see')
@@ -79,6 +81,7 @@ class Warnings(commands.Cog):
             return await interaction.response.send_message(embed=embed)
             
 
+    @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(id='ID of the warning you would like to delete')

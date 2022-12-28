@@ -656,11 +656,12 @@ class Profile(commands.Cog):
         embed = discord.Embed(
             title = f"Profile For - {await self.bot.fetch_user(user_id)}",
             description = f"Below will show all economy information for this user",
-            color = discord.Color.random()
+            color = user.color
         )
 
         embed.add_field(name = "Money Balance:", value = f"${balance:,}", inline=False)
         embed.add_field(name = "Ranks:", value = f"{names}", inline=False)
+        embed.set_thumbnail(url = user.avatar.url)
 
         await interaction.response.send_message(embed=embed)
 

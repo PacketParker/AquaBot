@@ -102,8 +102,6 @@ class Info(commands.Cog):
                         "\n➤ Shows information about the bot. "
                         "\n —"
         )
-        before = time.monotonic()
-        ping = (time.monotonic() - before) * 1000
         embed.set_thumbnail(url = self.bot.user.avatar.url)
         embed.add_field(name="• Bot Creator: ", value="Fiji#3608"),
         embed.add_field(name="• Servers: ", value = f"{len(self.bot.guilds):,}"),
@@ -123,7 +121,7 @@ class Info(commands.Cog):
         "Get link to vote for the bot on top.gg"
 
         embed = discord.Embed(
-            title = "→ Vote for me on top.gg!",
+            title = "→ Vote for me on top.gg! Voting awards you $10,000!",
             description = "[Click here to vote](https://top.gg/bot/889027125275922462)",
             colour = discord.Colour.blurple()
         )
@@ -132,23 +130,24 @@ class Info(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-    # @app_commands.command()
-    # async def new(
-    #     self, 
-    #     interaction: discord.Interaction
-    # ):
-    #     "See all of the new changes in the bot"
+    @app_commands.command()
+    async def new(
+        self, 
+        interaction: discord.Interaction
+    ):
+        "See all of the new changes in the bot"
         
-    #     embed = discord.Embed(
-    #         title = "Change Log - ",
-    #         description = "",
-    #         colour = discord.Colour.og_blurple()
-    #     )
+        embed = discord.Embed(
+            title = "Change Log - 12/27/2022",
+            description = "Below are all of the changes that have been made to the bot since the last update.",
+            colour = discord.Colour.og_blurple()
+        )
 
-    #     embed.add_field(name = "", value = "", inline=True)
+        embed.add_field(name = "Work", value = "You now use the `/work` command in order to gain a randomized amount of money (1,000-5,000) every 2 minutes.", inline=True)
+        embed.add_field(name = "Add Increase", value = "When you use the `/add` command you now get $10,000 rather than $2,500.", inline=True)
+        embed.add_field(name = "Coinflip", value = "You can now bet your money on a coinflip with the `/coinflip` command.", inline=True)
 
-
-    #     await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):
