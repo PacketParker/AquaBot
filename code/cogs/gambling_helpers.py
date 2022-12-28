@@ -31,6 +31,7 @@ class GamblingHelpers(commands.Cog):
 
 
     @app_commands.command()
+    @app_commands.checks.cooldown(1, 120)
     async def work(
         self,
         interaction: discord.Interaction
