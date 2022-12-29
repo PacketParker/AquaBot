@@ -7,8 +7,8 @@ class Count(commands.Cog):
 
     async def cog_load(self):
         self.dump_count.start()
-        
-    
+
+
     @tasks.loop(seconds=300)
     async def dump_count(self):
         cur = await aiosqlite.connect("./code/count/count.db")
