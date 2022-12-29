@@ -11,9 +11,8 @@ class Count(commands.Cog):
     
     @tasks.loop(seconds=300)
     async def dump_count(self):
-        cur = await aiosqlite.connect("code/count/count.db")
+        cur = await aiosqlite.connect("./code/count/count.db")
         await cur.execute("UPDATE count SET count = count + ?", (self.bot.count_hold,))
-        await cur.commit()
         self.bot.count_hold = 0
 
 

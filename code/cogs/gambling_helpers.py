@@ -19,15 +19,15 @@ class GamblingHelpers(commands.Cog):
         self, 
         interaction: discord.Interaction
     ):
-
         "Add $10,000 to your balance every 2 hours"
+        
         amount = 10000
         await self.economy.add_money(interaction.user.id, amount)
         embed = discord.Embed(
             title = "I've added $10,000 to you balance",
             description = f"Come back again in {B_COOLDOWN} hours."
         )
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
     @app_commands.command()
@@ -50,7 +50,7 @@ class GamblingHelpers(commands.Cog):
             title = f"You worked and earned ${num:,}",
             description = "Come back again in 2 minutes."
         )
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
     @app_commands.command()

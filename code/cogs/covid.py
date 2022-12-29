@@ -3,8 +3,8 @@ from discord.ext import commands, tasks
 from discord import app_commands
 import requests
 
-covid_dict = {':microbe: Total cases':0, ':skull_crossbones: Total deaths':0, 
-    ':syringe: Total recovered':0, ':radioactive: Total active cases':0, ':map: Total affected countries':0}
+covid_dict = {'total_cases':0, 'total_deaths':0, 'total_recovered':0, 'active_cases':0, 
+    'critical_cases':0, 'cases_today':0, 'deaths_today':0, 'tests':0}
 
 class Covid(commands.Cog):
     def __init__(self, bot):
@@ -24,18 +24,17 @@ class Covid(commands.Cog):
             deaths = int(data["deaths"])
             recovered = int(data["recovered"])
             active = int(data["active"])
-            countries = int(data["affectedCountries"])
+            critical = int(data["critical"])
+            cases_today = int(data["todayCases"])
+            deaths_today = int(data["todayDeaths"])
+            tests = int(data["tests"])
         
         else:
-            cases = 0
-            deaths = 0
-            recovered = 0
-            active = 0
-            countries = 0
+            return
 
-        update_crypto_dict = {':microbe: Total cases':cases, ':skull_crossbones: Total deaths':deaths, 
-        ':syringe: Total recovered':recovered, ':radioactive: Total active cases':active, 
-        ':map: Total affected countries':countries}
+        update_crypto_dict = {'total_cases':cases, 'total_deaths':deaths, 
+        'total_recovered':recovered, 'active_cases':active, 'critical_cases':critical,
+        'cases_today':cases_today, 'deaths_today':deaths_today, 'tests':tests}
 
         covid_dict.update(update_crypto_dict)
 
@@ -52,12 +51,20 @@ class Covid(commands.Cog):
             colour = 0x000000
         )
 
-        for key in covid_dict:
-            embed.add_field(name = f"{key}", value = f"```{covid_dict[key]:,}```", inline=True)
+        embed.add_field(name="Total Cases", value=f"```{covid_dict['total_cases']:,}```", inline=True)
+        embed.add_field(name="Total Deaths", value=f"```{covid_dict['total_deaths']:,}```", inline=True)
+        embed.add_field(name="Total Recovered", value=f"```{covid_dict['total_recovered']:,}```", inline=True)
+        embed.add_field(name="Active Cases", value=f"```{covid_dict['active_cases']:,}```", inline=True)
+        embed.add_field(name="Critical Cases", value=f"```{covid_dict['critical_cases']:,}```", inline=True)
+        embed.add_field(name="Cases Today", value=f"```{covid_dict['cases_today']:,}```", inline=True)
+        embed.add_field(name="Deaths Today", value=f"```{covid_dict['deaths_today']:,}```", inline=True)
+        embed.add_field(name="Tests", value=f"```{covid_dict['tests']:,}```", inline=True)
 
         embed.set_footer(text="Information provided from:  https://disease.sh/v3/covid-19/all")
+        file = discord.File("./code/utils/covid.png", filename="covid.png")
+        embed.set_thumbnail(url="attachment://covid.png")
 
-        await interaction.response.send_message(embed=embed)
+        await interaction.response.send_message(embed=embed, file=file)
 
 
 async def setup(bot):
