@@ -154,10 +154,10 @@ class Music(commands.Cog):
                         pass
 
 
-    @tasks.loop(seconds=1)
+    @tasks.loop(seconds=10)
     async def check_voice_channels(self):
         for guild_id, time in self.voice_channels_on_timer.items():
-            if time + datetime.timedelta(seconds=10) < datetime.datetime.now():
+            if time + datetime.timedelta(minutes=3) < datetime.datetime.now():
                 player = self.bot.lavalink.player_manager.get(guild_id)
                 player.queue.clear()
                 await player.stop()
