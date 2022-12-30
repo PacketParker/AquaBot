@@ -1,8 +1,9 @@
 import re
 import discord
 import lavalink
-from discord.ext import commands
+from discord.ext import commands, tasks
 import math
+import datetime
 from discord import app_commands
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
@@ -69,6 +70,9 @@ class Music(commands.Cog):
 
         lavalink.add_event_hook(self.track_hook)
 
+    def cog_load(self):
+        self.check_voice_channels.start()
+
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
         self.bot.lavalink._event_hooks.clear()
@@ -116,6 +120,7 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
 
+    voice_channels_on_timer = {}
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -129,6 +134,38 @@ class Music(commands.Cog):
                         await guild.voice_client.disconnect(force=True)
                     except AttributeError:
                         pass
+
+        if before.channel and before.channel != after.channel:
+            if len(before.channel.members) == 1:
+                if before.channel.members[0] == self.bot.user:
+                    self.voice_channels_on_timer[member.guild.id] = datetime.datetime.now()
+                    return
+
+                if after.channel.members[0] == self.bot.user:
+                    self.voice_channels_on_timer[member.guild.id] = datetime.datetime.now()
+                    return
+
+        if before.channel != after.channel:
+            if after.channel:
+                if len(after.channel.members) > 1:
+                    try:
+                        self.voice_channels_on_timer.pop(member.guild.id)
+                    except KeyError:
+                        pass
+
+
+    @tasks.loop(seconds=1)
+    async def check_voice_channels(self):
+        for guild_id, time in self.voice_channels_on_timer.items():
+            if time + datetime.timedelta(seconds=10) < datetime.datetime.now():
+                player = self.bot.lavalink.player_manager.get(guild_id)
+                player.queue.clear()
+                await player.stop()
+                guild = self.bot.get_guild(guild_id)
+                try:
+                    await guild.voice_client.disconnect(force=True)
+                except AttributeError:
+                    pass
 
 
     @app_commands.command()
