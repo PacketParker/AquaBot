@@ -9,11 +9,18 @@ class Count(commands.Cog):
         self.dump_count.start()
 
 
-    @tasks.loop(seconds=300)
+    @tasks.loop(seconds=10)
     async def dump_count(self):
         cur = await aiosqlite.connect("./code/count/count.db")
-        await cur.execute("UPDATE count SET count = count + ?", (self.bot.count_hold,))
+        count = await cur.execute("SELECT count FROM count")
+        count = await count.fetchone()
+        if count is None:
+            await cur.execute("INSERT INTO count (count) VALUES (?)", (self.bot.count_hold,))
+        else:
+            await cur.execute("UPDATE count SET count = count + ?", (self.bot.count_hold,))
         self.bot.count_hold = 0
+        await cur.commit()
+        await cur.close()
 
 
     @commands.Cog.listener()

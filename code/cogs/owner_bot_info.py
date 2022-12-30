@@ -1,5 +1,6 @@
 from discord.ext import commands
 import discord
+import aiosqlite
 
 class UserCount(commands.Cog):
     def __init__(self, bot):
@@ -22,10 +23,19 @@ class UserCount(commands.Cog):
 
         for guild in total_guilds:
             total_members += total_guilds[guild]
+            
+        cur = await aiosqlite.connect("./code/count/count.db")
+        count = await cur.execute("SELECT count FROM count")
+        count = await count.fetchone()
+        await cur.close()
+        if count is None:
+            count = 0
+        else:
+            count = count[0]
 
         embed = discord.Embed(
             title="User Count",
-            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`",
+            description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`\nTotal Commands Run: `{count:,}`",
             color=discord.Color.blurple()
         )
         # Add the top 5 guilds to the embed

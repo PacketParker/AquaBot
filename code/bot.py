@@ -20,7 +20,6 @@ async def initialise():
     
     cur = await aiosqlite.connect("code/count/count.db")
     await cur.execute("CREATE TABLE IF NOT EXISTS count (count INTEGER)")
-    await cur.execute("INSERT INTO count (count) VALUES (0)")
     await cur.commit()
 
 class MyBot(commands.Bot):
