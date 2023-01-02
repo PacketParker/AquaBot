@@ -194,17 +194,58 @@ class Music(commands.Cog):
                 await interaction.response.send_message('Something went wrong with the Spotify API. Please try again later.', ephemeral=True)
                 return
 
-        # If the URL is just a Spotify track URL, we can use the same method as above.
+        # If the URL is just a Spotify album URL, we can use the same method as above.
+        if 'open.spotify.com/album/' in query:
+            album_id = query.split('album/')[1]
+            album_url = f'https://api.spotify.com/v1/albums/{album_id}'
+            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+            response = requests.get(album_url, headers=headers)
+            if response.status_code == 200:
+                embed = discord.Embed(color=discord.Color.green())
+                embed.title = 'Album Enqueued!'
+                embed.description = f'{response.json()["name"]}'
+                embed.set_thumbnail(url=response.json()['images'][0]['url'])
+                embed.set_footer(text=f'Added by {interaction.user.name}', icon_url=interaction.user.avatar.url)
+                await interaction.response.send_message(embed=embed)
+
+                for track in response.json()['tracks']['items'][:2]:
+                    track_name = track['name']
+                    artist_name = track['artists'][0]['name']
+                    album_name = response.json()['name']
+                    query = f'ytsearch:{track_name} {artist_name} {album_name}'
+                    results = await player.node.get_tracks(query)
+                    if not results or not results['tracks']:
+                        return await interaction.response.send_message('Nothing found!')
+                    track = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track)
+
+                if not player.is_playing:
+                    await player.play()
+
+                for track in response.json()['tracks']['items'][2:]:
+                    track_name = track['name']
+                    artist_name = track['artists'][0]['name']
+                    album_name = response.json()['name']
+                    query = f'ytsearch:{track_name} {artist_name} {album_name} audio'
+                    results = await player.node.get_tracks(query)
+                    if not results or not results['tracks']:
+                        return await interaction.response.send_message('Nothing found!')
+                    track = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track)
+                    
+                return
+
+        # If the URL is a Spotify track
         if 'open.spotify.com/track/' in query:
-            track_id = query.split('track/')[1].split('?si=')[0]
+            track_id = query.split('track/')[1]
             track_url = f'https://api.spotify.com/v1/tracks/{track_id}'
             headers = {'Authorization': f'Bearer {self.bot.access_token}'}
             response = requests.get(track_url, headers=headers)
             if response.status_code == 200:
-                track_name = response.json()['name']
                 artist_name = response.json()['artists'][0]['name']
-                album_name = response.json()['album']['name']
-                query = f'{track_name} {artist_name} {album_name}'
+                track_name = response.json()['name']
+                query = f'{artist_name} {track_name} audio'
+            
     
 
         if not url_rx.match(query):
