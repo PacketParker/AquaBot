@@ -41,6 +41,9 @@ class MyBot(commands.Bot):
 
 bot = MyBot()
 bot.count_hold = 0
+bot.music_info = {} 
+# {guild_id: [track_name:[track_url, track_thumbnail_url, track_requester], 
+# track_name:[track_url, track_thumbnail_url, track_requester], ...]}
 bot.remove_command('help')
 
 @bot.event

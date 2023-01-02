@@ -4,6 +4,7 @@ import lavalink
 from discord.ext import commands, tasks
 import math
 import requests
+import datetime
 from discord import app_commands
 from reader import CLIENT_SECRET, CLIENT_ID
 
@@ -64,7 +65,6 @@ class Music(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(self.bot.user.id)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
@@ -111,12 +111,12 @@ class Music(commands.Cog):
                 await interaction.response.send_message('You need to be in my voicechannel.', ephemeral=True)
                 raise ZeroDivisionError
 
-
     async def track_hook(self, event):
         if isinstance(event, lavalink.events.QueueEndEvent):
             guild_id = int(event.player.guild_id)
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
+
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
@@ -131,6 +131,7 @@ class Music(commands.Cog):
                     except AttributeError:
                         pass
 
+
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")
     async def play(
@@ -141,143 +142,215 @@ class Music(commands.Cog):
         "Play a song from your favorite music provider"
         await self.ensure_before(interaction)
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
-        query = name.strip('<>')
+        query = name
 
-        # If the "name" is a Spotify playlist URL, we need to use a different method to get the tracks.
-        # First, we need to get the playlist ID from the URL.
-        if 'open.spotify.com/playlist/' in query:
-            playlist_id = query.split('playlist/')[1].split('?si=')[0]
-            # Then, we can use the Spotify API to get the info from the playlist.
-            playlist_url = f'https://api.spotify.com/v1/playlists/{playlist_id}'
-            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+        # Below begins the start of the search for Spotify links - we must checks for playlist, albums, and tracks
+        if "open.spotify.com/playlist" in query:
+            playlist_id = query.split("playlist/")[1].split("?si=")[0]
+            playlist_url = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+            headers = {"Authorization": f"Bearer {self.bot.access_token}"}
             response = requests.get(playlist_url, headers=headers)
             if response.status_code == 200:
-                # Send a message to the user to let them know the playlist has been added to the queue.
-                embed = discord.Embed(color=discord.Color.green())
-                embed.title = 'Playlist Enqueued!'
-                embed.description = f'{response.json()["name"]}'
-                embed.set_thumbnail(url=response.json()['images'][0]['url'])
-                embed.set_footer(text=f'Added by {interaction.user.name}', icon_url=interaction.user.avatar.url)
-                await interaction.response.send_message(embed=embed)
+                playlist = response.json()
 
-                # Now, we can add the first 2 tracks to queue, play them, then begin adding the rest to the queue.
-                # This is because it will take time to add all the tracks to the queue, and we don't want to wait for that.
-                # We can add the rest of the tracks to the queue while the first 2 are playing.
-                for track in response.json()['tracks']['items'][:2]:
-                    track_name = track['track']['name']
-                    artist_name = track['track']['artists'][0]['name']
-                    album_name = track['track']['album']['name']
-                    query = f'ytsearch:{track_name} {artist_name} {album_name}'
+                embed = discord.Embed(color=0x0088a9)
+                embed.title = "Playlist Queued"
+                embed.description = f"**{playlist['name']}** from **{playlist['owner']['display_name']}**\n\nQueued by: {interaction.user.mention}"
+                embed.set_thumbnail(url=playlist['images'][0]['url'])
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                await interaction.response.send_message(embed=embed)
+                # Now, we add only the first track to the queue so that music will instantly 
+                # start playing. The rest of the tracks will be added while the first track plays.
+                # This is because it takes time to search for all of the tracks
+                for track in playlist["tracks"]["items"][:1]:
+                    track_name = track["track"]["name"]
+                    track_artist = track["track"]["artists"][0]["name"]
+                    track_album = track["track"]["album"]["name"]
+                    track_thumbnail = track["track"]["album"]["images"][0]["url"]
+                    track_url = track["track"]["external_urls"]["spotify"]
+                    query = f"ytsearch:{track_name} {track_album} {track_artist}"
+
                     results = await player.node.get_tracks(query)
                     if not results or not results['tracks']:
-                        return await interaction.response.send_message('Nothing found!')
-                    track = results['tracks'][0]
-                    player.add(requester=interaction.user.id, track=track)
+                        return await interaction.response.send_message('Nothing found!', ephemeral=True)
+                    track_ = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track_)
+
+                    try:
+                        self.bot.music_info[interaction.guild.id][track_['info']['title']] = [track_url, track_thumbnail, interaction.user]
+                    except KeyError:
+                        self.bot.music_info[interaction.guild.id] = {track_['info']['title']: [track_url, track_thumbnail, interaction.user]}
 
                 if not player.is_playing:
                     await player.play()
 
-                for track in response.json()['tracks']['items'][2:]:
-                    track_name = track['track']['name']
-                    artist_name = track['track']['artists'][0]['name']
-                    album_name = track['track']['album']['name']
-                    query = f'ytsearch:{track_name} {artist_name} {album_name} audio'
+                # Now, we add the rest of the tracks to the queue
+                for track in playlist["tracks"]["items"][1:]:
+                    track_name = track["track"]["name"]
+                    track_artist = track["track"]["artists"][0]["name"]
+                    track_album = track["track"]["album"]["name"]
+                    track_thumbnail = track["track"]["album"]["images"][0]["url"]
+                    track_url = track["track"]["external_urls"]["spotify"]
+                    query = f"ytsearch:{track_name} {track_album} {track_artist}"
+
                     results = await player.node.get_tracks(query)
                     if not results or not results['tracks']:
-                        return await interaction.response.send_message('Nothing found!')
-                    track = results['tracks'][0]
-                    player.add(requester=interaction.user.id, track=track)
+                        return
+                    track_ = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track_)
 
+                    try:
+                        self.bot.music_info[interaction.guild.id][track_['info']['title']] = [track_url, track_thumbnail, interaction.user]
+                    except KeyError:
+                        self.bot.music_info[interaction.guild.id] = {track_['info']['title']: [track_url, track_thumbnail, interaction.user]}
                 return
-
             else:
-                await interaction.response.send_message('Something went wrong with the Spotify API. Please try again later.', ephemeral=True)
-                return
+                return await interaction.response.send_message("Playlist could not be found!", ephemeral=True)
 
-        # If the URL is just a Spotify album URL, we can use the same method as above.
-        if 'open.spotify.com/album/' in query:
-            album_id = query.split('album/')[1]
-            album_url = f'https://api.spotify.com/v1/albums/{album_id}'
-            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+        if "open.spotify.com/album" in query:
+            album_id = query.split("album/")[1]
+            album_url = f"https://api.spotify.com/v1/albums/{album_id}"
+            headers = {"Authorization": f"Bearer {self.bot.access_token}"}
             response = requests.get(album_url, headers=headers)
             if response.status_code == 200:
-                embed = discord.Embed(color=discord.Color.green())
-                embed.title = 'Album Enqueued!'
-                embed.description = f'{response.json()["name"]}'
-                embed.set_thumbnail(url=response.json()['images'][0]['url'])
-                embed.set_footer(text=f'Added by {interaction.user.name}', icon_url=interaction.user.avatar.url)
-                await interaction.response.send_message(embed=embed)
+                album = response.json()
 
-                for track in response.json()['tracks']['items'][:2]:
-                    track_name = track['name']
-                    artist_name = track['artists'][0]['name']
-                    album_name = response.json()['name']
-                    query = f'ytsearch:{track_name} {artist_name} {album_name}'
+                embed = discord.Embed(color=0x0088a9)
+                embed.title = "Album Queued"
+                embed.description = f"**{album['name']}** by **{album['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}"
+                embed.set_thumbnail(url=album['images'][0]['url'])
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                await interaction.response.send_message(embed=embed)
+                # Once again, we only add the first track for the beginning
+                for track in album["tracks"]["items"][:1]:
+                    track_name = track["name"]
+                    track_artist = album["artists"][0]["name"]
+                    track_album = album["name"]
+                    track_thumbnail = album["images"][0]["url"]
+                    track_url = track["external_urls"]["spotify"]
+                    query = f"ytsearch:{track_name} {track_album} {track_artist}"
+
                     results = await player.node.get_tracks(query)
                     if not results or not results['tracks']:
-                        return await interaction.response.send_message('Nothing found!')
-                    track = results['tracks'][0]
-                    player.add(requester=interaction.user.id, track=track)
+                        return await interaction.response.send_message('Nothing found!', ephemeral=True)
+                    track_ = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track_)
+
+                    try:
+                        self.bot.music_info[interaction.guild.id][track_['info']['title']] = [track_url, track_thumbnail, interaction.user]
+                    except KeyError:
+                        self.bot.music_info[interaction.guild.id] = {track_['info']['title']: [track_url, track_thumbnail, interaction.user]}
 
                 if not player.is_playing:
                     await player.play()
+                
+                # Now, we add the rest of the tracks to the queue
+                for track in album["tracks"]["items"][1:]:
+                    track_name = track["name"]
+                    track_artist = album["artists"][0]["name"]
+                    track_album = album["name"]
+                    track_thumbnail = album["images"][0]["url"]
+                    track_url = track["external_urls"]["spotify"]
+                    query = f"ytsearch:{track_name} {track_album} {track_artist}"
 
-                for track in response.json()['tracks']['items'][2:]:
-                    track_name = track['name']
-                    artist_name = track['artists'][0]['name']
-                    album_name = response.json()['name']
-                    query = f'ytsearch:{track_name} {artist_name} {album_name} audio'
                     results = await player.node.get_tracks(query)
                     if not results or not results['tracks']:
-                        return await interaction.response.send_message('Nothing found!')
-                    track = results['tracks'][0]
-                    player.add(requester=interaction.user.id, track=track)
-                    
-                return
+                        return
+                    track_ = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track_)
 
-        # If the URL is a Spotify track
-        if 'open.spotify.com/track/' in query:
-            track_id = query.split('track/')[1]
-            track_url = f'https://api.spotify.com/v1/tracks/{track_id}'
-            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+                    try:
+                        self.bot.music_info[interaction.guild.id][track_['info']['title']] = [track_url, track_thumbnail, interaction.user]
+                    except KeyError:
+                        self.bot.music_info[interaction.guild.id] = {track_['info']['title']: [track_url, track_thumbnail, interaction.user]}
+                return
+            else:
+                return await interaction.response.send_message("Album could not be found!", ephemeral=True)
+
+        if "open.spotify.com/track" in query:
+            track_id = query.split("track/")[1]
+            track_url = f"https://api.spotify.com/v1/tracks/{track_id}"
+            headers = {"Authorization": f"Bearer {self.bot.access_token}"}
             response = requests.get(track_url, headers=headers)
             if response.status_code == 200:
-                artist_name = response.json()['artists'][0]['name']
-                track_name = response.json()['name']
-                query = f'{artist_name} {track_name} audio'
-            
-    
+                track = response.json()
 
+                embed = discord.Embed(color=0x0088a9)
+                embed.title = "Track Queued"
+                embed.description = f"**{track['name']}** by **{track['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}"
+                embed.set_thumbnail(url=track['album']['images'][0]['url'])
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                await interaction.response.send_message(embed=embed)
+
+                track_name = track["name"]
+                track_artist = track["artists"][0]["name"]
+                track_album = track["album"]["name"]
+                track_thumbnail = track["album"]["images"][0]["url"]
+                track_url = track["external_urls"]["spotify"]
+                query = f"ytsearch:{track_name} {track_album} {track_artist}"
+
+                results = await player.node.get_tracks(query)
+                if not results or not results['tracks']:
+                    return await interaction.response.send_message('Nothing found!', ephemeral=True)
+                track_ = results['tracks'][0]
+                player.add(requester=interaction.user.id, track=track_)
+
+                try:
+                    self.bot.music_info[interaction.guild.id][track_['info']['title']] = [track_url, track_thumbnail, interaction.user]
+                except KeyError:
+                    self.bot.music_info[interaction.guild.id] = {track_['info']['title']: [track_url, track_thumbnail, interaction.user]}
+
+                if not player.is_playing:
+                    await player.play()
+                return
+            else:
+                return await interaction.response.send_message("Track could not be found!", ephemeral=True)
+
+        # Now begins the soundcloud section, this can be just like the youtube section
         if not url_rx.match(query):
-            query = f'ytsearch:{query}'
-
+            query = f'scsearch:{query}'
         results = await player.node.get_tracks(query)
 
         if not results or not results['tracks']:
-            query = f'scsearch:{query}'
+            # Don't return here, we want to try the next search type (YouTube)
+            await interaction.response.send_message('Nothing found!', ephemeral=True)
 
-            results = await player.node.get_tracks(query)
+        # Below is for YouTube search, which is the default and is used when no link is provided
+        if not url_rx.match(query):
+            query = f'ytsearch:{query}'
+        results = await player.node.get_tracks(query)
 
-            if not results or not results['tracks']:
-                return await interaction.response.send_message('Nothing found!')
+        if not results or not results['tracks']:
+            return await interaction.response.send_message('Nothing found!', ephemeral=True)
 
-        embed = discord.Embed(color=discord.Color.green())
+        embed = discord.Embed(color=0x0088a9)
 
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
 
             for track in tracks:
                 player.add(requester=interaction.user.id, track=track)
+                try:
+                    self.bot.music_info[interaction.guild.id][track["info"]["title"]] = [track["info"]["uri"], None, interaction.user]
+                except KeyError:
+                    self.bot.music_info[interaction.guild.id] = {track["info"]["title"]: [track["info"]["uri"], None, interaction.user]}
 
-            embed.title = 'Playlist Enqueued!'
-            embed.description = f'{results["playlistInfo"]["name"]} - {len(tracks)} tracks - [{interaction.user.mention}]'
+            embed.title = 'Playlist Queued!'
+            embed.description = f'**{results["playlistInfo"]["name"]}**\n\nQueued by: {interaction.user.mention}'
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         else:
             track = results['tracks'][0]
-            embed.title = 'Track Enqueued'
-            embed.description = f'[{track["info"]["title"]}]({track["info"]["uri"]}) - [{interaction.user.mention}]'
+            embed.title = 'Track Queued'
+            embed.description = f'**[{track["info"]["title"]}]({track["info"]["uri"]})**\n\nQueued by: {interaction.user.mention}'
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
 
             track = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True)
             player.add(requester=interaction.user.id, track=track)
+            # Add the info to the music_info dict
+            try:
+                self.bot.music_info[interaction.guild.id][track["info"]["title"]] = [track["info"]["uri"], None, interaction.user]
+            except KeyError:
+                self.bot.music_info[interaction.guild.id] = {track["info"]["title"]: [track["info"]["uri"], None, interaction.user]}
 
         await interaction.response.send_message(embed=embed)
 
@@ -300,23 +373,21 @@ class Music(commands.Cog):
             embed = discord.Embed(
                 title="→ No Channel", 
                 description="• I am not currently connected to any voice channel", 
-                color=discord.Color.green()
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        if not interaction.user.voice or (player.is_connected and interaction.user.voice.channel.id != int(player.channel_id)):
-            # Abuse prevention. Users not in voice channels, or not in the same voice channel as the bot
-            # may not disconnect the bot.
-            return await interaction.response.send_message('You\'re not in my voicechannel!', ephemeral=True)
 
         player.queue.clear()
         await player.stop()
         guild = interaction.guild
         await guild.voice_client.disconnect(force=True)
         embed = discord.Embed(
-            description = f"**Goodbye, thank you :wave: - [{interaction.user.mention}]**", 
-            color=discord.Color.green()
+            title="Queue Cleared and Music Stopped",
+            description = f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}", 
+            color=0x0088a9
         )
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -334,18 +405,18 @@ class Music(commands.Cog):
             embed = discord.Embed(
                 title="→ No Channel", 
                 description="• I am not currently connected to any voice channel", 
-                color=discord.Color.green()
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        if not interaction.user.voice or (player.is_connected and interaction.user.voice.channel.id != int(player.channel_id)):
-            return await interaction.response.send_message('You\'re not in my voicechannel!', ephemeral=True)
 
         player.queue.clear()
         embed = discord.Embed(
-            description = f"**Queue Cleared - [{interaction.user.mention}]**", 
-            color=discord.Color.green()
+            title="Queue Cleared",
+            description = f"The queue has been cleared of all songs!\n\nIssued by: {interaction.user.mention}", 
+            color=0x0088a9
         )
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -359,21 +430,36 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.is_playing:
-            await player.skip()
-            embed = discord.Embed(
-                description = f"**Track Skipped - [{interaction.user.mention}]**",
-                colour = discord.Colour.green()
-            )
-            await interaction.response.send_message(embed=embed)
-
         if not player.is_playing:
             embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing, so I can't skip anything.", 
-                color=discord.Color.green()
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        await player.skip()
+        if not player.is_playing:
+            embed = discord.Embed(
+                title="Track Skipped",
+                description=f"The queue is now empty, so I have left the voice channel. Thank you for using Aqua Bot.\n\nIssued by: {interaction.user.mention}",
+                color=0x0088a9
+            )
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
+            return await interaction.response.send_message(embed=embed)
+
+        track_url = self.bot.music_info[interaction.guild.id][player.current.title][0]
+        track_thumbnail = self.bot.music_info[interaction.guild.id][player.current.title][1]
+        track_requester = self.bot.music_info[interaction.guild.id][player.current.title][2]
+        embed = discord.Embed(
+            title="Track Skipped",
+            description = f"**Now Playing - [{player.current.title}]({track_url})**\n\nQueued by: {track_requester.mention}",
+            color=0x0088a9
+        )
+        embed.set_thumbnail(url=track_thumbnail)
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
+        await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
@@ -386,21 +472,27 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.is_playing:
-            await player.set_pause(pause = True)
-            embed = discord.Embed(
-                description = f"**Pause ⏸️ - [{interaction.user.mention}]**",
-                colour = discord.Colour.green()
-            )
-            await interaction.response.send_message(embed=embed)
-
         if not player.is_playing:
             embed = discord.Embed(
                 title="→ Nothing Playing", 
                 description="• Nothing is currently playing, so I can't pause anything.", 
-                color=discord.Color.green()
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
+
+        await player.set_pause(pause=True)
+        track_url = self.bot.music_info[interaction.guild.id][player.current.title][0]
+        track_thumbnail = self.bot.music_info[interaction.guild.id][player.current.title][1]
+        track_requester = self.bot.music_info[interaction.guild.id][player.current.title][2]
+        embed = discord.Embed(
+            title = f"Music Now Paused ⏸️",
+            description = f"**[{player.current.title}]({track_url})**\n\nQueued by: {track_requester.mention}",
+            color=0x0088a9
+        )
+        embed.set_thumbnail(url=track_thumbnail)
+        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
@@ -413,21 +505,27 @@ class Music(commands.Cog):
 
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
 
-        if player.is_playing:
-            await player.set_pause(pause = False)
-            embed = discord.Embed(
-                description = f"**Resuming ⏯️ - [{interaction.user.mention}]**",
-                colour = discord.Colour.green()
-            )
-            await interaction.response.send_message(embed=embed)
-
         if not player.is_playing:
             embed = discord.Embed(
                 title="→ Nothing Paused", 
                 description="• Nothing is currently paused, so I can't resume anything.", 
-                color=discord.Color.green()
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
+            
+        await player.set_pause(pause=False)
+        track_url = self.bot.music_info[interaction.guild.id][player.current.title][0]
+        track_thumbnail = self.bot.music_info[interaction.guild.id][player.current.title][1]
+        track_requester = self.bot.music_info[interaction.guild.id][player.current.title][2]
+        embed = discord.Embed(
+            title = f"Music Now Resumed ⏯️",
+            description = f"**[{player.current.title}]({track_url})**\n\nQueued by: {track_requester.mention}",
+            color=0x0088a9
+        )
+        embed.set_thumbnail(url=track_thumbnail)
+        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
@@ -445,9 +543,10 @@ class Music(commands.Cog):
         if not player.queue:
             embed = discord.Embed(
                 title="→ Nothing Queued", 
-                description="• Nothing is currently in the queue.", 
-                color=discord.Color.green()
+                description="• Nothing is currently in the queue, add a song with the `/play`.", 
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         items_per_page = 10
@@ -458,12 +557,14 @@ class Music(commands.Cog):
 
         queue_list = ''
         for index, track in enumerate(player.queue[start:end], start=start):
-            queue_list += f'`{index + 1}.` [**{track.title}**]({track.uri})\n'
-
+            queue_list += f"`{index+1}.` - [{track.title}]({self.bot.music_info[interaction.guild.id][track.title][0]})\n"
+        
         embed = discord.Embed(
-            colour=discord.Color.green(),
-            description=f'**{len(player.queue)} tracks**\n\n{queue_list}'
+            title=f"Queue for {interaction.guild.name}",
+            description=f'**{len(player.queue)} tracks total**\n\n{queue_list}',
+            color=0x0088a9
         )
+
         embed.set_footer(text=f'Viewing page {page}/{pages}')
         await interaction.response.send_message(embed=embed)
 
@@ -481,16 +582,23 @@ class Music(commands.Cog):
         if not player.is_playing:
             embed = discord.Embed(
                 title="→ Nothing Playing", 
-                description="• Nothing is currently playing.", 
-                color=discord.Color.green()
+                description="• Nothing is currently playing, play a song with the `/play` command.", 
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
+        track_url = self.bot.music_info[interaction.guild.id][player.current.title][0]
+        track_thumbnail = self.bot.music_info[interaction.guild.id][player.current.title][1]
+        track_requester = self.bot.music_info[interaction.guild.id][player.current.title][2]
+
         embed= discord.Embed(
-            title = player.current.title,
-            url = f"https://youtube.com/watch?v={player.current.identifier}",
-            colour = discord.Colour.green()
+            title = "Now Playing 🎶",
+            description = f"**[{player.current.title}]({track_url})**\n\nQueued by: {track_requester.mention}",
+            colour = 0x0088a9
         )
+        embed.set_thumbnail(url=track_thumbnail)
+        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -509,21 +617,29 @@ class Music(commands.Cog):
         if not player.queue:
             embed = discord.Embed(
                 title="→ Nothing Queued", 
-                description="• Nothing is currently in the queue.", 
-                color=discord.Color.green()
+                description="• Nothing is currently in the queue, so there is nothing for me to remove.", 
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed)
 
         if number > len(player.queue) or number < 1:
-            return await interaction.response.send_message('Index has to be >=1 and <=queue size', ephemeral=True)
+            return await interaction.response.send_message('The number entered is number a number within the queue - please try again!', ephemeral=True)
 
         index = number - 1
-        removed = player.queue.pop(index)
+        removed_title = player.queue[index].title
+        player.queue.pop(index)
+
+        track_url = self.bot.music_info[interaction.guild.id][removed_title][0]
+        track_thumbnail = self.bot.music_info[interaction.guild.id][removed_title][1]
 
         embed = discord.Embed(
-            description = 'Removed **' + removed.title + f'** from the queue - [{interaction.user.mention}]',
-            colour = discord.Colour.green()
+            title="Song Removed from Queue",
+            description=f"**Song Removed - [{removed_title}]({track_url})**\n\nIssued by: {interaction.user.mention}",
+            colour=0x0088a9
         )
+        embed.set_thumbnail(url=track_thumbnail)
+        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -540,44 +656,20 @@ class Music(commands.Cog):
         if not player.is_playing:
             embed = discord.Embed(
                 title="→ Nothing Playing", 
-                description="• Nothing is currently playing.", 
-                color=discord.Color.green()
+                description="• Nothing is currently playing, therefore I cannot shuffle the music.", 
+                color=0x0088a9
             )
+            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         player.shuffle = not player.shuffle
 
         embed = discord.Embed(
-            description = '🔀 | Shuffle ' + ('enabled' if player.shuffle else 'disabled') + f' - [{interaction.user.mention}]',
-            colour = discord.Colour.green()
+            title = f"{'Shuffle Enabled 🔀' if player.shuffle else 'Shuffle Disabled 🔀'}",
+            description = f"{'All music will now be shuffled.' if player.shuffle else 'Music will no longer be shuffled.'}",
+            color=0x0088a9
         )
-        await interaction.response.send_message(embed=embed)
-
-
-    @app_commands.command()
-    async def repeat(
-        self, 
-        interaction: discord.Interaction
-    ):
-        "Repeats the song that is currently played, until turned off"
-        await self.ensure_before(interaction)
-
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
-
-        if not player.is_playing:
-            embed = discord.Embed(
-                title="→ Nothing Playing", 
-                description="• Nothing is currently playing.", 
-                color=discord.Color.green()
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        player.repeat = not player.repeat
-
-        embed = discord.Embed(
-            description = '🔁 | Repeat ' + ('enabled' if player.repeat else 'disabled') + f' - [{interaction.user.mention}]',
-            colour = discord.Colour.green()
-        )
+        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
         await interaction.response.send_message(embed=embed)
 
 

@@ -147,6 +147,7 @@ class Info(commands.Cog):
         embed.add_field(name = "Add Increase", value = "When you use the `/add` command you now get $10,000 rather than $2,500.", inline=True)
         embed.add_field(name = "Coinflip", value = "You can now bet your money on a coinflip with the `/coinflip` command.", inline=True)
         embed.add_field(name = "Spotify Support", value="You can now play spotify songs/playlists with the `/play` command.")
+        embed.add_field(name = "Music Redesign", value="The music system has been completely redesigned and now provides better theming and more information.")
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
