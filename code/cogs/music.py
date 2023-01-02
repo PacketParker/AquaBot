@@ -194,6 +194,19 @@ class Music(commands.Cog):
                 await interaction.response.send_message('Something went wrong with the Spotify API. Please try again later.', ephemeral=True)
                 return
 
+        # If the URL is just a Spotify track URL, we can use the same method as above.
+        if 'open.spotify.com/track/' in query:
+            track_id = query.split('track/')[1].split('?si=')[0]
+            track_url = f'https://api.spotify.com/v1/tracks/{track_id}'
+            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+            response = requests.get(track_url, headers=headers)
+            if response.status_code == 200:
+                track_name = response.json()['name']
+                artist_name = response.json()['artists'][0]['name']
+                album_name = response.json()['album']['name']
+                query = f'{track_name} {artist_name} {album_name}'
+    
+
         if not url_rx.match(query):
             query = f'ytsearch:{query}'
 

@@ -146,6 +146,7 @@ class Info(commands.Cog):
         embed.add_field(name = "Work", value = "You now use the `/work` command in order to gain a randomized amount of money (1,000-5,000) every 2 minutes.", inline=True)
         embed.add_field(name = "Add Increase", value = "When you use the `/add` command you now get $10,000 rather than $2,500.", inline=True)
         embed.add_field(name = "Coinflip", value = "You can now bet your money on a coinflip with the `/coinflip` command.", inline=True)
+        embed.add_field(name = "Spotify Support", value="You can now play spotify songs/playlists with the `/play` command.")
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
