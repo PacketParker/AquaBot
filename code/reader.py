@@ -27,3 +27,6 @@ port = config.get('port')
 database = config.get('database')
 
 CONNECTION_STRING = f"postgresql://{username}:{password}@{host}:{port}/{database}"
+
+CLIENT_ID = config.get('spotify_id')
+CLIENT_SECRET = config.get('spotify_secret')

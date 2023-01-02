@@ -3,8 +3,9 @@ import discord
 import lavalink
 from discord.ext import commands, tasks
 import math
-import datetime
+import requests
 from discord import app_commands
+from reader import CLIENT_SECRET, CLIENT_ID
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -70,9 +71,6 @@ class Music(commands.Cog):
 
         lavalink.add_event_hook(self.track_hook)
 
-    def cog_load(self):
-        self.check_voice_channels.start()
-
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
         self.bot.lavalink._event_hooks.clear()
@@ -120,8 +118,6 @@ class Music(commands.Cog):
             guild = self.bot.get_guild(guild_id)
             await guild.voice_client.disconnect(force=True)
 
-    voice_channels_on_timer = {}
-
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if before.channel and member == self.bot.user:
@@ -135,39 +131,6 @@ class Music(commands.Cog):
                     except AttributeError:
                         pass
 
-        if before.channel and before.channel != after.channel:
-            if len(before.channel.members) == 1:
-                if before.channel.members[0] == self.bot.user:
-                    self.voice_channels_on_timer[member.guild.id] = datetime.datetime.now()
-                    return
-
-                if after.channel.members[0] == self.bot.user:
-                    self.voice_channels_on_timer[member.guild.id] = datetime.datetime.now()
-                    return
-
-        if before.channel != after.channel:
-            if after.channel:
-                if len(after.channel.members) > 1:
-                    try:
-                        self.voice_channels_on_timer.pop(member.guild.id)
-                    except KeyError:
-                        pass
-
-
-    @tasks.loop(seconds=10)
-    async def check_voice_channels(self):
-        for guild_id, time in self.voice_channels_on_timer.items():
-            if time + datetime.timedelta(minutes=3) < datetime.datetime.now():
-                player = self.bot.lavalink.player_manager.get(guild_id)
-                player.queue.clear()
-                await player.stop()
-                guild = self.bot.get_guild(guild_id)
-                try:
-                    await guild.voice_client.disconnect(force=True)
-                except AttributeError:
-                    pass
-
-
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")
     async def play(
@@ -180,8 +143,57 @@ class Music(commands.Cog):
         player = self.bot.lavalink.player_manager.get(interaction.guild.id)
         query = name.strip('<>')
 
-        # Check if the user input might be a URL. If it isn't, we can Lavalink do a YouTube search for it instead.
-        # SoundCloud searching is possible by prefixing "scsearch:" instead.
+        # If the "name" is a Spotify playlist URL, we need to use a different method to get the tracks.
+        # First, we need to get the playlist ID from the URL.
+        if 'open.spotify.com/playlist/' in query:
+            playlist_id = query.split('playlist/')[1].split('?si=')[0]
+            # Then, we can use the Spotify API to get the info from the playlist.
+            playlist_url = f'https://api.spotify.com/v1/playlists/{playlist_id}'
+            headers = {'Authorization': f'Bearer {self.bot.access_token}'}
+            response = requests.get(playlist_url, headers=headers)
+            if response.status_code == 200:
+                # Send a message to the user to let them know the playlist has been added to the queue.
+                embed = discord.Embed(color=discord.Color.green())
+                embed.title = 'Playlist Enqueued!'
+                embed.description = f'{response.json()["name"]}'
+                embed.set_thumbnail(url=response.json()['images'][0]['url'])
+                embed.set_footer(text=f'Added by {interaction.user.name}', icon_url=interaction.user.avatar.url)
+                await interaction.response.send_message(embed=embed)
+
+                # Now, we can add the first 2 tracks to queue, play them, then begin adding the rest to the queue.
+                # This is because it will take time to add all the tracks to the queue, and we don't want to wait for that.
+                # We can add the rest of the tracks to the queue while the first 2 are playing.
+                for track in response.json()['tracks']['items'][:2]:
+                    track_name = track['track']['name']
+                    artist_name = track['track']['artists'][0]['name']
+                    album_name = track['track']['album']['name']
+                    query = f'ytsearch:{track_name} {artist_name} {album_name}'
+                    results = await player.node.get_tracks(query)
+                    if not results or not results['tracks']:
+                        return await interaction.response.send_message('Nothing found!')
+                    track = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track)
+
+                if not player.is_playing:
+                    await player.play()
+
+                for track in response.json()['tracks']['items'][2:]:
+                    track_name = track['track']['name']
+                    artist_name = track['track']['artists'][0]['name']
+                    album_name = track['track']['album']['name']
+                    query = f'ytsearch:{track_name} {artist_name} {album_name} audio'
+                    results = await player.node.get_tracks(query)
+                    if not results or not results['tracks']:
+                        return await interaction.response.send_message('Nothing found!')
+                    track = results['tracks'][0]
+                    player.add(requester=interaction.user.id, track=track)
+
+                return
+
+            else:
+                await interaction.response.send_message('Something went wrong with the Spotify API. Please try again later.', ephemeral=True)
+                return
+
         if not url_rx.match(query):
             query = f'ytsearch:{query}'
 

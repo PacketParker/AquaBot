@@ -1,5 +1,4 @@
 import random
-import aiosqlite
 from typing import Tuple, List
 from bot import CONNECTION
 
@@ -23,7 +22,7 @@ class Database:
             cur.execute("INSERT INTO economy(user_id, money) VALUES(%s, %s)", (user_id, 0))
             CONNECTION.commit()
             return await self.get_entry(user_id)
-        except aiosqlite.IntegrityError:
+        except:
             return await self.get_entry(user_id)
 
     async def remove_entry(self, user_id: int) -> None:

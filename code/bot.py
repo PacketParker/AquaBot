@@ -1,10 +1,11 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 import psycopg2
 from decimal import *
 import aiosqlite
-from reader import TOKEN, CONNECTION_STRING
+from reader import TOKEN, CONNECTION_STRING, CLIENT_ID, CLIENT_SECRET
+import requests
 
 CONNECTION = psycopg2.connect(CONNECTION_STRING)
 
@@ -21,6 +22,7 @@ async def initialise():
     cur = await aiosqlite.connect("code/count/count.db")
     await cur.execute("CREATE TABLE IF NOT EXISTS count (count INTEGER)")
     await cur.commit()
+    await cur.close()
 
 class MyBot(commands.Bot):
     def __init__(self):
@@ -32,6 +34,7 @@ class MyBot(commands.Bot):
 
     async def setup_hook(self):
         await initialise()
+        get_access_token.start()
         for ext in os.listdir('./code/cogs'):
             if ext.endswith('.py'):
                 await self.load_extension(f'cogs.{ext[:-3]}')
@@ -43,6 +46,19 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     print(f'{bot.user} has connected to Discord!')
+
+
+@tasks.loop(minutes=45)
+async def get_access_token():
+    auth_url = 'https://accounts.spotify.com/api/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET
+    }
+    response = requests.post(auth_url, data=data)
+    access_token = response.json()['access_token']
+    bot.access_token = access_token
 
 if __name__ == '__main__':
     bot.run(TOKEN)
