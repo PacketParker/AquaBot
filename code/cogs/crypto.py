@@ -82,7 +82,7 @@ class Crypto(commands.Cog):
         )
 
         for key in master_dict:
-            price = master_dict[key].split(':')[0]
+            price = master_dict[key].split(':')[1]
             embed.add_field(name = f"{key}", value = f"```${Decimal(price):,}```", inline=True)
 
         await interaction.response.send_message(embed=embed)
