@@ -2,7 +2,6 @@ import asyncio
 import os
 import random
 from typing import List, Tuple
-
 import discord
 from discord.ext import commands
 from PIL import Image
@@ -49,7 +48,7 @@ class Card:
 
     def __repr__(self) -> str:
         return str(self)
-    
+
 
 class Blackjack(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -119,12 +118,12 @@ class Blackjack(commands.Cog):
     @app_commands.command()
     @app_commands.describe(bet='Amount of money to bet')
     async def blackjack(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         bet: int
     ):
         "Bet your money on a blackjack game vs. the dealer"
-        
+
         if f"{interaction.user.id}.png" in os.listdir("./code/players/tables"):
             await interaction.response.send_message(f"{interaction.user.mention}, It appears you have a game already running in this server or another, please finish that game before starting a new one.", ephemeral=True)
 
@@ -158,7 +157,6 @@ class Blackjack(commands.Cog):
                     reac = await interaction.original_response()
                     await reac.clear_reactions()
                 return msg
-        
 
             standing = False
 
@@ -182,7 +180,7 @@ class Blackjack(commands.Cog):
                 reac = await interaction.original_response()
                 await reac.add_reaction("🇭")
                 await reac.add_reaction("🇸")
-                
+
                 buttons = {"🇭", "🇸"}
 
                 try:

@@ -3,13 +3,13 @@ from discord.ext import commands, tasks
 from discord import app_commands
 import requests
 
-covid_dict = {'total_cases':0, 'total_deaths':0, 'total_recovered':0, 'active_cases':0, 
+covid_dict = {'total_cases':0, 'total_deaths':0, 'total_recovered':0, 'active_cases':0,
     'critical_cases':0, 'cases_today':0, 'deaths_today':0, 'tests':0}
 
 class Covid(commands.Cog):
     def __init__(self, bot):
-        self.bot = bot 
-    
+        self.bot = bot
+
     async def cog_load(self):
         self.update_covid.start()
 
@@ -28,11 +28,11 @@ class Covid(commands.Cog):
             cases_today = int(data["todayCases"])
             deaths_today = int(data["todayDeaths"])
             tests = int(data["tests"])
-        
+
         else:
             return
 
-        update_crypto_dict = {'total_cases':cases, 'total_deaths':deaths, 
+        update_crypto_dict = {'total_cases':cases, 'total_deaths':deaths,
         'total_recovered':recovered, 'active_cases':active, 'critical_cases':critical,
         'cases_today':cases_today, 'deaths_today':deaths_today, 'tests':tests}
 
@@ -41,7 +41,7 @@ class Covid(commands.Cog):
 
     @app_commands.command()
     async def covid(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Get current global Covid-19 data"

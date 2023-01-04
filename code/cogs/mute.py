@@ -40,8 +40,8 @@ class Mute(commands.Cog):
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(role_name='Name of your servers muted role')
     async def setmute(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         role_name: discord.Role
     ):
         "Set the role for users to be given when muted"
@@ -73,7 +73,7 @@ class Mute(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     async def delmute(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Delete the role set to be given to muted users"
@@ -106,7 +106,7 @@ class Mute(commands.Cog):
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_roles=True)
     async def muterole(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "See the current role set for when users are muted"
@@ -123,7 +123,7 @@ class Mute(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await interaction.response.send_message(embed=embed)
-        
+
         else:
             embed = discord.Embed(
                 colour = color,
@@ -140,11 +140,11 @@ class Mute(commands.Cog):
     @app_commands.describe(member='Name of the member you want to temporarily mute')
     @app_commands.describe(time='Amount of time (in hours) to mute the member')
     async def tempmute(
-        self, 
-        interaction: discord.Interaction, 
-        member: discord.Member, 
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
         time: int
-    ): 
+    ):
         "Mute a user for a specified amount of time"
 
         if time > 2147483647:
@@ -186,7 +186,7 @@ class Mute(commands.Cog):
             cur = CONNECTION.cursor()
             cur.execute("INSERT INTO tempmute (guild_id, user_id, role_id, time) VALUES (%s, %s, %s, %s)", (guild_id, member.id, role.id, (datetime.now()+timedelta(hours=time))))
             CONNECTION.commit()
-        
+
         except TypeError:
             embed = discord.Embed(
                 colour = color,
@@ -211,11 +211,11 @@ class Mute(commands.Cog):
     @app_commands.describe(member='Name of the member you want to mute')
     @app_commands.describe(reason='Reason for muting the member')
     async def mute(
-        self, 
-        interaction: discord.Interaction, 
-        member: discord.Member, 
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
         reason: str
-    ): 
+    ):
         "Mutes a user for an indefinite amount of time"
 
         try:
@@ -261,12 +261,12 @@ class Mute(commands.Cog):
     @app_commands.checks.has_permissions(manage_roles=True)
     @app_commands.describe(member='Name of the member you want to unmute')
     async def unmute(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         member: discord.Member
     ):
         "Unmute a specified member"
-        
+
         try:
             guild_id = interaction.user.guild.id
             cur = CONNECTION.cursor()
@@ -302,7 +302,7 @@ class Mute(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             await interaction.response.send_message(embed=embed, ephemeral=True)
-        
+
 
 async def setup(bot):
     await bot.add_cog(Mute(bot))

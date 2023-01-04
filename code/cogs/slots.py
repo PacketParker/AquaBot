@@ -15,7 +15,6 @@ class Slots(commands.Cog):
         self.bot = bot
         self.economy = Database(bot)
 
-
     async def check_bet(
         self,
         interaction: discord.Interaction,
@@ -28,13 +27,14 @@ class Slots(commands.Cog):
         if bet > current:
             raise InsufficientFundsException()
 
+
     #Usage: slots [bet]
     @app_commands.command()
     @app_commands.checks.cooldown(1, 4)
     @app_commands.describe(bet='Amount of money to bet')
     async def slots(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         bet: int
     ):
         "Bet a specified amount of money on the slot machines"
@@ -54,7 +54,7 @@ class Slots(commands.Cog):
         win_rate = 1/100
 
         if random.random() < win_rate:
-            symbols_weights = [3.5, 7, 15, 25, 55] # 
+            symbols_weights = [3.5, 7, 15, 25, 55]
             x = round(random.random()*100, 1)
             pos = bisect.bisect(symbols_weights, x)
             s1 = pos + (random.randint(1, (items/6)-1) * 6)
@@ -85,7 +85,7 @@ class Slots(commands.Cog):
 
         # win logic
         result = ('lost', bet)
-        await self.economy.add_money(interaction.user.id, bet*-1)       
+        await self.economy.add_money(interaction.user.id, bet*-1)
         # (1+s1)%6 gets the symbol 0-5 inclusive
         if (1+s1)%6 == (1+s2)%6 == (1+s3)%6:
             symbol = (1+s1)%6

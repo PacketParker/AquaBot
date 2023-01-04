@@ -11,7 +11,7 @@ class BugReport(discord.ui.Modal, title='Report a bug'):
         self.bot = bot
 
     name = discord.ui.TextInput(
-        label='Discord name & tag', 
+        label='Discord name & tag',
         placeholder='EX: Bob#0001...',
     )
     command = discord.ui.TextInput(
@@ -48,7 +48,7 @@ class FeedbackForm(discord.ui.Modal, title='Give feedback about Aqua Bot'):
         self.bot = bot
 
     name = discord.ui.TextInput(
-        label='Discord name & tag', 
+        label='Discord name & tag',
         placeholder='EX: Bob#0001...',
     )
     positive = discord.ui.TextInput(

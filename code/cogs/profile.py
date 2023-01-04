@@ -24,7 +24,7 @@ class Economy:
         current = (await self.economy.get_entry(user_id))[1]
         if bet > current:
             raise InsufficientFundsException()
-            
+
 #BEGIN CODE FOR RANK PURCHASING
 
 class AfterRankPurchase(discord.ui.View):
@@ -450,7 +450,7 @@ class ShopDropdown(discord.ui.Select):
         data = cur.fetchall()
         if data:
             names = ([str(i[0]) for i in data])
-            
+
             if "Copper III" in names:
                 copper_iii = "~~Copper III~~ - OWNED"
             else:
@@ -580,7 +580,7 @@ class ShopDropdown(discord.ui.Select):
             embed.add_field(name = f"{platinum_iii}", value = f"```100,000,000,000,000,000  (100 quad.)```", inline=True)
             embed.add_field(name = f"{platinum_ii}", value = f"```200,000,000,000,000,000  (200 quad.)```", inline=True)
             embed.add_field(name = f"{platinum_i}", value = f"```300,000,000,000,000,000  (300 quad.)```", inline=True)
-            
+
             embed.add_field(name = f"{diamond}", value = f"```123,456,789,000,000,000,000\n(<123 quint.)```", inline=True)
 
             embed.add_field(name = f"{champion}", value = f"```999,999,999,999,999,999,999,\n999,999 (<999 sept.)```", inline=True)
@@ -634,8 +634,8 @@ class Profile(commands.Cog):
     @app_commands.command()
     @app_commands.describe(user='User whose profile you would like to view')
     async def profile(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         user: discord.Member
     ):
         "Show the profile for the given user"
@@ -668,7 +668,7 @@ class Profile(commands.Cog):
 
     @app_commands.command()
     async def shop(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Shows the shop so that you can buy items"
@@ -693,7 +693,6 @@ class Profile(commands.Cog):
 
         view = ShopView(self.bot)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
-
 
 
 async def setup(bot):

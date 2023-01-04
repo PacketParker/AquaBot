@@ -16,12 +16,12 @@ class Moderation(commands.Cog):
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(amount='Number of messages you would like deleted')
     async def purge(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         amount: int
     ):
         "Delete the specified number of messages from the channel"
-        
+
         if amount < 1:
             embed = discord.Embed(
                 colour = color,
@@ -49,13 +49,13 @@ class Moderation(commands.Cog):
     @app_commands.describe(member='Member you would like to kick')
     @app_commands.describe(reason='Reason for kicking the member')
     async def kick(
-        self, 
-        interaction: discord.Interaction, 
-        member: discord.Member, 
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
         reason: str
     ):
         "Kick a member from your server"
-    
+
         await member.kick(reason=reason)
         embed = discord.Embed(
             title = f"**User {member} has been kicked for {reason}**",
@@ -75,9 +75,9 @@ class Moderation(commands.Cog):
     @app_commands.describe(member='Member you would like to ban')
     @app_commands.describe(reason='Reason for banning the member')
     async def ban(
-        self, 
-        interaction: discord.Interaction, 
-        member: discord.Member, 
+        self,
+        interaction: discord.Interaction,
+        member: discord.Member,
         reason: str
     ):
         "Ban a member from your server"
@@ -101,8 +101,8 @@ class Moderation(commands.Cog):
     @app_commands.describe(member='Member you would like to softban')
     @app_commands.describe(reason='Reason for softbanning the member')
     async def softban(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         member: discord.Member,
         reason: str
     ):

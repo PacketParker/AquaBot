@@ -47,7 +47,7 @@ class CoinFlip(commands.Cog):
             embed.set_image(url="https://aquabot.info/assets/images/heads.gif")
 
             return await interaction.response.send_message(embed=embed)
-        
+
         else:
             await self.economy.add_money(interaction.user.id, bet*-1)
             embed = discord.Embed(

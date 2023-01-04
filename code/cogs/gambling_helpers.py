@@ -16,11 +16,11 @@ class GamblingHelpers(commands.Cog):
     @app_commands.command()
     @app_commands.checks.cooldown(1, B_COOLDOWN*3600)
     async def add(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Add $10,000 to your balance every 2 hours"
-        
+
         amount = 10000
         await self.economy.add_money(interaction.user.id, amount)
         embed = discord.Embed(
@@ -55,18 +55,18 @@ class GamblingHelpers(commands.Cog):
 
     @app_commands.command()
     async def leaderboard(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Show the global currency leaderboard"
 
         entries = await self.economy.top_entries(5)
         embed = discord.Embed(
-            title='Global Economy Leaderboard:', 
+            title='Global Economy Leaderboard:',
             color=discord.Color.gold()
         )
-        
-        for i, entry in enumerate(entries): 
+
+        for i, entry in enumerate(entries):
             id = entry[0]
             try:
                 name = await self.bot.fetch_user(id)
@@ -99,7 +99,7 @@ class GamblingHelpers(commands.Cog):
                 colour = color
             )
             return await interaction.response.send_message(embed=embed)
-        
+
         elif user == interaction.user:
             embed = discord.Embed(
                 title = "→ Self error!",

@@ -13,7 +13,7 @@ class Info(commands.Cog):
 
     @app_commands.command()
     async def ping(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Pong! 🏓"
@@ -30,7 +30,7 @@ class Info(commands.Cog):
 
     @app_commands.command()
     async def invite(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Get the invite link for the bot"
@@ -45,8 +45,8 @@ class Info(commands.Cog):
     @app_commands.command()
     @app_commands.describe(member="Member whose information you want to view")
     async def userinfo(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         member: discord.Member
     ):
         "Send account information for the given user"
@@ -90,7 +90,7 @@ class Info(commands.Cog):
 
     @app_commands.command()
     async def botinfo(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Get information about the bot. i.e. creator, creation data, etc."
@@ -115,7 +115,7 @@ class Info(commands.Cog):
 
     @app_commands.command()
     async def vote(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Get link to vote for the bot on top.gg"
@@ -132,11 +132,11 @@ class Info(commands.Cog):
 
     @app_commands.command()
     async def new(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "See all of the new changes in the bot"
-        
+
         embed = discord.Embed(
             title = "Change Log - 12/27/2022",
             description = "Below are all of the changes that have been made to the bot since the last update.",

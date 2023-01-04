@@ -52,7 +52,7 @@ class CustomSource(Source):
                 'title': track['name'],
                 'uri': track['external_urls']['spotify']
                 }, requester=user, duration=track['duration_ms'], extra=metadata['images'][0]['url']))
-            
+
         return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
 
     async def load_playlist(self, user, metadata):
@@ -67,5 +67,5 @@ class CustomSource(Source):
                 'title': track['track']['name'],
                 'uri': track['track']['external_urls']['spotify']
                 }, requester=user, duration=track['track']['duration_ms'], extra=track['track']['album']['images'][0]['url']))
-            
+
         return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())

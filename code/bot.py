@@ -18,7 +18,7 @@ async def initialise():
     cur.execute("CREATE TABLE IF NOT EXISTS economy (user_id BIGINT NOT NULL PRIMARY KEY, money BIGINT NOT NULL DEFAULT 0)")
     cur.execute("CREATE TABLE IF NOT EXISTS profile (user_id BIGINT, rank_name TEXT, rank_int BIGINT, UNIQUE (user_id, rank_name, rank_int))")
     CONNECTION.commit()
-    
+
     cur = await aiosqlite.connect("code/count/count.db")
     await cur.execute("CREATE TABLE IF NOT EXISTS count (count INTEGER)")
     await cur.commit()

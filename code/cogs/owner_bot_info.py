@@ -23,7 +23,7 @@ class UserCount(commands.Cog):
 
         for guild in total_guilds:
             total_members += total_guilds[guild]
-            
+
         cur = await aiosqlite.connect("./code/count/count.db")
         count = await cur.execute("SELECT count FROM count")
         count = await count.fetchone()

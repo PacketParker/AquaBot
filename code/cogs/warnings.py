@@ -17,8 +17,8 @@ class Warnings(commands.Cog):
     @app_commands.describe(member='The member you would like to warn')
     @app_commands.describe(reason='Reason for warning the member')
     async def warn(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         member: discord.Member,
         reason: str
     ):
@@ -41,16 +41,16 @@ class Warnings(commands.Cog):
 
         embed.add_field(name = f"User was warned in `{interaction.user.guild.name}`.", value = f"Reason - {reason}")
         embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-        await interaction.response.send_message(embed=embed)    
-    
+        await interaction.response.send_message(embed=embed)
+
 
     @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(member='The member whose warnings you want to see')
     async def warnings(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         member: discord.Member
     ):
         "Show all warnings for a given user"
@@ -69,7 +69,7 @@ class Warnings(commands.Cog):
             )
             for data in data:
                 embed.add_field(name = f"Warning Reason - \"{data[3]}\" | ID = {data[0]}", value = f"Warned By: <@{data[5]}> | Warned At: {data[4]}\n", inline=False)
-                
+
             await interaction.response.send_message(embed=embed)
         else:
             embed = discord.Embed(
@@ -79,17 +79,17 @@ class Warnings(commands.Cog):
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
             return await interaction.response.send_message(embed=embed)
-            
+
 
     @app_commands.default_permissions(manage_messages=True)
     @app_commands.command()
     @app_commands.checks.has_permissions(manage_messages=True)
     @app_commands.describe(id='ID of the warning you would like to delete')
     async def delwarn(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         id: str
-    ):  
+    ):
         "Delete a warning from a user with the warning ID"
 
         cur = CONNECTION.cursor()
@@ -109,7 +109,7 @@ class Warnings(commands.Cog):
             embed.set_footer(text = datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
 
             await interaction.response.send_message(embed=embed)
-        
+
         else:
             embed = discord.Embed(
                 colour = color,
@@ -117,7 +117,7 @@ class Warnings(commands.Cog):
                 description="• That ID is not associated with any warnings in this server."
             )
             embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            await interaction.response.send_message(embed=embed, ephemeral=True)               
+            await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 async def setup(bot):

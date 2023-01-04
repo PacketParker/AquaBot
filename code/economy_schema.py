@@ -11,8 +11,8 @@ class Database:
     async def get_entry(self, user_id: int) -> Entry:
         cur = CONNECTION.cursor()
         cur.execute("SELECT * FROM economy WHERE user_id = %s", (user_id,))
-        result = cur.fetchone()  
-        if result: 
+        result = cur.fetchone()
+        if result:
             return result
         return await self.new_entry(user_id)
 
