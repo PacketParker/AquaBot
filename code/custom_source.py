@@ -37,8 +37,7 @@ class CustomSource(Source):
             'isStream': False,
             'title': metadata['name'],
             'uri': metadata['external_urls']['spotify'],
-            'thumbnail': metadata['album']['images'][0]['url']
-            }, requester=user, duration=metadata['duration_ms'])
+            }, requester=user, duration=metadata['duration_ms'], extra=metadata['album']['images'][0]['url'])
         return LoadResult(LoadType.TRACK, [track], playlist_info=PlaylistInfo.none())
 
     async def load_album(self, user, metadata):
@@ -52,7 +51,7 @@ class CustomSource(Source):
                 'isStream': False,
                 'title': track['name'],
                 'uri': track['external_urls']['spotify']
-                }, requester=user, duration=track['duration_ms']))
+                }, requester=user, duration=track['duration_ms'], extra=metadata['images'][0]['url']))
             
         return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
 
@@ -67,6 +66,6 @@ class CustomSource(Source):
                 'isStream': False,
                 'title': track['track']['name'],
                 'uri': track['track']['external_urls']['spotify']
-                }, requester=user, duration=track['track']['duration_ms']))
+                }, requester=user, duration=track['track']['duration_ms'], extra=track['track']['album']['images'][0]['url']))
             
         return LoadResult(LoadType.PLAYLIST, tracks, playlist_info=PlaylistInfo.none())
