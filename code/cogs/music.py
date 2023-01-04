@@ -1,7 +1,7 @@
 import re
 import discord
 import lavalink
-from discord.ext import commands, tasks
+from discord.ext import commands
 import math
 import requests
 import datetime
@@ -69,7 +69,7 @@ class Music(commands.Cog):
             bot.lavalink = lavalink.Client(self.bot.user.id)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
 
-        lavalink.add_event_hook(self.track_hook)
+        bot.lavalink.add_event_hooks(self)
 
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
@@ -111,13 +111,6 @@ class Music(commands.Cog):
                 await interaction.response.send_message('You need to be in my voicechannel.', ephemeral=True)
                 raise ZeroDivisionError
 
-    async def track_hook(self, event):
-        if isinstance(event, lavalink.events.QueueEndEvent):
-            guild_id = int(event.player.guild_id)
-            guild = self.bot.get_guild(guild_id)
-            await guild.voice_client.disconnect(force=True)
-
-
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
         if before.channel and member == self.bot.user:
@@ -136,8 +129,8 @@ class Music(commands.Cog):
     @app_commands.command()
     @app_commands.describe(name="Name or link of song")
     async def play(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         name: str
     ):
         "Play a song from your favorite music provider"
@@ -165,7 +158,7 @@ class Music(commands.Cog):
                 tracks = await CustomSource.load_playlist(self, interaction.user, playlist)
                 for track in tracks['tracks']:
                     player.add(requester=interaction.user, track=track)
-        
+
         if "open.spotify.com/album" in query:
             album_id = query.split("album/")[1]
             album_url = f"https://api.spotify.com/v1/albums/{album_id}"
@@ -184,7 +177,7 @@ class Music(commands.Cog):
                 tracks = await CustomSource.load_album(self, interaction.user, album)
                 for track in tracks['tracks']:
                     player.add(requester=interaction.user, track=track)
-                
+
         if "open.spotify.com/track" in query:
             track_id = query.split("track/")[1]
             track_url = f"https://api.spotify.com/v1/tracks/{track_id}"
@@ -255,7 +248,7 @@ class Music(commands.Cog):
 
     @app_commands.command()
     async def stop(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Disconnects the bot from the voice channel and clears the queue"
@@ -265,8 +258,8 @@ class Music(commands.Cog):
 
         if not player.is_connected:
             embed = discord.Embed(
-                title="→ No Channel", 
-                description="• I am not currently connected to any voice channel", 
+                title="→ No Channel",
+                description="• I am not currently connected to any voice channel",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -279,7 +272,7 @@ class Music(commands.Cog):
         await guild.voice_client.disconnect(force=True)
         embed = discord.Embed(
             title="Queue Cleared and Music Stopped",
-            description = f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}", 
+            description = f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}",
             color=0x0088a9
         )
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -288,7 +281,7 @@ class Music(commands.Cog):
 
     @app_commands.command()
     async def clear(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Clear the current queue of songs"
@@ -298,8 +291,8 @@ class Music(commands.Cog):
 
         if not player.is_connected:
             embed = discord.Embed(
-                title="→ No Channel", 
-                description="• I am not currently connected to any voice channel", 
+                title="→ No Channel",
+                description="• I am not currently connected to any voice channel",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -308,7 +301,7 @@ class Music(commands.Cog):
         player.queue.clear()
         embed = discord.Embed(
             title="Queue Cleared",
-            description = f"The queue has been cleared of all songs!\n\nIssued by: {interaction.user.mention}", 
+            description = f"The queue has been cleared of all songs!\n\nIssued by: {interaction.user.mention}",
             color=0x0088a9
         )
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -317,7 +310,7 @@ class Music(commands.Cog):
 
     @app_commands.command()
     async def skip(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Skips the song that is currently playing"
@@ -327,8 +320,8 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing", 
-                description="• Nothing is currently playing, so I can't skip anything.", 
+                title="→ Nothing Playing",
+                description="• Nothing is currently playing, so I can't skip anything.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -357,7 +350,7 @@ class Music(commands.Cog):
     @app_commands.command()
     async def pause(
         self,
-        interaction: discord.Interaction    
+        interaction: discord.Interaction
     ):
         "Pauses the song that is currently playing"
         await self.ensure_before(interaction)
@@ -366,8 +359,8 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing", 
-                description="• Nothing is currently playing, so I can't pause anything.", 
+                title="→ Nothing Playing",
+                description="• Nothing is currently playing, so I can't pause anything.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
@@ -386,7 +379,7 @@ class Music(commands.Cog):
 
     @app_commands.command()
     async def resume(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Resumes the paused song"
@@ -396,13 +389,13 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Paused", 
-                description="• Nothing is currently paused, so I can't resume anything.", 
+                title="→ Nothing Paused",
+                description="• Nothing is currently paused, so I can't resume anything.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
-            
+
         await player.set_pause(pause=False)
         embed = discord.Embed(
             title = f"Music Now Resumed ⏯️",
@@ -417,8 +410,8 @@ class Music(commands.Cog):
     @app_commands.command()
     @app_commands.describe(page="Queue page number - leave blank if you are unsure")
     async def queue(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         page: int = 1
     ):
         "See the current queue of songs"
@@ -428,8 +421,8 @@ class Music(commands.Cog):
 
         if not player.queue:
             embed = discord.Embed(
-                title="→ Nothing Queued", 
-                description="• Nothing is currently in the queue, add a song with the `/play`.", 
+                title="→ Nothing Queued",
+                description="• Nothing is currently in the queue, add a song with the `/play`.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
@@ -444,13 +437,13 @@ class Music(commands.Cog):
         queue_list = ''
         for index, track in enumerate(player.queue[start:end], start=start):
             # Change ms duration to hour, min, sec in the format of 00:00:00
-            track_duration = str(datetime.timedelta(milliseconds=track.duration))[:-7]
-            # If there are no hours, then remove the hour part
-            if track_duration[:2] == "0:": track_duration = track_duration[2:]
-            # If there are no minutes, then remove the minute part
-            if track_duration[:1] == "0": track_duration = track_duration[1:]
-            queue_list += f"`{index+1}. ` [{track.title}]({track.uri}) - {track.author} ({track_duration})\n"
-        
+            track_duration = lavalink.utils.format_time(track.duration)
+            # If the track is less than an hour, remove the hour from the duration
+            if track_duration.split(':')[0] == '00':
+                track_duration = track_duration[3:]
+
+            queue_list += f"`{index+1}. ` [{track.title}]({track.uri}) - {track.author} `({track_duration})`\n"
+
         embed = discord.Embed(
             title=f"Queue for {interaction.guild.name}",
             description=f'**{len(player.queue)} tracks total**\n\n{queue_list}',
@@ -473,16 +466,23 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing", 
-                description="• Nothing is currently playing, play a song with the `/play` command.", 
+                title="→ Nothing Playing",
+                description="• Nothing is currently playing, play a song with the `/play` command.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
+        time_in = str(datetime.timedelta(milliseconds=player.position))[:-7]
+        total_duration = lavalink.utils.format_time(player.current.duration)
+        # If total_duration has no hours, then remove the hour part from both times
+        if total_duration.split(":")[0] == "00":
+            time_in = time_in[2:]
+            total_duration = total_duration[3:]
+
         embed= discord.Embed(
             title = "Now Playing 🎶",
-            description = f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
+            description = f"**[{player.current.title}]({player.current.uri})**\n{f'` {time_in}/{total_duration} `'}\n\nQueued by: {player.current.requester.mention}",
             colour = 0x0088a9
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
@@ -493,8 +493,8 @@ class Music(commands.Cog):
     @app_commands.command()
     @app_commands.describe(number='Song number to have removed')
     async def remove(
-        self, 
-        interaction: discord.Interaction, 
+        self,
+        interaction: discord.Interaction,
         number: int
     ):
         "Removes the specified song from the queue"
@@ -504,8 +504,8 @@ class Music(commands.Cog):
 
         if not player.queue:
             embed = discord.Embed(
-                title="→ Nothing Queued", 
-                description="• Nothing is currently in the queue, so there is nothing for me to remove.", 
+                title="→ Nothing Queued",
+                description="• Nothing is currently in the queue, so there is nothing for me to remove.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
@@ -531,7 +531,7 @@ class Music(commands.Cog):
 
     @app_commands.command()
     async def shuffle(
-        self, 
+        self,
         interaction: discord.Interaction
     ):
         "Plays the songs in the queue in a randomized order, until turned off"
@@ -541,8 +541,8 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing", 
-                description="• Nothing is currently playing, therefore I cannot shuffle the music.", 
+                title="→ Nothing Playing",
+                description="• Nothing is currently playing, therefore I cannot shuffle the music.",
                 color=0x0088a9
             )
             embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
