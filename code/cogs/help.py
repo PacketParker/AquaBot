@@ -26,7 +26,8 @@ class HelpDropdown(discord.ui.Select):
                 colour = discord.Colour.random()
             )
 
-            embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you $2,500. Can be run every 2 hours", inline=False)
+            embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you $10,000. Can be run every 2 hours", inline=False)
+            embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you an amount of money between $1,000 and $5,000.", inline=False)
             embed.add_field(name = "**Shop**", value = f"**Usage: `/shop`**\nGives you the shop menus so that you can buy items", inline=False)
             embed.add_field(name = "**Blackjack**", value = f"**Usage: `/blackjack <bet>`**\nAllows you to play blackjack with the amount of money bet", inline=False)
             embed.add_field(name = "**Slots**", value = f"**Usage: `/slots <bet>`**\nTake your chances on the slots with a bet of your choice.", inline=False)
