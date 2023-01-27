@@ -12,6 +12,18 @@ class GamblingHelpers(commands.Cog):
         self.bot = bot
         self.economy = Database(bot)
 
+    
+    @commands.command()
+    @commands.is_owner()
+    @commands.dm_only()
+    async def refund(self, ctx: commands.Context, user_id, amount: int):
+        user = await self.bot.fetch_user(user_id)
+        if user:
+            await self.economy.add_money(user_id, amount)
+            await ctx.send(f"Given ${amount:,} to {user}")
+        else:
+            await ctx.send("User not found!")
+
 
     @app_commands.command()
     @app_commands.checks.cooldown(1, B_COOLDOWN*3600)

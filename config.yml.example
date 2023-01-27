@@ -9,3 +9,5 @@ bot:
   host: 
   port: 
   database: 
+  spotify_id: IN ORDER TO PLAY
+  spotify_secret: SPOTIFY SONGS
