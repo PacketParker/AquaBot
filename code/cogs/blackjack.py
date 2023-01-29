@@ -165,11 +165,11 @@ class Blackjack(commands.Cog):
                 dealer_score = self.calc_hand(dealer_hand)
                 if player_score == 21:  # win condition
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = (f"Blackjack! - you win ${bet*2}", 'won')
+                    result = (f"Blackjack! - you win ${bet*2:,}", 'won')
                     break
                 elif player_score > 21:  # losing condition
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = (f"Player busts - you lose ${bet}", 'lost')
+                    result = (f"Player busts - you lose ${bet:,}", 'lost')
                     break
                 msg = await out_table(
                     title="Your Turn",
@@ -210,18 +210,18 @@ class Blackjack(commands.Cog):
 
                 if dealer_score == 21:  # winning/losing conditions
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = (f"Dealer blackjack - you lose ${bet}", 'lost')
+                    result = (f"Dealer blackjack - you lose ${bet:,}", 'lost')
                 elif dealer_score > 21:
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = (f"Dealer busts - you win ${bet*2}", 'won')
+                    result = (f"Dealer busts - you win ${bet*2:,}", 'won')
                 elif dealer_score == player_score:
                     result = (f"Tie - you keep your money", 'kept')
                 elif dealer_score > player_score:
                     await self.economy.add_money(interaction.user.id, bet*-1)
-                    result = (f"You lose ${bet}", 'lost')
+                    result = (f"You lose ${bet:,}", 'lost')
                 elif dealer_score < player_score:
                     await self.economy.add_money(interaction.user.id, bet*2)
-                    result = (f"You win ${bet*2}", 'won')
+                    result = (f"You win ${bet*2:,}", 'won')
 
             color = (
                 discord.Color.red() if result[1] == 'lost'
