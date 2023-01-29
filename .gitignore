@@ -3,3 +3,4 @@ config.yml
 __pycache__
 count.db
 .vscode
+backup.sql
