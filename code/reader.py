@@ -15,6 +15,7 @@ with open(os.path.join(ABS_PATH, 'config.yml'),  # type:ignore
 
 TOKEN = config.get('token')
 B_COOLDOWN = config.get('bonus_cooldown')
+BOT_COLOR = config.get('bot_color')
 SERVER_ID = config.get('test_server_id')
 BUG_CHANNEL_ID = config.get('bug_channel_id')
 FEEDBACK_CHANNEL_ID = config.get('feedback_channel_id')

@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import aiosqlite
+from reader import BOT_COLOR
 
 class UserCount(commands.Cog):
     def __init__(self, bot):
@@ -36,7 +37,7 @@ class UserCount(commands.Cog):
         embed = discord.Embed(
             title="User Count",
             description=f"Total Members: `{total_members:,}`\nTotal Guilds: `{len(self.bot.guilds):,}`\nTotal Commands Run: `{count:,}`",
-            color=discord.Color.blurple()
+            color=BOT_COLOR
         )
         # Add the top 5 guilds to the embed
         for guild in list(total_guilds)[:5]:

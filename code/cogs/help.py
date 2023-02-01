@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import re
 from discord import app_commands
+from reader import BOT_COLOR
 
 color = 0xc48aff
 
@@ -21,94 +22,90 @@ class HelpDropdown(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         if self.values[0] == 'Economy':
             embed = discord.Embed(
-                title = ":moneybag: - Economy Help",
-                description = "**Options in `<>` are mandatory**",
-                colour = discord.Colour.random()
+                title=":moneybag: - Economy Help",
+                description="**Options in `<>` are mandatory**",
+                color=BOT_COLOR
             )
-
-            embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you $10,000. Can be run every 2 hours", inline=False)
-            embed.add_field(name = "**Add**", value = f"**Usage: `/add`**\nGives you an amount of money between $1,000 and $5,000.", inline=False)
-            embed.add_field(name = "**Shop**", value = f"**Usage: `/shop`**\nGives you the shop menus so that you can buy items", inline=False)
-            embed.add_field(name = "**Blackjack**", value = f"**Usage: `/blackjack <bet>`**\nAllows you to play blackjack with the amount of money bet", inline=False)
-            embed.add_field(name = "**Slots**", value = f"**Usage: `/slots <bet>`**\nTake your chances on the slots with a bet of your choice.", inline=False)
-            embed.add_field(name = "**Profile**", value = f"**Usage: `/profile <member>`**\nShows the amount of money and ranks that a user has", inline=False),
-            embed.add_field(name = "**Leaderboard**", value = f"**Usage: `/leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
+            embed.add_field(name="**Add**", value=f"**Usage: `/add`**\nGives you $10,000. Can be run every 2 hours", inline=False)
+            embed.add_field(name="**Add**", value=f"**Usage: `/add`**\nGives you an amount of money between $1,000 and $5,000.", inline=False)
+            embed.add_field(name="**Shop**", value=f"**Usage: `/shop`**\nGives you the shop menus so that you can buy items", inline=False)
+            embed.add_field(name="**Blackjack**", value=f"**Usage: `/blackjack <bet>`**\nAllows you to play blackjack with the amount of money bet", inline=False)
+            embed.add_field(name="**Slots**", value=f"**Usage: `/slots <bet>`**\nTake your chances on the slots with a bet of your choice.", inline=False)
+            embed.add_field(name="**Profile**", value=f"**Usage: `/profile <member>`**\nShows the amount of money and ranks that a user has", inline=False),
+            embed.add_field(name="**Leaderboard**", value=f"**Usage: `/leaderboard` **\nShows the top 5 players with the most money. This is a global leaderboard and not per server.", inline=False)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == 'Moderation':
             embed = discord.Embed(
-                title = ":crossed_swords: - Moderation Help",
-                description = "**Options in `<>` are mandatory**",
-                colour = discord.Colour.random()
+                title=":crossed_swords: - Moderation Help",
+                description="**Options in `<>` are mandatory**",
+                color=BOT_COLOR
             )
-            embed.add_field(name = "**Warn**", value = f"**Usage: `/warn <member> <reason>`** \nWarn a member for doing something against the rules.", inline=True)
-            embed.add_field(name = "**Delwarn**", value = f"**Usage: `/delwarn <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
-            embed.add_field(name = "**Warnings**", value = f"**Usage: `/warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
-            embed.add_field(name = "**Mute**", value = f"**Usage: `/mute <member> <time>`** \nMute a member so they can't send anymore messages.", inline=True)
-            embed.add_field(name = "**Tempmute**", value = f"**Usage: `/tempmute <member> <time - in hours>` \nExample: `/tempmute @bob 2`** \nMutes the member temporarily, they will be unmuted once the specified time has passed.", inline=True)
-            embed.add_field(name = "**Unmute**", value = f"**Usage: `/unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)
-            embed.add_field(name = "**Purge**", value = f"**Usage: `/purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
-            embed.add_field(name = "**Kick**", value = f"**Usage: `/kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
-            embed.add_field(name = "**Ban**", value = f"**Usage: `/ban <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=True)
-            embed.add_field(name = "**Softban**", value = f"**Usage: `/softban <member> <reason>`** \nThis command will ban and then immediately unban the member in order to get rid of their message history.", inline=True)
+            embed.add_field(name="**Warn**", value=f"**Usage: `/warn <member> <reason>`** \nWarn a member for doing something against the rules.", inline=True)
+            embed.add_field(name="**Delwarn**", value=f"**Usage: `/delwarn <warn ID>`** \nDelete a warning from a member so that it is no longer on their record.", inline=True)
+            embed.add_field(name="**Warnings**", value=f"**Usage: `/warnings <member>`** \nSee all of the warnings for a member. Also includes when they were warned, and who warned them.", inline=True)
+            embed.add_field(name="**Mute**", value=f"**Usage: `/mute <member> <time>`** \nMute a member so they can't send anymore messages.", inline=True)
+            embed.add_field(name="**Tempmute**", value=f"**Usage: `/tempmute <member> <time - in hours>` \nExample: `/tempmute @bob 2`** \nMutes the member temporarily, they will be unmuted once the specified time has passed.", inline=True)
+            embed.add_field(name="**Unmute**", value=f"**Usage: `/unmute <member>`** \nUnmute a member so they are able to send messages again.", inline=True)
+            embed.add_field(name="**Purge**", value=f"**Usage: `/purge <amount>`** \nDelete messages from your server. Max amount that can be deleted at one time is `100` messages.")
+            embed.add_field(name="**Kick**", value=f"**Usage: `/kick <member> <reason>`** \nKick a member from your server. They will be able to join back with a new invite.", inline=True)
+            embed.add_field(name="**Ban**", value=f"**Usage: `/ban <member> <reason>`** \nBan a member from your server. They will not be able to join back until they are unbanned.", inline=True)
+            embed.add_field(name="**Softban**", value=f"**Usage: `/softban <member> <reason>`** \nThis command will ban and then immediately unban the member in order to get rid of their message history.", inline=True)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == "Info":
             embed = discord.Embed(
-                title = ":question: - Info Help",
-                description = "**Options in `<>` are mandatory**",
-                colour = discord.Colour.random()
+                title=":question: - Info Help",
+                description="**Options in `<>` are mandatory**",
+                color=BOT_COLOR
             )
-            embed.add_field(name = "**Prices**", value = f"**Usage: `/prices`** \nShows the prices for the 20 cryptocurrencies that we currently list", inline=True)
-            embed.add_field(name = "**Crypto**", value = f"**Usage: `/crypto <ticker>`** \nShows expanded information on the specific currency given its ticker.", inline=True)
-            embed.add_field(name = "**Covid**", value = f"**Usage: `/covid` **\nSends the current global COVID-19 data.", inline=True)
-            embed.add_field(name = "**Invite**", value = f"**Usage: `/invite` **\nSends the invite for the bot.", inline=True)
-            embed.add_field(name = "**User Info**", value = f"**Usage: `/userinfo <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and some more.", inline=True)
-            embed.add_field(name = "**Bot Info**", value = f"**Usage: `/botinfo`** \nGives information on the bot.", inline=True)
-            embed.add_field(name = "**Vote**", value = f"**Usage: `/vote`** \nSends the link for you to vote for our bot on top.gg", inline=True)
-            embed.add_field(name = "**Bug**", value = f"**Usage: `/bug`** \nShows a form to be filled out to notify the developer of a bug", inline=True)
-            embed.add_field(name = "**Feedback**", value = f"**Usage: `/feedback`** \nShows a form to be filled out to show the developer feedback on the both", inline=True)
-            embed.add_field(name = "**Ping**", value = f"**Usage: `/ping` **\nGives the current ping of the bot.", inline=True)
+            embed.add_field(name="**Prices**", value=f"**Usage: `/prices`** \nShows the prices for the 20 cryptocurrencies that we currently list", inline=True)
+            embed.add_field(name="**Crypto**", value=f"**Usage: `/crypto <ticker>`** \nShows expanded information on the specific currency given its ticker.", inline=True)
+            embed.add_field(name="**Covid**", value=f"**Usage: `/covid` **\nSends the current global COVID-19 data.", inline=True)
+            embed.add_field(name="**Invite**", value=f"**Usage: `/invite` **\nSends the invite for the bot.", inline=True)
+            embed.add_field(name="**User Info**", value=f"**Usage: `/userinfo <member>`** \nGives information on a member in your server. Information includes account creation date, when they joined your server, and some more.", inline=True)
+            embed.add_field(name="**Bot Info**", value=f"**Usage: `/botinfo`** \nGives information on the bot.", inline=True)
+            embed.add_field(name="**Vote**", value=f"**Usage: `/vote`** \nSends the link for you to vote for our bot on top.gg", inline=True)
+            embed.add_field(name="**Bug**", value=f"**Usage: `/bug`** \nShows a form to be filled out to notify the developer of a bug", inline=True)
+            embed.add_field(name="**Feedback**", value=f"**Usage: `/feedback`** \nShows a form to be filled out to show the developer feedback on the both", inline=True)
+            embed.add_field(name="**Ping**", value=f"**Usage: `/ping` **\nGives the current ping of the bot.", inline=True)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == "Music":
             embed = discord.Embed(
-                title = f":musical_note: - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `/contact`",
-                description = "**Options in `<>` are mandatory**",
-                colour = discord.Colour.random()
+                title=f":musical_note: - Music Help \n*NOTE - These commands are still in beta. Please report bugs using `/contact`",
+                description="**Options in `<>` are mandatory**",
+                color=BOT_COLOR
             )
-
-            embed.add_field(name = "**Play**", value = f"**Usage: `/play <name/URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
-            embed.add_field(name = "**Skip**", value = f"**Usage: `/skip` **\nSkips the song that is currently playing.", inline=True)
-            embed.add_field(name = "**Queue**", value = f"**Usage: `/queue`** \nSends all of the songs that are in the queue.", inline=True)
-            embed.add_field(name = "**Remove**", value = f"**Usage: `/remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
-            embed.add_field(name = "**Stop**", value = f"**Usage: `/stop`** \nStops music, clears queue, and leaves VC.", inline=True),
-            embed.add_field(name = "**Clear**", value = f"**Usage: `/clear` **\nRemoves ALL songs in the queue.", inline=True)
-            embed.add_field(name = "**Repeat**", value = f"**Usage: `/remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
-            embed.add_field(name = "**Shuffle**", value = f"**Usage: `/shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
-            embed.add_field(name = "**NowPlaying**", value = f"**Usage: `/np` **\nSends the song that is currently playing.", inline=True)
-            embed.add_field(name = "**Pause**", value = f"**Usage: `/pause`** \nPauses the currently playing song.", inline=True)
-            embed.add_field(name = "**Resume**", value = f"**Usage: `/resume` **\nResumes the paused song.", inline=True)
-
+            embed.add_field(name="**Play**", value=f"**Usage: `/play <name/URL>` **\nSearches YouTube, and then plays the top song.", inline=True)
+            embed.add_field(name="**Skip**", value=f"**Usage: `/skip` **\nSkips the song that is currently playing.", inline=True)
+            embed.add_field(name="**Queue**", value=f"**Usage: `/queue`** \nSends all of the songs that are in the queue.", inline=True)
+            embed.add_field(name="**Remove**", value=f"**Usage: `/remove <song #>` **\nRemoves the specified song from the queue.", inline=True)
+            embed.add_field(name="**Stop**", value=f"**Usage: `/stop`** \nStops music, clears queue, and leaves VC.", inline=True),
+            embed.add_field(name="**Clear**", value=f"**Usage: `/clear` **\nRemoves ALL songs in the queue.", inline=True)
+            embed.add_field(name="**Repeat**", value=f"**Usage: `/remove`** \nRepeats the song that is playing. Run the command again to stop repeating.", inline=True)
+            embed.add_field(name="**Shuffle**", value=f"**Usage: `/shuffle`** \nWill play a random song in the queue. Run the command again to stop shuffling.", inline=True)
+            embed.add_field(name="**NowPlaying**", value=f"**Usage: `/np` **\nSends the song that is currently playing.", inline=True)
+            embed.add_field(name="**Pause**", value=f"**Usage: `/pause`** \nPauses the currently playing song.", inline=True)
+            embed.add_field(name="**Resume**", value=f"**Usage: `/resume` **\nResumes the paused song.", inline=True)
             await interaction.response.edit_message(embed=embed)
 
         if self.values[0] == "Admin":
             embed = discord.Embed(
-                title = ":gear: - Admin Help",
-                description = "**Options in `<>` are mandatory**",
-                colour = discord.Colour.random()
+                title=":gear: - Admin Help",
+                description="**Options in `<>` are mandatory**",
+                color=BOT_COLOR
             )
-            embed.add_field(name = "**Setmute**", value = f"**Usage: `/setmute <name of role>` **\nSets the role that will be given to users whenever you use the `/mute` command.", inline=True)
-            embed.add_field(name = "**Delmute**", value = f"**Usage: `/delmute` **\nDeletes the muted role from our database.", inline=True)
-            embed.add_field(name = "**Muterole**", value = f"**Usage: `/muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
-
+            embed.add_field(name="**Setmute**", value = f"**Usage: `/setmute <name of role>` **\nSets the role that will be given to users whenever you use the `/mute` command.", inline=True)
+            embed.add_field(name="**Delmute**", value = f"**Usage: `/delmute` **\nDeletes the muted role from our database.", inline=True)
+            embed.add_field(name="**Muterole**", value = f"**Usage: `/muterole`** \nSends the current role that is assigned as the muted role for your server.", inline=True)
             await interaction.response.edit_message(embed=embed)
 
         else:
             return
 
 class HelpView(discord.ui.View):
-    def __init__(self, timeout = 180.0):
+    def __init__(self, timeout=180.0):
         super().__init__(timeout=timeout)
         self.value = None
         self.add_item(HelpDropdown())
@@ -118,11 +115,10 @@ class HelpView(discord.ui.View):
     @discord.ui.button(label='Main Page', style=discord.ButtonStyle.blurple, row=2)
     async def main_page(self, interaction: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
-            title = "Help",
-            description = f"**IMPORTANT - A lot of stuff changed, please use the `new` command to see all of the changes** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
-            colour = discord.Colour.random()
+            title="Help",
+            description=f"**IMPORTANT - A lot of stuff changed, please use the `new` command to see all of the changes** \n\nFor extended information on commands and categories, please choose an option from the dropdown menu below.",
+            color=BOT_COLOR
         )
-
         await interaction.response.edit_message(embed=embed)
 
 
@@ -139,11 +135,10 @@ class Help(commands.Cog):
         "Sends the bots commands and features"
 
         embed = discord.Embed(
-            title = "Help",
-            description = f"**IMPORTANT - All commands are now slash commands, and a few changes have been made. Please use `/new` to see any alterations.",
-            colour = discord.Colour.random()
+            title="Help",
+            description=f"**IMPORTANT - All commands are now slash commands, and a few changes have been made. Please use `/new` to see any alterations.",
+            color=BOT_COLOR
         )
-
         view = HelpView()
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 
@@ -152,11 +147,10 @@ class Help(commands.Cog):
     async def on_message(self, message: discord.Message) -> None:
         if re.fullmatch(rf"<@!?{self.bot.user.id}>", message.content):
             embed = discord.Embed(
-                title = f"All commands are now slash commands!",
-                description = f"**Use `/help` in order to get help on what commands are available.**",
-                colour = discord.Colour.blurple()
+                title=f"All commands are now slash commands!",
+                description=f"**Use `/help` in order to get help on what commands are available.**",
+                color=BOT_COLOR
             )
-
             await message.reply(embed=embed)
 
 

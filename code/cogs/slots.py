@@ -1,6 +1,7 @@
 import bisect
 import os
 import random
+import datetime
 import discord
 from discord.ext import commands
 from economy_schema import Database
@@ -8,7 +9,9 @@ from PIL import Image
 from reader import InsufficientFundsException
 from discord import app_commands
 
-color = 0xc48aff
+"""NOTE: This code was found somewhere on GitHub a long time ago. I changed it a bit to work for
+discord.py 2.0 and for my needs. If anyone knows who wrote this, please let me know so I can
+give them credit."""
 
 class Slots(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -28,17 +31,15 @@ class Slots(commands.Cog):
             raise InsufficientFundsException()
 
 
-    #Usage: slots [bet]
     @app_commands.command()
     @app_commands.checks.cooldown(1, 4)
     @app_commands.describe(bet='Amount of money to bet')
     async def slots(
         self,
         interaction: discord.Interaction,
-        bet: int
+        bet: app_commands.Range[int, 1, None]
     ):
         "Bet a specified amount of money on the slot machines"
-
         await self.check_bet(interaction, bet)
         facade = Image.open(f'./code/utils/slot-face.png').convert('RGBA')
         reel = Image.open(f'./code/utils/slot-reel.png').convert('RGBA')
@@ -75,7 +76,7 @@ class Slots(commands.Cog):
             bg.alpha_composite(facade)
             images.append(bg)
 
-        fp = './code/players/reels/'+str(interaction.user.id)+'.gif'
+        fp = './code/players/reels/' + str(interaction.user.id) + '.gif'
         images[0].save(
             fp,
             save_all=True,
@@ -111,6 +112,7 @@ class Slots(commands.Cog):
 
         file = discord.File(fp, filename=f'{interaction.user.id}.gif')
         embed.set_image(url=f"attachment://{interaction.user.id}.gif")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(
             file=file,
             embed=embed

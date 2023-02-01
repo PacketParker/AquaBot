@@ -1,9 +1,7 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands.errors import *
-from reader import InsufficientFundsException
-
-color = 0xc48aff
+from reader import InsufficientFundsException, BOT_COLOR
 
 class slash_handlers(commands.Cog):
     def __init__(self, bot):
@@ -24,35 +22,35 @@ class slash_handlers(commands.Cog):
 
         elif isinstance(error, InsufficientFundsException):
             embed = discord.Embed(
-                title = "→ Insufficient Funds!",
-                description = f"• You do not have enough money to use that command. You can use `/add` to add more money. You can also check your current balance with `/profile`",
-                colour = color
+                title="Insufficient Funds!",
+                description=f"You do not have enough money to use that command. You can use `/add` to add more money. You can also check your current balance with `/profile`",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, BadArgument):
             embed = discord.Embed(
-                title = "→ Bad Argument!",
-                description = f"• The arguments you provided in the command are invalid. Please try again.",
-                colour = color
+                title="Bad Argument!",
+                description=f"The arguments you provided in the command are invalid. Please try again.",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, discord.app_commands.errors.MissingPermissions):
             embed = discord.Embed(
-                title = "→ Missing Permissions!",
-                description = f"• {error}",
-                colour = color
+                title="Missing Permissions!",
+                description=f"{error}",
+                color=BOT_COLOR
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, discord.app_commands.errors.BotMissingPermissions):
             embed = discord.Embed(
-                title = "→ Bot Missing Permissions!",
-                description = f"• {error}",
-                colour = color
+                title="Bot Missing Permissions!",
+                description=f"{error}",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -66,17 +64,17 @@ class slash_handlers(commands.Cog):
             s %= 60
 
             embed = discord.Embed(
-                title = "→ Command On Cooldown!",
-                description = f"• Please wait another {h}hrs {m}min {s}sec before trying that command again.",
-                colour = color
+                title="Command On Cooldown!",
+                description=f"Please wait another {h}hrs {m}min {s}sec before trying that command again.",
+                color=BOT_COLOR
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, discord.app_commands.errors.CommandOnCooldown) and interaction.command.name == "slots":
             embed = discord.Embed(
-                title = "→ Slots Cooldown!",
-                description = "• To prevent spamming, the slots command in on a 4 second cooldown. Sorry for the inconvenience.",
-                colour = color
+                title="Slots Cooldown!",
+                description="To prevent spamming, the slots command in on a 4 second cooldown. Sorry for the inconvenience.",
+                color=BOT_COLOR
             )
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -85,18 +83,18 @@ class slash_handlers(commands.Cog):
 
         elif isinstance(error, discord.errors.Forbidden) and interaction.command.name in ('kick', 'ban', 'softban'):
             embed = discord.Embed(
-                title = "→ Forbidden!",
-                description = f"• Moderation actions cannot be performed on the bot, or on members above the bot (like owners or administrators), please try again on users below me.",
-                colour = color
+                title="Forbidden Error",
+                description=f"Moderation actions cannot be performed on the bot, or on members above the bot (like owners or administrators), please try again on users below me.",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
         elif isinstance(error, discord.errors.Forbidden) and interaction.command.name in ('mute', 'tempmute', 'unmute'):
             embed = discord.Embed(
-                title = "→ Forbidden!",
-                description = f"• I cannot mute or unmute members with a role that is above mine. Please double check that my roles are listed above your servers muted role.",
-                colour = color
+                title="Forbidden Error",
+                description=f"I cannot mute or unmute members with a role that is above mine. Please double check that my roles are listed above your servers muted role.",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -104,9 +102,9 @@ class slash_handlers(commands.Cog):
 
         elif isinstance(error, discord.errors.Forbidden) and interaction.command.name == 'purge':
             embed = discord.Embed(
-                title = "→ Permissions!",
-                description = f"• It appears im missing the `manage messages` permissions needed to be able to run the `purge` command..",
-                colour = color
+                title="Permissions Error",
+                description=f"It appears im missing the `manage messages` permissions needed to be able to run the `purge` command..",
+                color=BOT_COLOR
             )
 
             await interaction.response.send_message(embed=embed, ephemeral=True)

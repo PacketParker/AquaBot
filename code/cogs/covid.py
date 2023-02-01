@@ -13,7 +13,6 @@ class Covid(commands.Cog):
     async def cog_load(self):
         self.update_covid.start()
 
-
     @tasks.loop(seconds=300)
     async def update_covid(self):
         response = requests.get("https://disease.sh/v3/covid-19/all")
@@ -47,10 +46,8 @@ class Covid(commands.Cog):
         "Get current global Covid-19 data"
         embed = discord.Embed(
             title = "World COVID-19 Data",
-            description = "Data is updated once every 5 minutes",
-            colour = 0x000000
+            description = "Data is updated once every 5 minutes"
         )
-
         embed.add_field(name="Total Cases", value=f"```{covid_dict['total_cases']:,}```", inline=True)
         embed.add_field(name="Total Deaths", value=f"```{covid_dict['total_deaths']:,}```", inline=True)
         embed.add_field(name="Total Recovered", value=f"```{covid_dict['total_recovered']:,}```", inline=True)

@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 from discord import app_commands
+from reader import BOT_COLOR
 from reader import BUG_CHANNEL_ID, FEEDBACK_CHANNEL_ID
 
 color = 0xc48aff
@@ -32,12 +33,12 @@ class BugReport(discord.ui.Modal, title='Report a bug'):
         channel = self.bot.get_channel(BUG_CHANNEL_ID)
 
         embed = discord.Embed(
-            title = "Bug Report",
-            description = f"Submitted by {self.name}",
-            color = discord.Color.blurple()
+            title="Bug Report",
+            description=f"Submitted by {self.name}",
+            color=BOT_COLOR
         )
-        embed.add_field(name = "Command with issue:", value = f"{self.command}", inline=False)
-        embed.add_field(name = "Report:", value = f"{self.report}", inline=False)
+        embed.add_field(name="Command with issue:", value=f"{self.command}", inline=False)
+        embed.add_field(name="Report:", value=f"{self.report}", inline=False)
 
         await channel.send(embed=embed)
 
@@ -71,9 +72,9 @@ class FeedbackForm(discord.ui.Modal, title='Give feedback about Aqua Bot'):
         channel = self.bot.get_channel(FEEDBACK_CHANNEL_ID)
 
         embed = discord.Embed(
-            title = "Bot Feedback",
-            description = f"Submitted by {self.name}",
-            color = discord.Color.blurple()
+            title="Bot Feedback",
+            description=f"Submitted by {self.name}",
+            color=BOT_COLOR
         )
         embed.add_field(name = "Positive:", value = f"{self.positive}", inline=False)
         embed.add_field(name = "Negative:", value = f"{self.negative}", inline=False)
@@ -85,6 +86,7 @@ class Modals(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+
     @app_commands.command()
     async def bug(self, interaction: discord.Interaction):
         "Send a bug report to the developer"
@@ -95,6 +97,7 @@ class Modals(commands.Cog):
     async def feedback(self, interaction: discord.Interaction):
         "Send bot feeback to the developer"
         await interaction.response.send_modal(FeedbackForm(self.bot))
+
 
 async def setup(bot):
 	await bot.add_cog(Modals(bot))

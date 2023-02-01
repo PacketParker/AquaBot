@@ -31,7 +31,6 @@ class MyBot(commands.Bot):
         activity = discord.Game(name="Ping Me For Help!"),
         intents = discord.Intents.default()
     )
-
     async def setup_hook(self):
         await initialise()
         get_access_token.start()

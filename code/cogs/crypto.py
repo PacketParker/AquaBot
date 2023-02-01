@@ -45,7 +45,6 @@ class Crypto(commands.Cog):
     async def cog_load(self):
         self.update_crypto.start()
 
-
     def update_dicts_for_currency(self, response, cut_currency, currency):
         round_num = 8 if cut_currency == 'SHIB' else 3 if cut_currency == 'DOGE' else 3 if cut_currency == 'VET' else 3 if cut_currency == 'XLM' else 2
         market = response.json()['RAW'][cut_currency]['USD']['LASTMARKET']
@@ -62,7 +61,6 @@ class Crypto(commands.Cog):
         response = requests.get(
             f'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,SOL,ADA,XRP,DOT,DOGE,AVAX,SHIB,LUNA,LTC,UNI,LINK,MATIC,ALGO,BCH,VET,XLM,ICP&tsyms=USD&api_key={APIKEY}'
         )
-
         for currency in currencies:
             cut_currency = currency[currency.find("(")+1:currency.find(")")]
             self.update_dicts_for_currency(response, cut_currency, currency)
@@ -74,13 +72,11 @@ class Crypto(commands.Cog):
         interaction: discord.Interaction,
     ):
         "See the current crypto prices"
-
         embed = discord.Embed(
-            title = "Current Crpytocurrency Price",
-            description = f"**In order to see more information on a specific cryptocurrency, do `/crypto <ticker>` to show price, percentage change, and more.** \n\nPrices are updated every 60 seconds. \nLetters following the name within () are known as the ticker. \nExample: Bitcoin (BTC) - The ticker is BTC",
-            colour = discord.Colour.gold()
+            title="Current Crpytocurrency Price",
+            description=f"**In order to see more information on a specific cryptocurrency, do `/crypto <ticker>` to show price, percentage change, and more.** \n\nPrices are updated every 60 seconds. \nLetters following the name within () are known as the ticker. \nExample: Bitcoin (BTC) - The ticker is BTC",
+            color=discord.Color.gold()
         )
-
         for key in master_dict:
             price = master_dict[key].split(':')[1]
             embed.add_field(name = f"{key}", value = f"```${Decimal(price):,}```", inline=True)
@@ -100,7 +96,6 @@ class Crypto(commands.Cog):
         'Internet Computer (ICP)']
     ):
         "Send more information on a certain cryptocurrency"
-
         icon_name = connect_icon_dict.get(currency)
         color = connect_color_dict.get(currency)
         market = master_dict[currency].split(':')[0]
@@ -111,18 +106,18 @@ class Crypto(commands.Cog):
         mktcap = master_dict[currency].split(':')[5]
 
         embed = discord.Embed(
-            title = currency,
-            description = "Information is updated every 60 seconds",
-            colour = color
+            title=currency,
+            description="Information is updated every 60 seconds",
+            color=color
         )
-        embed.add_field(name = "Market", value = f"```{market}```")
-        embed.add_field(name = "Current Price", value = f"```${Decimal(price):,}```")
-        embed.add_field(name = "24 Hour Change", value = f"```{Decimal(price_change):,}%```")
-        embed.add_field(name = "24 Hour High", value = f"```${Decimal(high):,}```")
-        embed.add_field(name = "24 Hour Low", value = f"```${Decimal(low):,}```")
-        embed.add_field(name = "Market Cap", value = f"```${Decimal(mktcap):,}```")
+        embed.add_field(name="Market", value = f"```{market}```")
+        embed.add_field(name="Current Price", value=f"```${Decimal(price):,}```")
+        embed.add_field(name="24 Hour Change", value=f"```{Decimal(price_change):,}%```")
+        embed.add_field(name="24 Hour High", value=f"```${Decimal(high):,}```")
+        embed.add_field(name="24 Hour Low", value=f"```${Decimal(low):,}```")
+        embed.add_field(name="Market Cap", value=f"```${Decimal(mktcap):,}```")
         file = discord.File(f"./code/utils/crypto_icons/{icon_name}.png", filename = f"{icon_name}.png")
-        embed.set_thumbnail(url = f"attachment://{icon_name}.png")
+        embed.set_thumbnail(url=f"attachment://{icon_name}.png")
 
         await interaction.response.send_message(embed=embed, file=file)
 

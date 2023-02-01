@@ -1,9 +1,10 @@
 import discord
+import datetime
 from discord.ext import commands
 from economy_schema import Database
-import sqlite3
+import psycopg2
 from discord import app_commands
-from reader import InsufficientFundsException
+from reader import InsufficientFundsException, BOT_COLOR
 from bot import CONNECTION
 
 color = 0xc48af
@@ -50,11 +51,10 @@ class AfterRankPurchase(discord.ui.View):
             names = "No ranks"
 
         embed = discord.Embed(
-            title = "Shop",
-            description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = discord.Color.random()
+            title="Shop",
+            description=f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
+            color=BOT_COLOR
         )
-
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
@@ -83,31 +83,28 @@ class ConfirmRankPurchase(discord.ui.View):
             await self.economy.add_money(user_id, self.bet*-1)
 
             embed = discord.Embed(
-                title = "Purchase Successful",
-                description = f"Your purchase was successful. In order to purchase more items, please click the main page button below.",
-                color = discord.Color.random()
+                title="Purchase Successful",
+                description=f"Your purchase was successful. In order to purchase more items, please click the main page button below.",
+                color=BOT_COLOR
             )
-
             view = AfterRankPurchase(self.bot)
             await interaction.response.edit_message(embed=embed, view=view)
 
-        except sqlite3.IntegrityError:
+        except psycopg2.errors.UniqueViolation:
             embed = discord.Embed(
-                title = "Rank Already Owned",
-                description = f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
-                color = discord.Color.random()
+                title="Rank Already Owned",
+                description=f"You already have that rank and therefore cannot buy it again. Try purchasing another rank.",
+                color=BOT_COLOR
             )
-
             view = RankView(self.bot)
             return await interaction.response.edit_message(embed=embed, view=view)
 
         except InsufficientFundsException:
             embed = discord.Embed(
-                title = "Not Enough Money",
-                description = f"You do not have enough money to make that purchase, come back once you've earned some more money.",
-                color = discord.Color.random()
+                title="Not Enough Money",
+                description=f"You do not have enough money to make that purchase, come back once you've earned some more money.",
+                color=BOT_COLOR
             )
-
             view = RankView(self.bot)
             return await interaction.response.edit_message(embed=embed, view=view)
 
@@ -115,11 +112,10 @@ class ConfirmRankPurchase(discord.ui.View):
     @discord.ui.button(label='No', style=discord.ButtonStyle.red, row=2)
     async def no(self, interaction: discord.Interaction, button: discord.ui.Button):
         embed = discord.Embed(
-            title = "Purchase Canceled, Taken Back to Shop",
-            description = f"Choose from one of the categories below in order to shop for items.",
-            color = discord.Color.random()
+            title="Purchase Cancelled, Taken Back to Shop",
+            description=f"Choose from one of the categories below in order to shop for items.",
+            color=BOT_COLOR
         )
-
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
@@ -160,9 +156,9 @@ class RankDropdown(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         if self.values[0] == 'Copper III':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Copper III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Copper III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 1
@@ -174,9 +170,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Copper II':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Copper II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Copper II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 2
@@ -188,9 +184,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Copper I':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Copper I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Copper I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 3
@@ -202,9 +198,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Bronze III':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Bronze III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Bronze III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 4
@@ -216,9 +212,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Bronze II':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Bronze II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Bronze II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 5
@@ -230,9 +226,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Bronze I':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Bronze I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Bronze I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 6
@@ -244,9 +240,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Silver III':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Silver III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Silver III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 7
@@ -258,9 +254,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Silver II':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Silver II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Silver II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 8
@@ -272,9 +268,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Silver I':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Silver I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Silver I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 9
@@ -286,9 +282,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Gold III':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Gold III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Gold III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 10
@@ -300,9 +296,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Gold II':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Gold II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Gold II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 11
@@ -314,9 +310,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Gold I':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Gold I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Gold I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 12
@@ -328,9 +324,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Platinum III':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Platinum III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Platinum III` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 13
@@ -342,9 +338,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Platinum II':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Platinum II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Platinum II` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 14
@@ -356,9 +352,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Platinum I':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Platinum I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Platinum I` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 15
@@ -370,9 +366,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Diamond':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Diamond` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Diamond` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 16
@@ -384,9 +380,9 @@ class RankDropdown(discord.ui.Select):
 
         if self.values[0] == 'Champion':
             embed = discord.Embed(
-                title = "Please Confirm Your Purchase",
-                description = "If you are sure you would like to purchase the `Champion` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
-                colour = discord.Colour.random()
+                title="Please Confirm Your Purchase",
+                description="If you are sure you would like to purchase the `Champion` rank, please click the 'Yes' button below, otherwise click the 'No' button.",
+                color=BOT_COLOR
             )
 
             rank_value = 17
@@ -421,11 +417,10 @@ class RankView(discord.ui.View):
             names = "No ranks"
 
         embed = discord.Embed(
-            title = "Shop",
-            description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = discord.Color.random()
+            title="Shop",
+            description=f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
+            color=BOT_COLOR
         )
-
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
@@ -556,34 +551,34 @@ class ShopDropdown(discord.ui.Select):
 
         if self.values[0] == 'Ranks':
             embed = discord.Embed(
-                title = "Ranks \nSpend your money in order to get more ranks.",
-                description = "**Purchase a rank by clicking on one of the dropdown menus below, and then confirming your purchase.**",
-                colour = discord.Colour.random()
+                title="Ranks \nSpend your money in order to get more ranks.",
+                description="**Purchase a rank by clicking on one of the dropdown menus below, and then confirming your purchase.**",
+                color=BOT_COLOR
             )
 
-            embed.add_field(name = f"{copper_iii}", value = f"```100,000```", inline=True)
-            embed.add_field(name = f"{copper_ii}", value = f"```200,000```", inline=True)
-            embed.add_field(name = f"{copper_i}", value = f"```300,000```", inline=True)
+            embed.add_field(name=f"{copper_iii}", value=f"```100,000```", inline=True)
+            embed.add_field(name=f"{copper_ii}", value=f"```200,000```", inline=True)
+            embed.add_field(name=f"{copper_i}", value=f"```300,000```", inline=True)
 
-            embed.add_field(name = f"{bronze_iii}", value = f"```100,000,000```", inline=True)
-            embed.add_field(name = f"{bronze_ii}", value = f"```200,000,000```", inline=True)
-            embed.add_field(name = f"{bronze_i}", value = f"```300,000,000```", inline=True)
+            embed.add_field(name=f"{bronze_iii}", value=f"```100,000,000```", inline=True)
+            embed.add_field(name=f"{bronze_ii}", value=f"```200,000,000```", inline=True)
+            embed.add_field(name=f"{bronze_i}", value=f"```300,000,000```", inline=True)
 
-            embed.add_field(name = f"{silver_iii}", value = f"```100,000,000,000\n(100 bil.)```", inline=True)
-            embed.add_field(name = f"{silver_ii}", value = f"```200,000,000,000\n(200 bil.)```", inline=True)
-            embed.add_field(name = f"{silver_i}", value = f"```300,000,000,000\n(300 bil.)```", inline=True)
+            embed.add_field(name=f"{silver_iii}", value=f"```100,000,000,000\n(100 bil.)```", inline=True)
+            embed.add_field(name=f"{silver_ii}", value=f"```200,000,000,000\n(200 bil.)```", inline=True)
+            embed.add_field(name=f"{silver_i}", value=f"```300,000,000,000\n(300 bil.)```", inline=True)
 
-            embed.add_field(name = f"{gold_iii}", value = f"```100,000,000,000,\n000  (100 tril.)```", inline=True)
-            embed.add_field(name = f"{gold_ii}", value = f"```200,000,000,000,\n000  (200 tril.)```", inline=True)
-            embed.add_field(name = f"{gold_i}", value = f"```300,000,000,000,\n000  (300 tril.)```", inline=True)
+            embed.add_field(name=f"{gold_iii}", value=f"```100,000,000,000,\n000  (100 tril.)```", inline=True)
+            embed.add_field(name=f"{gold_ii}", value=f"```200,000,000,000,\n000  (200 tril.)```", inline=True)
+            embed.add_field(name=f"{gold_i}", value=f"```300,000,000,000,\n000  (300 tril.)```", inline=True)
 
-            embed.add_field(name = f"{platinum_iii}", value = f"```100,000,000,000,000,000  (100 quad.)```", inline=True)
-            embed.add_field(name = f"{platinum_ii}", value = f"```200,000,000,000,000,000  (200 quad.)```", inline=True)
-            embed.add_field(name = f"{platinum_i}", value = f"```300,000,000,000,000,000  (300 quad.)```", inline=True)
+            embed.add_field(name=f"{platinum_iii}", value=f"```100,000,000,000,000,000  (100 quad.)```", inline=True)
+            embed.add_field(name=f"{platinum_ii}", value=f"```200,000,000,000,000,000  (200 quad.)```", inline=True)
+            embed.add_field(name=f"{platinum_i}", value=f"```300,000,000,000,000,000  (300 quad.)```", inline=True)
 
-            embed.add_field(name = f"{diamond}", value = f"```123,456,789,000,000,000,000\n(<123 quint.)```", inline=True)
+            embed.add_field(name=f"{diamond}", value=f"```123,456,789,000,000,000,000\n(<123 quint.)```", inline=True)
 
-            embed.add_field(name = f"{champion}", value = f"```999,999,999,999,999,999,999,\n999,999 (<999 sept.)```", inline=True)
+            embed.add_field(name=f"{champion}", value=f"```999,999,999,999,999,999,999,\n999,999 (<999 sept.)```", inline=True)
 
             view = RankView(self.bot)
             await interaction.response.edit_message(embed=embed, view=view)
@@ -613,11 +608,10 @@ class ShopView(discord.ui.View):
             names = "No ranks"
 
         embed = discord.Embed(
-            title = "Shop",
-            description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = discord.Color.random()
+            title="Shop",
+            description=f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
+            color=BOT_COLOR
         )
-
         view = ShopView(self.bot)
         await interaction.response.edit_message(embed=embed, view=view)
 
@@ -639,7 +633,6 @@ class Profile(commands.Cog):
         user: discord.Member
     ):
         "Show the profile for the given user"
-
         user_id = user.id if user else interaction.user.id
         profile = await self.economy.get_entry(user_id)
         balance = profile[1]
@@ -654,15 +647,15 @@ class Profile(commands.Cog):
             names = "No ranks"
 
         embed = discord.Embed(
-            title = f"Profile For - {await self.bot.fetch_user(user_id)}",
-            description = f"Below will show all economy information for this user",
-            color = user.color
+            title=f"Profile For - {await self.bot.fetch_user(user_id)}",
+            description=f"Below will show all economy information for this user",
+            color=BOT_COLOR
         )
 
-        embed.add_field(name = "Money Balance:", value = f"${balance:,}", inline=False)
-        embed.add_field(name = "Ranks:", value = f"{names}", inline=False)
+        embed.add_field(name="Money Balance:", value=f"${balance:,}", inline=False)
+        embed.add_field(name="Ranks:", value=f"{names}", inline=False)
         embed.set_thumbnail(url = user.avatar.url)
-
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -686,11 +679,10 @@ class Profile(commands.Cog):
             names = "No ranks"
 
         embed = discord.Embed(
-            title = "Shop",
-            description = f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
-            color = discord.Color.random()
+            title="Shop",
+            description=f"Choose from one of the categories below in order to shop for items \n\nBalance: **${balance:,}** \n\nRanks: **{names}**",
+            color=BOT_COLOR
         )
-
         view = ShopView(self.bot)
         await interaction.response.send_message(embed=embed, view=view, ephemeral=True)
 

@@ -1,10 +1,9 @@
 import discord
 from discord.ext import commands
-from datetime import datetime
+import datetime
 from discord import app_commands
 from bot import CONNECTION
-
-color = 0xc48aff
+from reader import BOT_COLOR
 
 class Warnings(commands.Cog):
     def __init__(self, bot):
@@ -23,11 +22,10 @@ class Warnings(commands.Cog):
         reason: str
     ):
         "Warn a member for a given reason"
-
         guild_id = interaction.user.guild.id
         user_id = member.id
         warn_id = interaction.id
-        warn_time = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
+        warn_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         warned_by = interaction.user.id
 
         cur = CONNECTION.cursor()
@@ -35,12 +33,11 @@ class Warnings(commands.Cog):
         CONNECTION.commit()
 
         embed = discord.Embed(
-            title = f"{member.name}#{member.discriminator} Has Been Warned -",
-            color = discord.Colour.dark_orange()
+            title = f"`{member.name}#{member.discriminator}` Has Been Warned in {interaction.guild}",
+            description=f"Reason: {reason}",
+            color = discord.Colour.orange()
         )
-
-        embed.add_field(name = f"User was warned in `{interaction.user.guild.name}`.", value = f"Reason - {reason}")
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -54,7 +51,6 @@ class Warnings(commands.Cog):
         member: discord.Member
     ):
         "Show all warnings for a given user"
-
         guild_id = interaction.user.guild.id
         user_id = member.id
 
@@ -63,22 +59,25 @@ class Warnings(commands.Cog):
         data = cur.fetchall()
 
         if data:
-            embed = discord.Embed(
-                title = f"**Warnings For - {member.name}#{member.discriminator}**",
-                color = 0xffe75c
+            embed=discord.Embed(
+                title=f"Warnings for `{member.name}#{member.discriminator}` in {interaction.guild}",
+                description="",
+                color=discord.Color.orange()
             )
-            for data in data:
-                embed.add_field(name = f"Warning Reason - \"{data[3]}\" | ID = {data[0]}", value = f"Warned By: <@{data[5]}> | Warned At: {data[4]}\n", inline=False)
+            for entry in data:
+                embed.description += f"**Reason - `\"{entry[3]}\"` | ID: `{entry[0]}`**\nWarned By: <@{entry[5]}> | Date: {entry[4]}\n\n"
 
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             await interaction.response.send_message(embed=embed)
+
         else:
             embed = discord.Embed(
-                colour = color,
-                title = "→ User has no warnings!",
-                description = f"• {member.mention} has not been warned in the past, or all of their warnings have been deleted."
+                title="No Warnings",
+                description=f"{member.mention} has not been warned in the past, or all of their warnings have been deleted.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-            return await interaction.response.send_message(embed=embed)
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
+            await interaction.response.send_message(embed=embed)
 
 
     @app_commands.default_permissions(manage_messages=True)
@@ -91,7 +90,6 @@ class Warnings(commands.Cog):
         id: str
     ):
         "Delete a warning from a user with the warning ID"
-
         cur = CONNECTION.cursor()
         cur.execute("SELECT warn_id FROM warnings WHERE warn_id = %s", (id,))
         data = cur.fetchone()
@@ -101,22 +99,20 @@ class Warnings(commands.Cog):
             CONNECTION.commit()
 
             embed = discord.Embed(
-                title = "Warning Deleted -",
-                color = discord.Colour.fuchsia()
+                title="Warning Deleted",
+                description=f"{interaction.user.mention} has deleted the warning identified by `{id}` .",
+                color=discord.Color.orange()
             )
-
-            embed.add_field(name = f"**Warning identified by - {id} - has been deleted.**", value = f"Command Issued By: {interaction.user.mention}")
-            embed.set_footer(text = datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             await interaction.response.send_message(embed=embed)
 
         else:
             embed = discord.Embed(
-                colour = color,
-                title = "→ Not a valid ID!",
-                description="• That ID is not associated with any warnings in this server."
+                title="Invalid ID",
+                description="That ID is not associated with any warnings in this server.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 

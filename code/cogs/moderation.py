@@ -1,10 +1,7 @@
 import discord
 from discord.ext import commands
-from datetime import datetime
+import datetime
 from discord import app_commands
-
-yellow = 0xffc400
-color = 0xc48aff
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
@@ -18,29 +15,11 @@ class Moderation(commands.Cog):
     async def purge(
         self,
         interaction: discord.Interaction,
-        amount: int
+        amount: app_commands.Range[int, 1, 100]
     ):
         "Delete the specified number of messages from the channel"
-
-        if amount < 1:
-            embed = discord.Embed(
-                colour = color,
-                title = "→ Amount Too Small!",
-                description="• You sent an amount smaller than 1. Sorry, but you can only delete 1 or more messages at a time."
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        if amount > 100:
-            embed = discord.Embed(
-                colour = color,
-                title = "→ Amount Too Large!",
-                description="• You sent an amount larger than 100. Sorry, but you can only delete 100 messages at a time."
-            )
-            return await interaction.response.send_message(embed=embed, ephemeral=True)
-
-        else:
-            await interaction.channel.purge(limit=amount+1)
-            await interaction.response.send_message(f"{amount} {'messages' if amount > 1 else 'message'} deleted")
+        await interaction.channel.purge(limit=amount+1)
+        await interaction.response.send_message(f"{amount} {'messages' if amount > 1 else 'message'} deleted")
 
 
     @app_commands.default_permissions(kick_members=True)
@@ -55,17 +34,14 @@ class Moderation(commands.Cog):
         reason: str
     ):
         "Kick a member from your server"
-
         await member.kick(reason=reason)
         embed = discord.Embed(
-            title = f"**User {member} has been kicked for {reason}**",
-            colour = yellow
+            title=f"{member} Kicked",
+            description=f"{interaction.user.mention} has kicked {member.mention} for `\"{reason}\"`.",
+            color=discord.Color.orange()
         )
-
-        embed.add_field(name=f'This command was issued by {interaction.user}', value = f'\u200b', inline=False)
-        embed.set_thumbnail(url = member.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
+        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -81,17 +57,14 @@ class Moderation(commands.Cog):
         reason: str
     ):
         "Ban a member from your server"
-
         await member.ban(reason=reason)
         embed = discord.Embed(
-            title = f"**User {member} has been banned for {reason}**",
-            colour = discord.Colour.red()
+            title=f"{member} Banned",
+            description=f"{interaction.user.mention} has banned {member.mention} for `\"{reason}\"`.",
+            color=discord.Color.red()
         )
-
-        embed.add_field(name=f'This command was issued by {interaction.user}', value = f'\u200b', inline=False)
-        embed.set_thumbnail(url = member.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
+        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -107,18 +80,15 @@ class Moderation(commands.Cog):
         reason: str
     ):
         "Ban and then immediately unban a member"
-
         await member.ban(reason=reason)
         await member.unban()
         embed = discord.Embed(
-            title = f"**User {member} has been soft-banned for {reason}**",
-            colour = discord.Colour.orange()
+            title=f"{member} Softbanned",
+            description=f"{interaction.user.mention} has softbanned {member.mention} for `\"{reason}\"`.",
+            color=discord.Color.orange()
         )
-
-        embed.add_field(name=f'This command was issued by {interaction.user}', value = f'\u200b', inline=False)
-        embed.set_thumbnail(url = member.avatar.url)
-        embed.set_footer(text=datetime.now().strftime("%m/%d/%Y %H:%M:%S"))
-
+        embed.set_thumbnail(url=member.avatar.url)
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 

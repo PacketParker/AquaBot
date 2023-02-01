@@ -9,8 +9,11 @@ from economy_schema import Database
 from discord import app_commands
 from reader import InsufficientFundsException
 
+"""NOTE: This code was found somewhere on GitHub a long time ago. I changed it a bit to work for
+discord.py 2.0 and for my needs. If anyone knows who wrote this, please let me know so I can
+give them credit."""
+
 Entry = Tuple[int, int]
-color = 0xc48aff
 
 class Card:
     suits = ["clubs", "diamonds", "hearts", "spades"]
@@ -120,7 +123,7 @@ class Blackjack(commands.Cog):
     async def blackjack(
         self,
         interaction: discord.Interaction,
-        bet: int
+        bet: app_commands.Range[int, 1, None]
     ):
         "Bet your money on a blackjack game vs. the dealer"
 

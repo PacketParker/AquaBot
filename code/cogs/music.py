@@ -7,6 +7,7 @@ import requests
 import datetime
 from discord import app_commands
 from custom_source import CustomSource
+from reader import BOT_COLOR
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
 
@@ -148,11 +149,13 @@ class Music(commands.Cog):
             if response.status_code == 200:
                 playlist = response.json()
 
-                embed = discord.Embed(color=0x0088a9)
-                embed.title = "Playlist Queued"
-                embed.description = f"**{playlist['name']}** from **{playlist['owner']['display_name']}**\n` {len(playlist['tracks']['items'])} ` tracks\n\nQueued by: {interaction.user.mention}"
+                embed = discord.Embed(
+                    title = "Playlist Queued",
+                    description = f"**{playlist['name']}** from **{playlist['owner']['display_name']}**\n` {len(playlist['tracks']['items'])} ` tracks\n\nQueued by: {interaction.user.mention}",
+                    color=BOT_COLOR
+                )
                 embed.set_thumbnail(url=playlist['images'][0]['url'])
-                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
                 await interaction.response.send_message(embed=embed)
 
                 tracks = await CustomSource.load_playlist(self, interaction.user, playlist)
@@ -167,11 +170,13 @@ class Music(commands.Cog):
             if response.status_code == 200:
                 album = response.json()
 
-                embed = discord.Embed(color=0x0088a9)
-                embed.title = "Album Queued"
-                embed.description = f"**{album['name']}** by **{album['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}"
+                embed = discord.Embed(
+                    title = "Album Queued",
+                    description = f"**{album['name']}** by **{album['artists'][0]['name']}**\n` {len(album['tracks']['items'])} ` tracks\n\nQueued by: {interaction.user.mention}",
+                    color=BOT_COLOR
+                )
                 embed.set_thumbnail(url=album['images'][0]['url'])
-                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
                 await interaction.response.send_message(embed=embed)
 
                 tracks = await CustomSource.load_album(self, interaction.user, album)
@@ -186,11 +191,13 @@ class Music(commands.Cog):
             if response.status_code == 200:
                 track = response.json()
 
-                embed = discord.Embed(color=0x0088a9)
-                embed.title = "Track Queued"
-                embed.description = f"**{track['name']}** by **{track['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}"
+                embed = discord.Embed(
+                    title = "Track Queued",
+                    description = f"**{track['name']}** by **{track['artists'][0]['name']}**\n\nQueued by: {interaction.user.mention}",
+                    color=BOT_COLOR
+                )
                 embed.set_thumbnail(url=track['album']['images'][0]['url'])
-                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+                embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
                 await interaction.response.send_message(embed=embed)
 
                 track_ = await CustomSource.load_item(self, interaction.user, track)
@@ -217,7 +224,7 @@ class Music(commands.Cog):
         if not results or not results['tracks']:
             return await interaction.response.send_message('Nothing found!', ephemeral=True)
 
-        embed = discord.Embed(color=0x0088a9)
+        embed = discord.Embed(color=BOT_COLOR)
 
         if results['loadType'] == 'PLAYLIST_LOADED':
             tracks = results['tracks']
@@ -241,7 +248,8 @@ class Music(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-        # We don't want to call .play() if the player is playing as that will effectively skip the current track
+        # We don't want to call .play() if the player is playing as that will 
+        # effectively skip the current track
         if not player.is_playing:
             await player.play()
 
@@ -258,9 +266,9 @@ class Music(commands.Cog):
 
         if not player.is_connected:
             embed = discord.Embed(
-                title="→ No Channel",
-                description="• I am not currently connected to any voice channel",
-                color=0x0088a9
+                title="No Channel",
+                description="I am not currently connected to any voice channel.",
+                color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -272,8 +280,8 @@ class Music(commands.Cog):
         await guild.voice_client.disconnect(force=True)
         embed = discord.Embed(
             title="Queue Cleared and Music Stopped",
-            description = f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}",
-            color=0x0088a9
+            description=f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}",
+            color=BOT_COLOR
         )
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
@@ -291,9 +299,9 @@ class Music(commands.Cog):
 
         if not player.is_connected:
             embed = discord.Embed(
-                title="→ No Channel",
-                description="• I am not currently connected to any voice channel",
-                color=0x0088a9
+                title="No Channel",
+                description="I am not currently connected to any voice channel.",
+                color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -320,9 +328,9 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing",
-                description="• Nothing is currently playing, so I can't skip anything.",
-                color=0x0088a9
+                title="Nothing Playing",
+                description="Nothing is currently playing, so I can't skip anything.",
+                color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -332,7 +340,7 @@ class Music(commands.Cog):
             embed = discord.Embed(
                 title="Track Skipped",
                 description=f"The queue is now empty, so I have left the voice channel. Thank you for using Aqua Bot.\n\nIssued by: {interaction.user.mention}",
-                color=0x0088a9
+                color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed)
@@ -340,7 +348,7 @@ class Music(commands.Cog):
         embed = discord.Embed(
             title="Track Skipped",
             description = f"**Now Playing: [{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
-            color=0x0088a9
+            color=BOT_COLOR
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -359,21 +367,21 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing",
-                description="• Nothing is currently playing, so I can't pause anything.",
-                color=0x0088a9
+                title="Nothing Playing",
+                description="Nothing is currently playing, so I can't pause anything.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         await player.set_pause(pause=True)
         embed = discord.Embed(
             title = f"Music Now Paused ⏸️",
             description = f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
-            color=0x0088a9
+            color=BOT_COLOR
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
-        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -389,21 +397,21 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Paused",
-                description="• Nothing is currently paused, so I can't resume anything.",
-                color=0x0088a9
+                title="Nothing Paused",
+                description="Nothing is currently paused, so I can't resume anything.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         await player.set_pause(pause=False)
         embed = discord.Embed(
-            title = f"Music Now Resumed ⏯️",
-            description = f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
-            color=0x0088a9
+            title=f"Music Now Resumed ⏯️",
+            description=f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
+            color=BOT_COLOR
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
-        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -421,11 +429,11 @@ class Music(commands.Cog):
 
         if not player.queue:
             embed = discord.Embed(
-                title="→ Nothing Queued",
-                description="• Nothing is currently in the queue, add a song with the `/play`.",
-                color=0x0088a9
+                title="Nothing Queued",
+                description="Nothing is currently in the queue, add a song with the `/play` command.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         items_per_page = 10
@@ -447,9 +455,8 @@ class Music(commands.Cog):
         embed = discord.Embed(
             title=f"Queue for {interaction.guild.name}",
             description=f'**{len(player.queue)} tracks total**\n\n{queue_list}',
-            color=0x0088a9
+            color=BOT_COLOR
         )
-
         embed.set_footer(text=f'Viewing page {page}/{pages}')
         await interaction.response.send_message(embed=embed)
 
@@ -466,11 +473,11 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing",
-                description="• Nothing is currently playing, play a song with the `/play` command.",
-                color=0x0088a9
+                title="Nothing Playing",
+                description="Nothing is currently playing, play a song with the `/play` command.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         time_in = str(datetime.timedelta(milliseconds=player.position))[:-7]
@@ -481,12 +488,12 @@ class Music(commands.Cog):
             total_duration = total_duration[3:]
 
         embed= discord.Embed(
-            title = "Now Playing 🎶",
-            description = f"**[{player.current.title}]({player.current.uri})**\n{f'` {time_in}/{total_duration} `'}\n\nQueued by: {player.current.requester.mention}",
-            colour = 0x0088a9
+            title="Now Playing 🎶",
+            description=f"**[{player.current.title}]({player.current.uri})**\n{f'` {time_in}/{total_duration} `'}\n\nQueued by: {player.current.requester.mention}",
+            color=BOT_COLOR
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
-        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -504,15 +511,15 @@ class Music(commands.Cog):
 
         if not player.queue:
             embed = discord.Embed(
-                title="→ Nothing Queued",
-                description="• Nothing is currently in the queue, so there is nothing for me to remove.",
-                color=0x0088a9
+                title="Nothing Queued",
+                description="Nothing is currently in the queue, so there is nothing for me to remove.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed)
 
         if number > len(player.queue) or number < 1:
-            return await interaction.response.send_message('The number entered is number a number within the queue - please try again!', ephemeral=True)
+            return await interaction.response.send_message('The number entered is not a number within the queue - please try again!', ephemeral=True)
 
         index = number - 1
         removed_title = player.queue[index].title
@@ -522,10 +529,10 @@ class Music(commands.Cog):
         embed = discord.Embed(
             title="Song Removed from Queue",
             description=f"**Song Removed - [{removed_title}]({removed_url})**\n\nIssued by: {interaction.user.mention}",
-            colour=0x0088a9
+            color=BOT_COLOR
         )
         embed.set_thumbnail(url=player.current.extra['extra'])
-        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 
@@ -541,21 +548,21 @@ class Music(commands.Cog):
 
         if not player.is_playing:
             embed = discord.Embed(
-                title="→ Nothing Playing",
-                description="• Nothing is currently playing, therefore I cannot shuffle the music.",
-                color=0x0088a9
+                title="Nothing Playing",
+                description="Nothing is currently playing, therefore I cannot shuffle the music.",
+                color=BOT_COLOR
             )
-            embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+            embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         player.shuffle = not player.shuffle
 
         embed = discord.Embed(
-            title = f"{'Shuffle Enabled 🔀' if player.shuffle else 'Shuffle Disabled 🔀'}",
-            description = f"{'All music will now be shuffled.' if player.shuffle else 'Music will no longer be shuffled.'}",
-            color=0x0088a9
+            title=f"{'Shuffle Enabled 🔀' if player.shuffle else 'Shuffle Disabled 🔀'}",
+            description=f"{'All music will now be shuffled.' if player.shuffle else 'Music will no longer be shuffled.'}",
+            color=BOT_COLOR
         )
-        embed.set_footer(text=datetime.datetime.now(tz=datetime.timezone.utc).strftime("%d/%m/%Y %H:%M:%S")+" UTC")
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
 

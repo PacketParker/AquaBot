@@ -37,7 +37,7 @@ class CoinFlip(commands.Cog):
 
         await self.check_bet(interaction, bet)
 
-        if random.randint(0, 3) == 0:
+        if random.randint(0, 2) == 0:
             await self.economy.add_money(interaction.user.id, bet*2)
             embed = discord.Embed(
                 title = f"You won ${bet*2:,}!",

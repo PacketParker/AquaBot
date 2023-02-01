@@ -1,11 +1,9 @@
 import discord
 from discord.ext import commands
 from economy_schema import Database
-from reader import B_COOLDOWN
+from reader import B_COOLDOWN, BOT_COLOR
 from discord import app_commands
 import random
-
-color = 0xc48aff
 
 class GamblingHelpers(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -13,6 +11,7 @@ class GamblingHelpers(commands.Cog):
         self.economy = Database(bot)
 
     
+    # This will only be here temporarily. It is because I accidentally deleted the database
     @commands.command()
     @commands.is_owner()
     @commands.dm_only()
@@ -32,12 +31,12 @@ class GamblingHelpers(commands.Cog):
         interaction: discord.Interaction
     ):
         "Add $10,000 to your balance every 2 hours"
-
         amount = 10000
         await self.economy.add_money(interaction.user.id, amount)
         embed = discord.Embed(
-            title = "I've added $10,000 to you balance",
-            description = f"Come back again in {B_COOLDOWN} hours."
+            title="I've added $10,000 to you balance",
+            description=f"Come back again in {B_COOLDOWN} hours.",
+            color=BOT_COLOR
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -49,7 +48,6 @@ class GamblingHelpers(commands.Cog):
         interaction: discord.Interaction
     ):
         "Work for a randomized amount of money every 2 minutes"
-
         a = random.randint(500, 2500)
         b = random.randint(500, 2500)
         if a == b:
@@ -59,8 +57,9 @@ class GamblingHelpers(commands.Cog):
 
         await self.economy.add_money(interaction.user.id, num)
         embed = discord.Embed(
-            title = f"You worked and earned ${num:,}",
-            description = "Come back again in 2 minutes."
+            title=f"You worked and earned ${num:,}",
+            description="Come back again in 2 minutes.",
+            color=BOT_COLOR
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
@@ -71,10 +70,9 @@ class GamblingHelpers(commands.Cog):
         interaction: discord.Interaction
     ):
         "Show the global currency leaderboard"
-
         entries = await self.economy.top_entries(5)
         embed = discord.Embed(
-            title='Global Economy Leaderboard:',
+            title="Global Economy Leaderboard:",
             color=discord.Color.gold()
         )
 
@@ -99,24 +97,14 @@ class GamblingHelpers(commands.Cog):
         self,
         interaction: discord.Interaction,
         user: discord.Member,
-        amount: int
+        amount: app_commands.Range[int, 1, None]
     ):
         "Give money to another user"
-        color = 0xc48aff
-
-        if amount <= 0:
+        if user == interaction.user:
             embed = discord.Embed(
-                title = "→ Negative or no money error!",
-                description = "• You cannot give negative or no money to another user, please try again.",
-                colour = color
-            )
-            return await interaction.response.send_message(embed=embed)
-
-        elif user == interaction.user:
-            embed = discord.Embed(
-                title = "→ Self error!",
-                description = "• You cannot give money to yourself, please try again.",
-                colour = color
+                title="Self Error",
+                description="You cannot give money to yourself, please try again with a different user.",
+                color=BOT_COLOR
             )
             return await interaction.response.send_message(embed=embed)
 
@@ -124,9 +112,9 @@ class GamblingHelpers(commands.Cog):
             await self.economy.add_money(user.id, amount)
             await self.economy.add_money(interaction.user.id, amount*-1)
             embed = discord.Embed(
-                title = "Gift Success!",
-                description = f"You have successfully given {user.mention} ${amount:,}!",
-                colour = discord.Color.green()
+                title="Gift Success",
+                description=f"You have successfully given {user.mention} ${amount:,}!",
+                color=discord.Color.green()
             )
             return await interaction.response.send_message(embed=embed)
 
