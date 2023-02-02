@@ -42,7 +42,7 @@ class Slots(commands.Cog):
         "Bet a specified amount of money on the slot machines"
         await self.check_bet(interaction, bet)
 
-        win_rate = 1/100
+        win_rate = 4/100
         multiplier_dict = {"seven": 80, "diamond": 40, "bar": 25, "clover": 10, "grape": 5, "lemon": 4}
 
         if random.random() < win_rate:
