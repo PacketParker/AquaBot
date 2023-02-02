@@ -114,7 +114,7 @@ class Crypto(commands.Cog):
         embed.add_field(name="24 Hour High", value=f"```${Decimal(high):,}```")
         embed.add_field(name="24 Hour Low", value=f"```${Decimal(low):,}```")
         embed.add_field(name="Market Cap", value=f"```${Decimal(mktcap):,}```")
-        file = discord.File(f"./code/utils/crypto_icons/{icon_name}.png", filename = f"{icon_name}.png")
+        file = discord.File(f"./code/utils/crypto_icons/{icon_name}.png", filename=f"{icon_name}.png")
         embed.set_thumbnail(url=f"attachment://{icon_name}.png")
 
         await interaction.response.send_message(embed=embed, file=file)
