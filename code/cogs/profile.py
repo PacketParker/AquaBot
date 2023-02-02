@@ -7,8 +7,6 @@ from discord import app_commands
 from reader import InsufficientFundsException, BOT_COLOR
 from bot import CONNECTION
 
-color = 0xc48af
-
 class Economy:
     def __init__(self, bot):
         self.bot = bot

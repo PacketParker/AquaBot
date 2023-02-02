@@ -5,8 +5,6 @@ import datetime
 from discord import app_commands
 from reader import BOT_COLOR
 
-color = 0xc48aff
-
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

@@ -5,8 +5,6 @@ from discord import app_commands
 from reader import InsufficientFundsException
 import random
 
-color = 0xc48aff
-
 class CoinFlip(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -40,9 +38,9 @@ class CoinFlip(commands.Cog):
         if random.randint(0, 2) == 0:
             await self.economy.add_money(interaction.user.id, bet*2)
             embed = discord.Embed(
-                title = f"You won ${bet*2:,}!",
-                description = "You flipped heads!",
-                color = discord.Color.green()
+                title=f"You won ${bet*2:,}!",
+                description="You flipped heads!",
+                color=discord.Color.green()
             )
             embed.set_image(url="https://aquabot.info/assets/images/heads.gif")
 
@@ -51,9 +49,9 @@ class CoinFlip(commands.Cog):
         else:
             await self.economy.add_money(interaction.user.id, bet*-1)
             embed = discord.Embed(
-                title = f"You lost ${bet:,}!",
-                description = "You flipped tails!",
-                color = discord.Color.red()
+                title=f"You lost ${bet:,}!",
+                description="You flipped tails!",
+                color=discord.Color.red()
             )
             embed.set_image(url="https://aquabot.info/assets/images/tails.gif")
 

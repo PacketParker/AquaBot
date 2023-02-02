@@ -33,9 +33,9 @@ class Warnings(commands.Cog):
         CONNECTION.commit()
 
         embed = discord.Embed(
-            title = f"`{member.name}#{member.discriminator}` Has Been Warned in {interaction.guild}",
+            title=f"`{member.name}#{member.discriminator}` Has Been Warned in {interaction.guild}",
             description=f"Reason: {reason}",
-            color = discord.Colour.orange()
+            color=discord.Color.orange()
         )
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)

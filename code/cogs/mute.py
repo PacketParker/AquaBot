@@ -5,8 +5,6 @@ from discord import app_commands
 from bot import CONNECTION
 from reader import BOT_COLOR
 
-color = 0xc48aff
-
 class Mute(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -110,7 +108,6 @@ class Mute(commands.Cog):
         interaction: discord.Interaction
     ):
         "See the current role set for when users are muted"
-
         guild_id = interaction.user.guild.id
         cur = CONNECTION.cursor()
         cur.execute("SELECT role_id FROM mute WHERE guild_id = %s", (guild_id,))
@@ -137,9 +134,9 @@ class Mute(commands.Cog):
 
         else:
             embed = discord.Embed(
-                colour = color,
-                title = "No Role Set!",
-                description = f"It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command."
+                title = "No Role Set",
+                description = f"It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command.",
+                color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
             await interaction.response.send_message(embed=embed, ephemeral=True)
@@ -182,7 +179,7 @@ class Mute(commands.Cog):
 
         except TypeError:
             embed = discord.Embed(
-                title = "No Role Set!",
+                title = "No Role Set",
                 description = f"It seems you haven't set a muted role yet. Please go do that with `/setmute` before running this command.",
                 color=BOT_COLOR
             )

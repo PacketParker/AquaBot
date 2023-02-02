@@ -6,8 +6,6 @@ from decimal import Decimal
 import requests
 from reader import APIKEY
 
-color = 0xc48aff
-
 master_dict = {'Bitcoin (BTC)':'0:0:0:0:0:0', 'Ethereum (ETH)':'0:0:0:0:0:0',
     'Binance Coin (BNB)':'0:0:0:0:0:0', 'Solana (SOL)':'0:0:0:0:0:0', 'Cardano (ADA)':'0:0:0:0:0:0',
     'XRP (XRP)':'0:0:0:0:0:0', 'Polkadot (DOT)':'0:0:0:0:0:0','Dogecoin (DOGE)':'0:0:0:0:0:0',

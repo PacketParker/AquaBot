@@ -4,8 +4,6 @@ from discord import app_commands
 from reader import BOT_COLOR
 from reader import BUG_CHANNEL_ID, FEEDBACK_CHANNEL_ID
 
-color = 0xc48aff
-
 class BugReport(discord.ui.Modal, title='Report a bug'):
     def __init__(self, bot):
         super().__init__()

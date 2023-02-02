@@ -4,8 +4,6 @@ import re
 from discord import app_commands
 from reader import BOT_COLOR
 
-color = 0xc48aff
-
 class HelpDropdown(discord.ui.Select):
     def __init__(self):
 
