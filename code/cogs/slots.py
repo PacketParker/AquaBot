@@ -41,85 +41,37 @@ class Slots(commands.Cog):
     ):
         "Bet a specified amount of money on the slot machines"
         await self.check_bet(interaction, bet)
-        facade = Image.open(f'./code/utils/slot-face.png').convert('RGBA')
-        reel = Image.open(f'./code/utils/slot-reel.png').convert('RGBA')
-
-        rw, rh = reel.size
-        item = 180
-        items = rh//item
-
-        s1 = random.randint(1, items-1)
-        s2 = random.randint(1, items-1)
-        s3 = random.randint(1, items-1)
 
         win_rate = 1/100
+        multiplier_dict = {"seven": 80, "diamond": 40, "bar": 25, "clover": 10, "grape": 5, "lemon": 4}
 
         if random.random() < win_rate:
-            symbols_weights = [3.5, 7, 15, 25, 55]
-            x = round(random.random()*100, 1)
-            pos = bisect.bisect(symbols_weights, x)
-            s1 = pos + (random.randint(1, (items/6)-1) * 6)
-            s2 = pos + (random.randint(1, (items/6)-1) * 6)
-            s3 = pos + (random.randint(1, (items/6)-1) * 6)
-            # ensure no reel hits the last symbol
-            s1 = s1 - 6 if s1 == items else s1
-            s2 = s2 - 6 if s2 == items else s2
-            s3 = s3 - 6 if s3 == items else s3
+            # Pick a random word
+            word = random.choice(["seven", "diamond", "bar", "clover", "grape", "lemon"])
+            multiplier = multiplier_dict[word]
+            # Pick one of the 10 images of the winning reel type (seven, diamond, etc.)
+            image_path = f"code/utils/winning_reels/{word}_{random.randint(1, 10)}.gif"
+            amount = bet * multiplier
 
-        images = []
-        speed = 6
-        for i in range(1, (item//speed)+1):
-            bg = Image.new('RGBA', facade.size, color=(255,255,255))
-            bg.paste(reel, (25 + rw*0, 100-(speed * i * s1)))
-            bg.paste(reel, (25 + rw*1, 100-(speed * i * s2))) # dont ask me why this works, but it took me hours
-            bg.paste(reel, (25 + rw*2, 100-(speed * i * s3)))
-            bg.alpha_composite(facade)
-            images.append(bg)
+        else:
+            # Pick a random number 1-5, this will decide which losing folder we pick a reel from
+            folder = f"code/utils/losing_reels_{random.randint(1, 5)}"
+            # Pick a random image from the folder
+            image_path = f"{folder}/{random.choice(os.listdir(folder))}"
+            amount = bet * -1
 
-        fp = './code/players/reels/' + str(interaction.user.id) + '.gif'
-        images[0].save(
-            fp,
-            save_all=True,
-            append_images=images[1:], # append all images after first to first
-            duration=50  # duration of each slide (ms)
-        )
+        await self.economy.add_money(interaction.user.id, amount)
+        current = (await self.economy.get_entry(interaction.user.id))[1]
 
-        # win logic
-        result = ('lost', bet)
-        await self.economy.add_money(interaction.user.id, bet*-1)
-        # (1+s1)%6 gets the symbol 0-5 inclusive
-        if (1+s1)%6 == (1+s2)%6 == (1+s3)%6:
-            symbol = (1+s1)%6
-            reward = [4, 80, 40, 25, 10, 5][symbol] * bet
-            result = ('won', reward)
-            await self.economy.add_money(interaction.user.id, reward)
-
+        file = discord.File(image_path, "slot_machine.gif")
         embed = discord.Embed(
-            title=(
-                f'You {result[0]} {result[1]:,} dollars'+
-                ('.' if result[0] == 'lost' else '!') # happy or sad based on outcome
-            ),
-            description=(
-                'You now have ' +
-                f'**{(await self.economy.get_entry(interaction.user.id))[1]:,}** ' +
-                'dollars.'
-            ),
-            color=(
-                discord.Color.red() if result[0] == "lost"
-                else discord.Color.green()
-            )
+            title=f"You {'won' if amount > 0 else 'lost'} {abs(amount):,} {'dollar' if abs(amount) == 1 else 'dollars'}!",
+            description=f"You now have {current:,} {'dollar' if current == 1 else 'dollars'}",
+            color=discord.Color.green() if amount > 0 else discord.Color.red()
         )
-
-        file = discord.File(fp, filename=f'{interaction.user.id}.gif')
-        embed.set_image(url=f"attachment://{interaction.user.id}.gif")
-        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-        await interaction.response.send_message(
-            file=file,
-            embed=embed
-        )
-
-        file.close()
-        os.remove(f'./code/players/reels/{interaction.user.id}.gif')
+        embed.set_image(url="attachment://slot_machine.gif")
+        embed.set_footer(text=datetime.datetime.now().strftime("%I:%M %p"))
+        await interaction.response.send_message(embed=embed, file=file)
 
 
 async def setup(bot: commands.Bot):
