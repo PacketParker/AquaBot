@@ -3,4 +3,9 @@ config.yml
 __pycache__
 count.db
 .vscode
-backup.sql
+/winning_reels
+/losing_reels_1
+/losing_reels_2
+/losing_reels_3
+/losing_reels_4
+/losing_reels_5
