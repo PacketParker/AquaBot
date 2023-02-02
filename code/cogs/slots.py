@@ -9,9 +9,12 @@ from PIL import Image
 from reader import InsufficientFundsException
 from discord import app_commands
 
-"""NOTE: This code was found somewhere on GitHub a long time ago. I changed it a bit to work for
-discord.py 2.0 and for my needs. If anyone knows who wrote this, please let me know so I can
-give them credit."""
+"""NOTE: The code to create the slot reels was found on GitHub a while ago, same person who
+made the blackjack stuff (still don't know who it was). I ended up modifying it quite a lot with my own images, and changed
+the code a bit so that I could have it generate the slot reels and put them in the correct folders
+
+I premade the slot reels as it uses less resources to just load them from the folder than to
+generate them every time someone uses the command."""
 
 class Slots(commands.Cog):
     def __init__(self, bot: commands.Bot):
