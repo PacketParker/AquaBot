@@ -118,7 +118,7 @@ class GamblingHelpers(commands.Cog):
                 description="You cannot give money to yourself, please try again with a different user.",
                 color=BOT_COLOR
             )
-            return await interaction.response.send_message(embed=embed)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
 
         else:
             await self.check_bet(interaction, amount)
