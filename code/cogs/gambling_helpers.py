@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from economy_schema import Database
-from reader import B_COOLDOWN, BOT_COLOR
+from reader import B_COOLDOWN, BOT_COLOR, InsufficientFundsException
 from discord import app_commands
 import random
 
@@ -10,18 +10,17 @@ class GamblingHelpers(commands.Cog):
         self.bot = bot
         self.economy = Database(bot)
 
-    
-    # This will only be here temporarily. It is because I accidentally deleted the database
-    @commands.command()
-    @commands.is_owner()
-    @commands.dm_only()
-    async def refund(self, ctx: commands.Context, user_id, amount: int):
-        user = await self.bot.fetch_user(user_id)
-        if user:
-            await self.economy.add_money(user_id, amount)
-            await ctx.send(f"Given ${amount:,} to {user}")
-        else:
-            await ctx.send("User not found!")
+    async def check_bet(
+        self,
+        interaction: discord.Interaction,
+        bet
+    ):
+        bet = int(bet)
+        if bet <= 0:
+            raise commands.errors.BadArgument()
+        current = (await self.economy.get_entry(interaction.user.id))[1]
+        if bet > current:
+            raise InsufficientFundsException()
 
 
     @app_commands.command()
@@ -73,20 +72,15 @@ class GamblingHelpers(commands.Cog):
         entries = await self.economy.top_entries(5)
         embed = discord.Embed(
             title="Global Economy Leaderboard:",
+            description="",
             color=discord.Color.gold()
         )
 
         for i, entry in enumerate(entries):
             id = entry[0]
-            try:
-                name = await self.bot.fetch_user(id)
-            except TypeError:
-                name = id
-            embed.add_field(
-                name=f"{i+1}. {name}",
-                value='${:,}'.format(entry[1]),
-                inline=False
-            )
+            name = f"<@{id}>"
+            embed.description += f"**`{i+1}.` {name}**\n${entry[1]:,}\n\n"
+
         await interaction.response.send_message(embed=embed)
 
 
@@ -109,6 +103,7 @@ class GamblingHelpers(commands.Cog):
             return await interaction.response.send_message(embed=embed)
 
         else:
+            await self.check_bet(interaction, amount)
             await self.economy.add_money(user.id, amount)
             await self.economy.add_money(interaction.user.id, amount*-1)
             embed = discord.Embed(
