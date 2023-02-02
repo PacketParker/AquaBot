@@ -23,6 +23,24 @@ class GamblingHelpers(commands.Cog):
             raise InsufficientFundsException()
 
 
+    # This is only here temporarily, because I accidentally deleted the database
+    @commands.command()
+    @commands.is_owner()
+    @commands.dm_only()
+    async def refund(
+        self,
+        ctx: commands.Context,
+        id,
+        amount: int
+    ):
+        user = await self.bot.fetch_user(id)
+        if user:
+            await self.economy.add_money(id, amount)
+            await ctx.send(f"Refunded {user} ${amount:,}")
+        else:
+            await ctx.send("User not found")
+
+
     @app_commands.command()
     @app_commands.checks.cooldown(1, B_COOLDOWN*3600)
     async def add(
