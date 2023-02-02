@@ -110,18 +110,15 @@ class Info(commands.Cog):
     ):
         "See all of the new changes in the bot"
         embed = discord.Embed(
-            title = "Change Log - 12/27/2022",
+            title = "Change Log - 2023-02-01",
             description = "Below are all of the changes that have been made to the bot since the last update.",
             color=BOT_COLOR
         )
-
-        embed.add_field(name="Work", value = "You now use the `/work` command in order to gain a randomized amount of money (1,000-5,000) every 2 minutes.", inline=True)
-        embed.add_field(name="Add Increase", value = "When you use the `/add` command you now get $10,000 rather than $2,500.", inline=True)
-        embed.add_field(name="Coinflip", value = "You can now bet your money on a coinflip with the `/coinflip` command.", inline=True)
-        embed.add_field(name="Spotify Support", value="You can now play spotify songs/playlists with the `/play` command.")
-        embed.add_field(name="Music Redesign", value="The music system has been completely redesigned and now provides better theming and more information.")
+        embed.add_field(name="New `Give` Command", value="The command, `/give`, has been added, which allows you to give an amount of your money to another member.")
+        embed.add_field(name="Slots Redesign", value="The slots game has been redesigned with the help of <@356582138633519114>. Thank you!")
+        embed.add_field(name="Embed Color", value="Many of the embed colors are no longer randomized, and have instead been changed to follow the color of the Bot's PFP.")
+        embed.add_field(name="Bug Fixes", value="General bug fixes have been applied in order to better the bot's performance.")
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
