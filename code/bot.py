@@ -6,8 +6,18 @@ from decimal import *
 import aiosqlite
 from reader import TOKEN, CONNECTION_STRING, CLIENT_ID, CLIENT_SECRET
 import requests
+import zipfile
+import tqdm
 
 CONNECTION = psycopg2.connect(CONNECTION_STRING)
+
+def unpack_reels():
+    # For every file that ends in .zip within /code/utils, extract it to /code/utils
+    for file in os.listdir("code/utils"):
+        if file.endswith(".zip"):
+            with zipfile.ZipFile(f"code/utils/{file}", 'r') as zip_ref:
+                for member in tqdm.tqdm(iterable=zip_ref.namelist(), total=len(zip_ref.namelist()), desc=f"Unpacking {file}..."):
+                    zip_ref.extract(member, "code/utils")
 
 async def initialise():
     cur = CONNECTION.cursor()
@@ -32,6 +42,7 @@ class MyBot(commands.Bot):
         intents = discord.Intents.default()
     )
     async def setup_hook(self):
+        unpack_reels()
         await initialise()
         get_access_token.start()
         for ext in os.listdir('./code/cogs'):
