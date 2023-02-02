@@ -14,6 +14,9 @@ CONNECTION = psycopg2.connect(CONNECTION_STRING)
 def unpack_reels():
     # For every file that ends in .zip within /code/utils, extract it to /code/utils
     for file in os.listdir("code/utils"):
+        # If the winning_reels, losing_reels_1, etc folders are already made, don't unpack the zip files
+        if os.path.exists("code/utils/winning_reels") and os.path.exists("code/utils/losing_reels_1") and os.path.exists("code/utils/losing_reels_2") and os.path.exists("code/utils/losing_reels_3") and os.path.exists("code/utils/losing_reels_4") and os.path.exists("code/utils/losing_reels_5"):
+            break
         if file.endswith(".zip"):
             with zipfile.ZipFile(f"code/utils/{file}", 'r') as zip_ref:
                 for member in tqdm.tqdm(iterable=zip_ref.namelist(), total=len(zip_ref.namelist()), desc=f"Unpacking {file}..."):
