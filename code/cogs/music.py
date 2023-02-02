@@ -70,7 +70,7 @@ class Music(commands.Cog):
             bot.lavalink = lavalink.Client(self.bot.user.id)
             bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
 
-        bot.lavalink.add_event_hooks(self)
+        lavalink.add_event_hook(self.track_hook)
 
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
@@ -111,6 +111,12 @@ class Music(commands.Cog):
             if int(player.channel_id) != interaction.user.voice.channel.id:
                 await interaction.response.send_message('You need to be in my voicechannel.', ephemeral=True)
                 raise ZeroDivisionError
+
+    async def track_hook(self, event):
+        if isinstance(event, lavalink.events.QueueEndEvent):
+            guild_id = event.player.guild_id
+            guild = self.bot.get_guild(guild_id)
+            await guild.voice_client.disconnect(force=True)
 
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
