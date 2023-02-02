@@ -37,6 +37,7 @@ async def initialise():
     await cur.commit()
     await cur.close()
 
+
 class MyBot(commands.Bot):
     def __init__(self):
         super().__init__(
@@ -52,9 +53,11 @@ class MyBot(commands.Bot):
             if ext.endswith('.py'):
                 await self.load_extension(f'cogs.{ext[:-3]}')
 
+
 bot = MyBot()
 bot.count_hold = 0
 bot.remove_command('help')
+
 
 @bot.event
 async def on_ready():
@@ -72,6 +75,7 @@ async def get_access_token():
     response = requests.post(auth_url, data=data)
     access_token = response.json()['access_token']
     bot.access_token = access_token
+
 
 if __name__ == '__main__':
     bot.run(TOKEN)
