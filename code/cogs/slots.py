@@ -70,7 +70,7 @@ class Slots(commands.Cog):
             color=discord.Color.green() if amount > 0 else discord.Color.red()
         )
         embed.set_image(url="attachment://slot_machine.gif")
-        embed.set_footer(text=datetime.datetime.now().strftime("%I:%M %p"))
+        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed, file=file)
 
 
