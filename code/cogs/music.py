@@ -248,7 +248,7 @@ class Music(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-        # We don't want to call .play() if the player is playing as that will 
+        # We don't want to call .play() if the player is playing as that will
         # effectively skip the current track
         if not player.is_playing:
             await player.play()
