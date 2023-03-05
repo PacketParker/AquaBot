@@ -15,7 +15,7 @@ Setup: <br>
 8. Now, you must start a lavalink server in order for music functionality. If you do not want to have music functionality, skip to `step 10`
 9. Setup a lavalink server, if you are unsure how to do this, you can follow a guide like [this](https://darrennathanael.com/post/how-to-lavalink/). Or, you can connect to a public lavalink server, such as one listed [here](https://lavalink-list.darrennathanael.com/).
 <br><br>
-Note that if you use a public lavalink server, you must change the login credentials in the `/code/cogs/music.py` file - lines 30-32.
+Note that if you use a public lavalink server, you must change the login credentials in the `/code/cogs/music.py` file - lines 30-32 and 71.
 10. Now you can navigate to the `code` folder and run the bot.py file. On first run your bot will unpack a few zip files, these are dependencies for the gambling features. Then, your bot will connect to Discord and should start.
 11. At this point, you will have to sync the slash commands from your bot with Discord. In order to do this you should first sync them to one of your servers specifically by DM'ing the bot `***sync [guild id]`. If you are able to run the commands in your server, then you are ready to sync the commands globally by DM'ing the bot `***sync`. The commands will take ~1 hour to sync globally, then you are completely done with setup. Congratulations!
 
