@@ -2,7 +2,7 @@
 
 # Aqua Bot
 
-Aqua Bot is a great multipurpose Discord bot that offers music with compatibility for Spotify/YouTube/SoundCloud, gambling, an economy system, and even more features. Invite Aqua Bot now by clicking [here](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands).
+Aqua Bot is a great multipurpose Discord bot that offers music with compatibility for Spotify/YouTube/SoundCloud, gambling, an economy system, and even more features. Aqua Bot is no longer in development, but feel free to run it yourself.
 
 Setup: <br>
 1. Create a bot at https://discord.com/developers and make sure to get the bot token. 
