@@ -1,0 +1,21 @@
+[BOT_INFO]
+token = 
+bonus_cooldown = 
+bot_color = 
+bug_channel_id = 
+feedback_channel_id = 
+
+[CRYPTO_COMPARE]
+api_key = 
+
+[POSTGRESQL]
+username = 
+password = 
+host = 
+port = 
+database = 
+
+[LAVALINK]
+host = 
+port = 
+password = 
