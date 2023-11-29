@@ -19,7 +19,7 @@ Note that if you use a public lavalink server, you must change the login credent
 10. Now you can navigate to the `code` folder and run the bot.py file. On first run your bot will unpack a few zip files, these are dependencies for the gambling features. Then, your bot will connect to Discord and should start.
 11. At this point, you will have to sync the slash commands from your bot with Discord. In order to do this you should first sync them to one of your servers specifically by DM'ing the bot `***sync [guild id]`. If you are able to run the commands in your server, then you are ready to sync the commands globally by DM'ing the bot `***sync`. The commands will take ~1 hour to sync globally, then you are completely done with setup. Congratulations!
 
-If you happen to find any issues with setting up the bot, or find a bug in the code, you can message me for help on Discord (Fiji#3608). If you would like to contribute to this project, you can submit a pull request for review.
+If you would like to contribute to this project, you can submit a pull request for review.
 
 Thank you for checking out Aqua Bot, have fun coding!
 
