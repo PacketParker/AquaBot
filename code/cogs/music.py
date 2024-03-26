@@ -27,25 +27,26 @@ class LavalinkVoiceClient(discord.VoiceClient):
         else:
             self.client.lavalink = lavalink.Client(client.user.id)
             self.client.lavalink.add_node(
-                    '127.0.0.1',
-                    2333,
-                    'youshallnotpass',
-                    'us-central',
-                    'default-node')
+                '127.0.0.1',
+                2333,
+                'youshallnotpass',
+                'us-central',
+                'default-node'
+            )
             self.lavalink = self.client.lavalink
 
     async def on_voice_server_update(self, data):
         lavalink_data = {
-                't': 'VOICE_SERVER_UPDATE',
-                'd': data
-                }
+            't': 'VOICE_SERVER_UPDATE',
+            'd': data
+        }
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def on_voice_state_update(self, data):
         lavalink_data = {
-                't': 'VOICE_STATE_UPDATE',
-                'd': data
-                }
+            't': 'VOICE_STATE_UPDATE',
+            'd': data
+        }
         await self.lavalink.voice_update_handler(lavalink_data)
 
     async def connect(self, *, timeout: float, reconnect: bool, self_deaf: bool = True, self_mute: bool = False) -> None:
@@ -68,13 +69,20 @@ class Music(commands.Cog):
 
         if not hasattr(bot, 'lavalink'):  # This ensures the client isn't overwritten during cog reloads.
             bot.lavalink = lavalink.Client(self.bot.user.id)
-            bot.lavalink.add_node('127.0.0.1', 2333, 'youshallnotpass', 'us-central', 'default-node')  # Host, Port, Password, Region, Name
+            bot.lavalink.add_node(
+                '127.0.0.1',
+                2333,
+                'youshallnotpass',
+                'us-central',
+                'default-node'
+            )  # Host, Port, Password, Region, Name
 
-        lavalink.add_event_hook(self.track_hook)
+        self.lavalink: lavalink.Client = bot.lavalink
+        self.lavalink.add_event_hooks(self.track_hook)
 
     def cog_unload(self):
         """ Cog unload handler. This removes any event hooks that were registered. """
-        self.bot.lavalink._event_hooks.clear()
+        self.lavalink._event_hooks.clear()
 
     async def ensure_before(self, interaction):
         """ Command before-invoke handler. """
@@ -87,7 +95,7 @@ class Music(commands.Cog):
 
     async def ensure_voice(self, interaction: discord.Interaction):
         """ This check ensures that the bot and command author are in the same voicechannel. """
-        player = self.bot.lavalink.player_manager.create(interaction.guild.id)
+        player = self.lavalink.player_manager.create(interaction.guild.id)
         should_connect = interaction.command.name in ('play',)
 
         if not interaction.user.voice or not interaction.user.voice.channel:
@@ -122,7 +130,7 @@ class Music(commands.Cog):
     async def on_voice_state_update(self, member, before, after):
         if before.channel and member == self.bot.user:
             if after.channel is None:
-                    player = self.bot.lavalink.player_manager.get(member.guild.id)
+                    player = self.lavalink.player_manager.get(member.guild.id)
                     player.queue.clear()
                     await player.stop()
                     guild = member.guild
@@ -142,7 +150,7 @@ class Music(commands.Cog):
     ):
         "Play a song from your favorite music provider"
         await self.ensure_before(interaction)
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
         query = name
 
         # Below begins the start of the search for Spotify links - we must check for playlist, albums, and tracks
@@ -236,7 +244,7 @@ class Music(commands.Cog):
             tracks = results['tracks']
 
             for track in tracks:
-                track_ = lavalink.models.AudioTrack(track, interaction.user.id, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
+                track_ = lavalink.AudioTrack(track, interaction.user.id, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
                 player.add(requester=interaction.user, track=track_)
 
             embed.title = 'Playlist Queued!'
@@ -249,7 +257,7 @@ class Music(commands.Cog):
             embed.set_thumbnail(url=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
 
-            track_ = lavalink.models.AudioTrack(track, interaction.user.id, recommended=True, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
+            track_ = lavalink.AudioTrack(track, interaction.user.id, recommended=True, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
             player.add(requester=interaction.user, track=track_)
 
         await interaction.response.send_message(embed=embed)
@@ -268,7 +276,7 @@ class Music(commands.Cog):
         "Disconnects the bot from the voice channel and clears the queue"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_connected:
             embed = discord.Embed(
@@ -301,7 +309,7 @@ class Music(commands.Cog):
         "Clear the current queue of songs"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_connected:
             embed = discord.Embed(
@@ -330,7 +338,7 @@ class Music(commands.Cog):
         "Skips the song that is currently playing"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_playing:
             embed = discord.Embed(
@@ -369,7 +377,7 @@ class Music(commands.Cog):
         "Pauses the song that is currently playing"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_playing:
             embed = discord.Embed(
@@ -399,7 +407,7 @@ class Music(commands.Cog):
         "Resumes the paused song"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_playing:
             embed = discord.Embed(
@@ -431,7 +439,7 @@ class Music(commands.Cog):
         "See the current queue of songs"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.queue:
             embed = discord.Embed(
@@ -475,7 +483,7 @@ class Music(commands.Cog):
         "Show what song is currently playing"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_playing:
             embed = discord.Embed(
@@ -513,7 +521,7 @@ class Music(commands.Cog):
         "Removes the specified song from the queue"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.queue:
             embed = discord.Embed(
@@ -550,7 +558,7 @@ class Music(commands.Cog):
         "Plays the songs in the queue in a randomized order, until turned off"
         await self.ensure_before(interaction)
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild.id)
+        player = self.lavalink.player_manager.get(interaction.guild.id)
 
         if not player.is_playing:
             embed = discord.Embed(

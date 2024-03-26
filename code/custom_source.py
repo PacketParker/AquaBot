@@ -1,5 +1,5 @@
-from lavalink.models import (DeferredAudioTrack, LoadResult, LoadType,
-                             PlaylistInfo, Source)
+from lavalink import LoadResult, LoadType, Source, DeferredAudioTrack, PlaylistInfo
+
 
 class LoadError(Exception):  # We'll raise this if we have trouble loading our track.
     pass
