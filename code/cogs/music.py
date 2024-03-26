@@ -294,7 +294,7 @@ class Music(commands.Cog):
         await guild.voice_client.disconnect(force=True)
         embed = discord.Embed(
             title="Queue Cleared and Music Stopped",
-            description=f"Thank you for using Aqua Bot :wave:\n\nIssued by: {interaction.user.mention}",
+            description=f"Thank you for using Guava :wave:\n\nIssued by: {interaction.user.mention}",
             color=BOT_COLOR
         )
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
@@ -353,7 +353,7 @@ class Music(commands.Cog):
         if not player.is_playing:
             embed = discord.Embed(
                 title="Track Skipped",
-                description=f"The queue is now empty, so I have left the voice channel. Thank you for using Aqua Bot.\n\nIssued by: {interaction.user.mention}",
+                description=f"The queue is now empty, so I have left the voice channel. Thank you for using Guava.\n\nIssued by: {interaction.user.mention}",
                 color=BOT_COLOR
             )
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")

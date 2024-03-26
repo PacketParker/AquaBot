@@ -1,11 +1,9 @@
-<img src="./code/utils/AquaBot.png" width="125"/>
+# Guava
 
-# Aqua Bot
-
-Aqua Bot is a great multipurpose Discord bot that offers music with compatibility for Spotify/YouTube/SoundCloud, gambling, an economy system, and even more features. Aqua Bot is no longer in development, but feel free to run it yourself.
+Guava is a great multipurpose Discord bot that offers music with compatibility for Spotify/YouTube/SoundCloud, gambling, an economy system, and even more features.
 
 Setup: <br>
-1. Create a bot at https://discord.com/developers and make sure to get the bot token. 
+1. Create a bot at https://discord.com/developers and make sure to get the bot token.
 2. Create a Discord server and make a channel for the feedback and bug messages (can be the same or different channels). After this, make sure to get the channel IDs.
 3. Create an account on [Crypto Compare](https://min-api.cryptocompare.com/) and get your free API key.
 4. Create PostgreSQL server and create a database. Make sure to note the username, password, host, port, and database name.
@@ -21,5 +19,5 @@ Note that if you use a public lavalink server, you must change the login credent
 
 If you would like to contribute to this project, you can submit a pull request for review.
 
-Thank you for checking out Aqua Bot, have fun coding!
+Thank you for checking out Guava, have fun coding!
 

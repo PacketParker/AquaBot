@@ -42,7 +42,6 @@ class CoinFlip(commands.Cog):
                 description="You flipped heads!",
                 color=discord.Color.green()
             )
-            embed.set_image(url="https://aquabot.info/assets/images/heads.gif")
 
             return await interaction.response.send_message(embed=embed)
 
@@ -53,7 +52,6 @@ class CoinFlip(commands.Cog):
                 description="You flipped tails!",
                 color=discord.Color.red()
             )
-            embed.set_image(url="https://aquabot.info/assets/images/tails.gif")
 
             return await interaction.response.send_message(embed=embed)
 

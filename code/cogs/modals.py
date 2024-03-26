@@ -41,7 +41,7 @@ class BugReport(discord.ui.Modal, title='Report a bug'):
         await channel.send(embed=embed)
 
 
-class FeedbackForm(discord.ui.Modal, title='Give feedback about Aqua Bot'):
+class FeedbackForm(discord.ui.Modal, title='Give feedback about Guava'):
     def __init__(self, bot):
         super().__init__()
         self.bot = bot

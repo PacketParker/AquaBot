@@ -10,18 +10,18 @@ class Info(commands.Cog):
         self.bot = bot
 
 
-    @app_commands.command()
-    async def invite(
-        self,
-        interaction: discord.Interaction
-    ):
-        "Get the invite link for the bot"
-        embed = discord.Embed(
-            title = "Invite Me To Your Server!",
-            description = "Here's the invite for [Aqua Bot](https://discord.com/api/oauth2/authorize?client_id=889027125275922462&permissions=8&scope=bot%20applications.commands)",
-            color=BOT_COLOR
-        )
-        await interaction.response.send_message(embed=embed)
+    # @app_commands.command()
+    # async def invite(
+    #     self,
+    #     interaction: discord.Interaction
+    # ):
+    #     "Get the invite link for the bot"
+    #     embed = discord.Embed(
+    #         title = "Invite Me To Your Server!",
+    #         description = "Here's the invite for [Guava](INVTE LINK HERE)",
+    #         color=BOT_COLOR
+    #     )
+    #     await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
@@ -65,42 +65,42 @@ class Info(commands.Cog):
             await interaction.response.send_message(embed=embed)
 
 
-    @app_commands.command()
-    async def botinfo(
-        self,
-        interaction: discord.Interaction
-    ):
-        "Get information about the bot. i.e. creator, creation data, etc."
+    # @app_commands.command()
+    # async def botinfo(
+    #     self,
+    #     interaction: discord.Interaction
+    # ):
+    #     "Get information about the bot. i.e. creator, creation data, etc."
 
-        embed = discord.Embed(
-            title=f"Bot Information",
-            color=BOT_COLOR
-        )
-        #embed.set_thumbnail(url=self.bot.user.avatar.url)
-        embed.add_field(name="Bot Creator: ", value="`Fiji#3608`"),
-        embed.add_field(name="Servers: ", value = f"`{len(self.bot.guilds):,}`"),
-        embed.add_field(name="Account name: ", value=f"`{str(self.bot.user.name)}`")
-        embed.add_field(name="Discord ID: ", value=f"`{str(self.bot.user.id)}`")
-        embed.add_field(name="Bot created at: ", value=f"`{self.bot.user.created_at.strftime('%Y-%m-%d')}`"),
-        embed.add_field(name="Aqua Bot Code: ", value="[GitHub Link](https://github.com/Fiji05/AquaBot)")
-        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-        await interaction.response.send_message(embed=embed)
+    #     embed = discord.Embed(
+    #         title=f"Bot Information",
+    #         color=BOT_COLOR
+    #     )
+    #     #embed.set_thumbnail(url=self.bot.user.avatar.url)
+    #     embed.add_field(name="Bot Creator: ", value="`Fiji#3608`"),
+    #     embed.add_field(name="Servers: ", value = f"`{len(self.bot.guilds):,}`"),
+    #     embed.add_field(name="Account name: ", value=f"`{str(self.bot.user.name)}`")
+    #     embed.add_field(name="Discord ID: ", value=f"`{str(self.bot.user.id)}`")
+    #     embed.add_field(name="Bot created at: ", value=f"`{self.bot.user.created_at.strftime('%Y-%m-%d')}`"),
+    #     embed.add_field(name="Guava Code: ", value="[GitHub Link](CODE LINK HERE)")
+    #     embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
+    #     await interaction.response.send_message(embed=embed)
 
 
-    @app_commands.command()
-    async def vote(
-        self,
-        interaction: discord.Interaction
-    ):
-        "Get link to vote for the bot on top.gg"
-        embed = discord.Embed(
-            title="Vote for me on top.gg! Voting awards you $10,000!",
-            description="[Click here to vote](https://top.gg/bot/889027125275922462)",
-            color=BOT_COLOR
-        )
-        embed.set_thumbnail(url=self.bot.user.avatar.url)
-        embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-        await interaction.response.send_message(embed=embed)
+    # @app_commands.command()
+    # async def vote(
+    #     self,
+    #     interaction: discord.Interaction
+    # ):
+    #     "Get link to vote for the bot on top.gg"
+    #     embed = discord.Embed(
+    #         title="Vote for me on top.gg! Voting awards you $10,000!",
+    #         description="[Click here to vote](TOP.GG LINK HERE)",
+    #         color=BOT_COLOR
+    #     )
+    #     embed.set_thumbnail(url=self.bot.user.avatar.url)
+    #     embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
+    #     await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
