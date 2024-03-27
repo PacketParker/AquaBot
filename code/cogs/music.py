@@ -7,6 +7,7 @@ import requests
 import datetime
 from discord import app_commands
 from custom_source import CustomSource
+from lavalink import LoadType
 from reader import BOT_COLOR
 
 url_rx = re.compile(r'https?://(?:www\.)?.+')
@@ -231,34 +232,34 @@ class Music(commands.Cog):
         results = await player.node.get_tracks(query)
 
         # Below is for YouTube search, which is the default and is used when no link is provided
-        if not url_rx.match(query) and not results or not results['tracks']:
+        if not url_rx.match(query) and not results or not results.tracks:
             query = f'scsearch:{query}'
         results = await player.node.get_tracks(query)
 
-        if not results or not results['tracks']:
+        if results.load_type == LoadType.EMPTY:
             return await interaction.response.send_message('Nothing found!', ephemeral=True)
 
         embed = discord.Embed(color=BOT_COLOR)
 
-        if results['loadType'] == 'PLAYLIST_LOADED':
-            tracks = results['tracks']
+        if results.load_type == LoadType.PLAYLIST:
+            tracks = results.tracks
+
+            print(results.playlist_info)
 
             for track in tracks:
-                track_ = lavalink.AudioTrack(track, interaction.user.id, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
-                player.add(requester=interaction.user, track=track_)
+                player.add(requester=interaction.user, track=track)
 
             embed.title = 'Playlist Queued!'
-            embed.description = f"**{results['playlistInfo']['name']}**\n` {len(tracks)} ` tracks\n\nQueued by: {interaction.user.mention}"
+            embed.description = f"**{results.playlist_info.name}**\n` {len(tracks)} ` tracks\n\nQueued by: {interaction.user.mention}"
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         else:
-            track = results['tracks'][0]
+            track = results.tracks[0]
             embed.title = 'Track Queued'
-            embed.description = f"**{track['info']['title']}** by **{track['info']['author']}**\n\nQueued by: {interaction.user.mention}"
-            embed.set_thumbnail(url=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
+            embed.description = f"**{track.title}** by **{track.author}**\n\nQueued by: {interaction.user.mention}"
+            embed.set_thumbnail(url=track.artwork_url)
             embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
 
-            track_ = lavalink.AudioTrack(track, interaction.user.id, recommended=True, extra=f"https://img.youtube.com/vi/{track['info']['identifier']}/hqdefault.jpg")
-            player.add(requester=interaction.user, track=track_)
+            player.add(requester=interaction.user, track=track)
 
         await interaction.response.send_message(embed=embed)
 
@@ -364,7 +365,7 @@ class Music(commands.Cog):
             description = f"**Now Playing: [{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
             color=BOT_COLOR
         )
-        embed.set_thumbnail(url=player.current.extra['extra'])
+        embed.set_thumbnail(url=player.current.artwork_url)
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
@@ -394,7 +395,7 @@ class Music(commands.Cog):
             description = f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
             color=BOT_COLOR
         )
-        embed.set_thumbnail(url=player.current.extra['extra'])
+        embed.set_thumbnail(url=player.current.artwork_url)
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
@@ -424,7 +425,7 @@ class Music(commands.Cog):
             description=f"**[{player.current.title}]({player.current.uri})**\n\nQueued by: {player.current.requester.mention}",
             color=BOT_COLOR
         )
-        embed.set_thumbnail(url=player.current.extra['extra'])
+        embed.set_thumbnail(url=player.current.artwork_url)
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
@@ -506,7 +507,7 @@ class Music(commands.Cog):
             description=f"**[{player.current.title}]({player.current.uri})**\n{f'` {time_in}/{total_duration} `'}\n\nQueued by: {player.current.requester.mention}",
             color=BOT_COLOR
         )
-        embed.set_thumbnail(url=player.current.extra['extra'])
+        embed.set_thumbnail(url=player.current.artwork_url)
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
@@ -545,7 +546,7 @@ class Music(commands.Cog):
             description=f"**Song Removed - [{removed_title}]({removed_url})**\n\nIssued by: {interaction.user.mention}",
             color=BOT_COLOR
         )
-        embed.set_thumbnail(url=player.current.extra['extra'])
+        embed.set_thumbnail(url=player.current.artwork_url)
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
         await interaction.response.send_message(embed=embed)
 
