@@ -1,13 +1,13 @@
-import bisect
 import os
 import random
 import datetime
 import discord
 from discord.ext import commands
-from economy_schema import Database
-from PIL import Image
-from reader import InsufficientFundsException
 from discord import app_commands
+
+from bot import InsufficientFundsException
+from database import Database
+
 
 """NOTE: The code to create the slot reels was found on GitHub a while ago, same person who
 made the blackjack stuff (still don't know who it was). I ended up modifying it quite a lot with my own images, and changed

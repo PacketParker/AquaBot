@@ -1,6 +1,25 @@
+import aiosqlite
 import random
 from typing import Tuple, List
-from bot import CONNECTION
+
+from global_variables import CONNECTION
+
+
+async def init_database():
+    cur = CONNECTION.cursor()
+    cur.execute("CREATE TABLE IF NOT EXISTS guildData (guild_id BIGINT, user_id BIGINT, exp BIGINT, PRIMARY KEY (guild_id, user_id))")
+    cur.execute("CREATE TABLE IF NOT EXISTS mute (guild_id BIGINT, role_id BIGINT, PRIMARY KEY (guild_id, role_id))")
+    cur.execute("CREATE TABLE IF NOT EXISTS tempmute (guild_id BIGINT, user_id BIGINT, role_id BIGINT, time TIMESTAMP, PRIMARY KEY (guild_id, user_id))")
+    cur.execute("CREATE TABLE IF NOT EXISTS warnings (warn_id BIGINT, guild_id BIGINT, user_id BIGINT, warning TEXT, warn_time DATE, warned_by BIGINT, PRIMARY KEY (warn_id))")
+    cur.execute("CREATE TABLE IF NOT EXISTS economy (user_id BIGINT NOT NULL PRIMARY KEY, money BIGINT NOT NULL DEFAULT 0)")
+    cur.execute("CREATE TABLE IF NOT EXISTS profile (user_id BIGINT, rank_name TEXT, rank_int BIGINT, UNIQUE (user_id, rank_name, rank_int))")
+    CONNECTION.commit()
+
+    cur = await aiosqlite.connect("code/count/count.db")
+    await cur.execute("CREATE TABLE IF NOT EXISTS count (count INTEGER)")
+    await cur.commit()
+    await cur.close()
+
 
 Entry = Tuple[int, int]
 

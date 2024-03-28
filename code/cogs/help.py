@@ -2,7 +2,9 @@ import discord
 from discord.ext import commands
 import re
 from discord import app_commands
-from reader import BOT_COLOR
+
+from global_variables import BOT_COLOR
+
 
 class HelpDropdown(discord.ui.Select):
     def __init__(self):

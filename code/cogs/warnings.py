@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 import datetime
 from discord import app_commands
-from bot import CONNECTION
-from reader import BOT_COLOR
+
+from global_variables import CONNECTION, BOT_COLOR
+
 
 class Warnings(commands.Cog):
     def __init__(self, bot):

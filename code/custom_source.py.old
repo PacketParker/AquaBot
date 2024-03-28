@@ -11,7 +11,7 @@ class CustomAudioTrack(DeferredAudioTrack):
     # where large playlists are loaded.
 
     async def load(self, client):  # Load our 'actual' playback track using the metadata from this one.
-        result: LoadResult = await client.get_tracks('ytsearch:{0.title} {0.author} audio'.format(self))  # Search for our track on YouTube.
+        result: LoadResult = await client.get_tracks('spsearch:{0.title} {0.author}'.format(self))  # Search for our track on YouTube.
 
         if result.load_type != LoadType.SEARCH or not result.tracks:  # We're expecting a 'SEARCH' due to our 'ytsearch' prefix above.
             raise LoadError

@@ -1,9 +1,12 @@
 import discord
 from discord.ext import commands
-from economy_schema import Database
-from reader import B_COOLDOWN, BOT_COLOR, InsufficientFundsException
 from discord import app_commands
 import random
+
+from bot import InsufficientFundsException
+from global_variables import BOT_COLOR, BONUS_COOLDOWN
+from database import Database
+
 
 class GamblingHelpers(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -42,7 +45,7 @@ class GamblingHelpers(commands.Cog):
 
 
     @app_commands.command()
-    @app_commands.checks.cooldown(1, B_COOLDOWN*3600)
+    @app_commands.checks.cooldown(1, BONUS_COOLDOWN*3600)
     async def add(
         self,
         interaction: discord.Interaction
@@ -52,7 +55,7 @@ class GamblingHelpers(commands.Cog):
         await self.economy.add_money(interaction.user.id, amount)
         embed = discord.Embed(
             title="I've added $10,000 to you balance",
-            description=f"Come back again in {B_COOLDOWN} hours.",
+            description=f"Come back again in {BONUS_COOLDOWN} hours.",
             color=BOT_COLOR
         )
         await interaction.response.send_message(embed=embed, ephemeral=True)

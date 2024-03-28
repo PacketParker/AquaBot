@@ -1,11 +1,13 @@
 import discord
 import datetime
 from discord.ext import commands
-from economy_schema import Database
 import psycopg2
 from discord import app_commands
-from reader import InsufficientFundsException, BOT_COLOR
-from bot import CONNECTION
+
+from global_variables import CONNECTION, BOT_COLOR
+from bot import InsufficientFundsException
+from database import Database
+
 
 class Economy:
     def __init__(self, bot):

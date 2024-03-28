@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
 from discord.ext.commands.errors import *
-from reader import InsufficientFundsException, BOT_COLOR
+
+from bot import InsufficientFundsException
+from global_variables import BOT_COLOR
+
 
 class slash_handlers(commands.Cog):
     def __init__(self, bot):

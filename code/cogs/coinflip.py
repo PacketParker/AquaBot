@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
-from economy_schema import Database
 from discord import app_commands
-from reader import InsufficientFundsException
 import random
+
+from bot import InsufficientFundsException
+from database import Database
+
 
 class CoinFlip(commands.Cog):
     def __init__(self, bot: commands.Bot):

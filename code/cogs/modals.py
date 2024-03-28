@@ -1,8 +1,9 @@
 from discord.ext import commands
 import discord
 from discord import app_commands
-from reader import BOT_COLOR
-from reader import BUG_CHANNEL_ID, FEEDBACK_CHANNEL_ID
+
+from global_variables import BUG_CHANNEL_ID, BOT_COLOR, FEEDBACK_CHANNEL_ID
+
 
 class BugReport(discord.ui.Modal, title='Report a bug'):
     def __init__(self, bot):

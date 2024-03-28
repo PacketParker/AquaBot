@@ -4,7 +4,9 @@ from discord import app_commands
 from typing import Literal
 from decimal import Decimal
 import requests
-from reader import APIKEY
+
+from global_variables import CRYPTO_COMPARE_API_KEY
+
 
 master_dict = {'Bitcoin (BTC)':'0:0:0:0:0:0', 'Ethereum (ETH)':'0:0:0:0:0:0',
     'Binance Coin (BNB)':'0:0:0:0:0:0', 'Solana (SOL)':'0:0:0:0:0:0', 'Cardano (ADA)':'0:0:0:0:0:0',
@@ -57,7 +59,7 @@ class Crypto(commands.Cog):
     @tasks.loop(seconds=60)
     async def update_crypto(self):
         response = requests.get(
-            f'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,SOL,ADA,XRP,DOT,DOGE,AVAX,SHIB,LUNA,LTC,UNI,LINK,MATIC,ALGO,BCH,VET,XLM,ICP&tsyms=USD&api_key={APIKEY}'
+            f'https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,SOL,ADA,XRP,DOT,DOGE,AVAX,SHIB,LUNA,LTC,UNI,LINK,MATIC,ALGO,BCH,VET,XLM,ICP&tsyms=USD&api_key={CRYPTO_COMPARE_API_KEY}'
         )
         for currency in currencies:
             cut_currency = currency[currency.find("(")+1:currency.find(")")]

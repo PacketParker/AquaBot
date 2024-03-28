@@ -3,7 +3,9 @@ import discord
 from discord.ext import commands
 import datetime
 from discord import app_commands
-from reader import BOT_COLOR
+
+from global_variables import BOT_COLOR
+
 
 class Info(commands.Cog):
     def __init__(self, bot):

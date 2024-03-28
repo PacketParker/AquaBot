@@ -5,9 +5,11 @@ from typing import List, Tuple
 import discord
 from discord.ext import commands
 from PIL import Image
-from economy_schema import Database
 from discord import app_commands
-from reader import InsufficientFundsException
+
+from bot import InsufficientFundsException
+from database import Database
+
 
 """NOTE: This code was found somewhere on GitHub a long time ago. I changed it a bit to work for
 discord.py 2.0 and for my needs. If anyone knows who wrote this, please let me know so I can
