@@ -27,7 +27,7 @@ config.read_string(file_contents)
 
 BOT_TOKEN = config['BOT_INFO']['TOKEN']
 BONUS_COOLDOWN = int(config['BOT_INFO']['BONUS_COOLDOWN'])
-BOT_COLOR = discord.Color(int(config['BOT_INFO']['BOT_COLOR'], 16))
+BOT_COLOR = discord.Color(int((config['BOT_INFO']['BOT_COLOR']).replace('#', ""), 16))
 BUG_CHANNEL_ID = int(config['BOT_INFO']['BUG_CHANNEL_ID'])
 FEEDBACK_CHANNEL_ID = int(config['BOT_INFO']['FEEDBACK_CHANNEL_ID'])
 
