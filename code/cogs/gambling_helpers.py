@@ -50,7 +50,7 @@ class GamblingHelpers(commands.Cog):
         self,
         interaction: discord.Interaction
     ):
-        "Add $10,000 to your balance every 2 hours"
+        f"Add $10,000 to your balance every {BONUS_COOLDOWN} hours"
         amount = 10000
         await self.economy.add_money(interaction.user.id, amount)
         embed = discord.Embed(
