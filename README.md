@@ -1,23 +1,61 @@
 # Guava
 
-Guava is a great multipurpose Discord bot that offers music with compatibility for Spotify/YouTube/SoundCloud, gambling, an economy system, and even more features.
+Guava is a great multipurpose Discord bot that is open source and offers all features for free. A list of the features for Guava can be found below.
 
-Setup: <br>
-1. Create a bot at https://discord.com/developers and make sure to get the bot token.
-2. Create a Discord server and make a channel for the feedback and bug messages (can be the same or different channels). After this, make sure to get the channel IDs.
-3. Create an account on [Crypto Compare](https://min-api.cryptocompare.com/) and get your free API key.
-4. Create PostgreSQL server and create a database. Make sure to note the username, password, host, port, and database name.
-5. Create a regular Spotify account and then sign into the developer console [here](https://developer.spotify.com/dashboard/). Then, create an app and get a Spotify ID and secret key.
-6. Now, rename the `config.yml.example` to just `config.yml` and fill in all of the necessary information.
-7. Open a console and navigate to this folder, and run the command `pip install -r requirements.txt`
-8. Now, you must start a lavalink server in order for music functionality. If you do not want to have music functionality, skip to `step 10`
-9. Setup a lavalink server, if you are unsure how to do this, you can follow a guide like [this](https://darrennathanael.com/post/how-to-lavalink/). Or, you can connect to a public lavalink server, such as one listed [here](https://lavalink-list.darrennathanael.com/).
-<br><br>
-Note that if you use a public lavalink server, you must change the login credentials in the `/code/cogs/music.py` file - lines 30-32 and 71.
-10. Now you can navigate to the `code` folder and run the bot.py file. On first run your bot will unpack a few zip files, these are dependencies for the gambling features. Then, your bot will connect to Discord and should start.
-11. At this point, you will have to sync the slash commands from your bot with Discord. In order to do this you should first sync them to one of your servers specifically by DM'ing the bot `***sync [guild id]`. If you are able to run the commands in your server, then you are ready to sync the commands globally by DM'ing the bot `***sync`. The commands will take ~1 hour to sync globally, then you are completely done with setup. Congratulations!
+If you want to invite Guava to your server, use [this link](https://pkrm.dev) - this link needs to be updated!
 
-If you would like to contribute to this project, you can submit a pull request for review.
+### Features
+1. Music - Play music from YouTube, Spotify, SoundCloud, Deezer, and Bandcamp
+2. Moderation - Kick, ban, mute, tempmute, warn, etc.
+3. Economy - Global leaderboard to show who has the most money, and buy ranks to show off to others
+4. Gambling - Gamble your money at the blackjack table or on the slot machines, or flip a coin
+5. Random - Get crypto price data, information on a users Discord account, etc.
 
-Thank you for checking out Guava, have fun coding!
+<br>
 
+## Selfhost
+
+If you want to selfhost your own version of Guava, follow the instructions below.
+
+Downlooad the code and install the necessary dependencies using pip (ex: `pip install -r requirements.txt`)
+
+On first run, you will likely get a critical warning in your console, don't worry, this is excepted. It will automatically create a `config.ini` file for you in the root of the directory with all of the necessary configuration options. 
+
+Fill out all of the configuration options, ALL options must be filled out. For help on what each option does, look at the table below.
+
+### BOT_INFO Configuration
+
+Field | Description
+--- | ---
+TOKEN | The token for your bot
+BONUS_COOLDOWN | Cooldown time, in hours, between uses of the `/add` command, which gives users $10,000
+BOT_COLOR | Hex color code for the color used on most of the message embeds
+BUG_CHANNEL_ID | Channel ID for the bug reporting channel
+FEEDBACK_CHANNEL_ID | Channel ID for the feedback message channel
+
+### CRYPTO_COMPARE Configuration
+Field | Description
+--- | ---
+API_KEY | API key from your CryptoCompare account. Can be aquired [here](https://min-api.cryptocompare.com/).
+
+### POSTGESQL Configuration
+Field | Description
+--- | ---
+USERNAME | Username for login
+PASSWORD | Password for login
+HOST | Host for connecting to database
+PORT | Port for connecting to database
+DATABASE | Name of the database to be used
+
+### LAVALINK Configuration
+Field | Description
+--- | ---
+HOST | Host for connecting to Lavalink
+PORT | Port for connecting to Lavalink
+PASSWORD | Password for login
+
+Once all options are properly configured, you must also setup a Lavalink server in order for the music features to work. For help on setting up a Lavalnk server, follow the docs [here](https://lavalink.dev/getting-started/).
+
+Once your Lavalink server has been configured, you can now, finally, start the bot again by running the `bot.py` file and everything should work.
+
+For support, feel free to contact `fiji3608` on Discord. Have fun coding!
