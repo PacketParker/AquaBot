@@ -106,6 +106,16 @@ def validate_config(file_contents):
             LOG.critical("HOST has not been set.")
             errors += 1
 
+        # Validate SPOTIFY
+        # Validate CLIENT_ID
+        if not config['SPOTIFY']['CLIENT_ID']:
+            LOG.critical("CLIENT_ID has not been set.")
+            errors += 1
+        # Validate CLIENT_SECRET
+        if not config['SPOTIFY']['CLIENT_SECRET']:
+            LOG.critical("CLIENT_SECRET has not been set.")
+            errors += 1
+
         if errors > 0:
             LOG.info(f"Program exiting with {errors} critical {'errors' if errors > 1 else 'error'}")
             exit()
@@ -151,6 +161,11 @@ def create_config():
             'HOST': '',
             'PORT': '',
             'PASSWORD': ''
+        }
+
+        config['SPOTIFY'] = {
+            'CLIENT_ID': '',
+            'CLIENT_SECRET': ''
         }
 
         with open('config.ini', 'w') as configfile:
