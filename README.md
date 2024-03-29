@@ -19,7 +19,7 @@ If you want to selfhost your own version of Guava, follow the instructions below
 
 Downlooad the code and install the necessary dependencies using pip (ex: `pip install -r requirements.txt`)
 
-On first run, you will likely get a critical warning in your console, don't worry, this is excepted. It will automatically create a `config.ini` file for you in the root of the directory with all of the necessary configuration options. 
+On first run, you will likely get a critical warning in your console, don't worry, this is excepted. It will automatically create a `config.ini` file for you in the root of the directory with all of the necessary configuration options.
 
 Fill out all of the configuration options, ALL options must be filled out. For help on what each option does, look at the table below.
 
