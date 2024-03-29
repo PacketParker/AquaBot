@@ -4,7 +4,7 @@ from discord.ext import commands
 import datetime
 from discord import app_commands
 
-from global_variables import BOT_COLOR, BOT_INVITE_LINK
+from global_variables import BOT_COLOR
 
 
 class Info(commands.Cog):
