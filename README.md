@@ -2,7 +2,7 @@
 
 Aqua Bot is a great multipurpose Discord bot that is open source and offers all features for free. A list of the features for Aqua Bot can be found below.
 
-Aqua Bot is no longer under development and does not run anymore. Attention has been switched to the music only Discord bot, Guava, which can be found [here](https://github.com/packetparker/messagearr)
+Aqua Bot is no longer under development and does not run anymore. Attention has been switched to the music only Discord bot, Guava, which can be found [here](https://github.com/packetparker/guava)
 
 ### Features
 1. Music - Play music from YouTube, Spotify, SoundCloud, Deezer, and Bandcamp
