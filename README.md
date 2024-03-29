@@ -54,6 +54,12 @@ HOST | Host for connecting to Lavalink
 PORT | Port for connecting to Lavalink
 PASSWORD | Password for login
 
+### SPOTIFY CONFIGURATION
+Field | Description
+--- | ---
+CLIENT_ID | Client ID given to you from Spotify Developer Dashboard
+CLIENT_SECRET | Client Secret, found in the same place
+
 Once all options are properly configured, you must also setup a Lavalink server in order for the music features to work. For help on setting up a Lavalnk server, follow the docs [here](https://lavalink.dev/getting-started/).
 
 Once your Lavalink server has been configured, you can now, finally, start the bot again by running the `bot.py` file and everything should work.
