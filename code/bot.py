@@ -1,12 +1,13 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import os
 import zipfile
 import tqdm
+import requests
 
 from validate_config import create_config
 from database import init_database
-from global_variables import LOG, BOT_TOKEN
+from global_variables import LOG, BOT_TOKEN, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET
 
 
 def unpack_reels():
@@ -36,6 +37,7 @@ class MyBot(commands.Bot):
     async def setup_hook(self):
         unpack_reels()
         create_config()
+        get_access_token.start()
         await init_database()
         for ext in os.listdir('./code/cogs'):
             if ext.endswith('.py'):
@@ -50,6 +52,19 @@ bot.remove_command('help')
 @bot.event
 async def on_ready():
     LOG.info(f"{bot.user} has connected to Discord.")
+
+
+@tasks.loop(minutes=45)
+async def get_access_token():
+    auth_url = 'https://accounts.spotify.com/api/token'
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': SPOTIFY_CLIENT_ID,
+        'client_secret': SPOTIFY_CLIENT_SECRET
+    }
+    response = requests.post(auth_url, data=data)
+    access_token = response.json()['access_token']
+    bot.access_token = access_token
 
 class InsufficientFundsException(Exception):
     def __init__(self) -> None:
