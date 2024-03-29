@@ -1,8 +1,8 @@
-# Guava
+# Aqua Bot
 
-Guava is a great multipurpose Discord bot that is open source and offers all features for free. A list of the features for Guava can be found below.
+Aqua Bot is a great multipurpose Discord bot that is open source and offers all features for free. A list of the features for Aqua Bot can be found below.
 
-If you want to invite Guava to your server, use [this link](https://pkrm.dev) - this link needs to be updated!
+Aqua Bot is no longer under development and does not run anymore. Attention has been switched to the music only Discord bot, Guava, which can be found [here](https://github.com/packetparker/messagearr)
 
 ### Features
 1. Music - Play music from YouTube, Spotify, SoundCloud, Deezer, and Bandcamp
@@ -15,7 +15,7 @@ If you want to invite Guava to your server, use [this link](https://pkrm.dev) - 
 
 ## Selfhost
 
-If you want to selfhost your own version of Guava, follow the instructions below.
+If you want to selfhost your own version of Aqua Bot, follow the instructions below.
 
 Downlooad the code and install the necessary dependencies using pip (ex: `pip install -r requirements.txt`)
 

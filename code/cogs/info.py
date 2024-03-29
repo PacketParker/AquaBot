@@ -4,7 +4,7 @@ from discord.ext import commands
 import datetime
 from discord import app_commands
 
-from global_variables import BOT_COLOR
+from global_variables import BOT_COLOR, BOT_INVITE_LINK
 
 
 class Info(commands.Cog):
@@ -12,18 +12,18 @@ class Info(commands.Cog):
         self.bot = bot
 
 
-    # @app_commands.command()
-    # async def invite(
-    #     self,
-    #     interaction: discord.Interaction
-    # ):
-    #     "Get the invite link for the bot"
-    #     embed = discord.Embed(
-    #         title = "Invite Me To Your Server!",
-    #         description = "Here's the invite for [Guava](INVTE LINK HERE)",
-    #         color=BOT_COLOR
-    #     )
-    #     await interaction.response.send_message(embed=embed)
+    @app_commands.command()
+    async def invite(
+        self,
+        interaction: discord.Interaction
+    ):
+        "Get the invite link for the bot"
+        embed = discord.Embed(
+            title = "Invite Me To Your Server!",
+            description = f"Here's the invite for [Aqua Bot]({BOT_INVITE_LINK})",
+            color=BOT_COLOR
+        )
+        await interaction.response.send_message(embed=embed)
 
 
     @app_commands.command()
@@ -67,61 +67,24 @@ class Info(commands.Cog):
             await interaction.response.send_message(embed=embed)
 
 
-    # @app_commands.command()
-    # async def botinfo(
-    #     self,
-    #     interaction: discord.Interaction
-    # ):
-    #     "Get information about the bot. i.e. creator, creation data, etc."
-
-    #     embed = discord.Embed(
-    #         title=f"Bot Information",
-    #         color=BOT_COLOR
-    #     )
-    #     #embed.set_thumbnail(url=self.bot.user.avatar.url)
-    #     embed.add_field(name="Bot Creator: ", value="`Fiji#3608`"),
-    #     embed.add_field(name="Servers: ", value = f"`{len(self.bot.guilds):,}`"),
-    #     embed.add_field(name="Account name: ", value=f"`{str(self.bot.user.name)}`")
-    #     embed.add_field(name="Discord ID: ", value=f"`{str(self.bot.user.id)}`")
-    #     embed.add_field(name="Bot created at: ", value=f"`{self.bot.user.created_at.strftime('%Y-%m-%d')}`"),
-    #     embed.add_field(name="Guava Code: ", value="[GitHub Link](CODE LINK HERE)")
-    #     embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-    #     await interaction.response.send_message(embed=embed)
-
-
-    # @app_commands.command()
-    # async def vote(
-    #     self,
-    #     interaction: discord.Interaction
-    # ):
-    #     "Get link to vote for the bot on top.gg"
-    #     embed = discord.Embed(
-    #         title="Vote for me on top.gg! Voting awards you $10,000!",
-    #         description="[Click here to vote](TOP.GG LINK HERE)",
-    #         color=BOT_COLOR
-    #     )
-    #     embed.set_thumbnail(url=self.bot.user.avatar.url)
-    #     embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-    #     await interaction.response.send_message(embed=embed)
-
-
     @app_commands.command()
-    async def new(
+    async def botinfo(
         self,
         interaction: discord.Interaction
     ):
-        "See all of the new changes in the bot"
+        "Get information about the bot. i.e. number of servers, creation date, etc."
+
         embed = discord.Embed(
-            title = "Change Log - 2023-02-01",
-            description = "Below are all of the changes that have been made to the bot since the last update.",
+            title=f"Bot Information",
             color=BOT_COLOR
         )
-        embed.add_field(name="New `Give` Command", value="The command, `/give`, has been added, which allows you to give an amount of your money to another member.")
-        embed.add_field(name="Slots Redesign", value="The slots game has been redesigned with the help of <@356582138633519114>. Thank you!")
-        embed.add_field(name="Embed Color", value="Many of the embed colors are no longer randomized, and have instead been changed to follow the color of the Bot's PFP.")
-        embed.add_field(name="Bug Fixes", value="General bug fixes have been applied in order to better the bot's performance.")
+        #embed.set_thumbnail(url=self.bot.user.avatar.url)
+        embed.add_field(name="Servers: ", value = f"`{len(self.bot.guilds):,}`"),
+        embed.add_field(name="Account name: ", value=f"`{str(self.bot.user.name)}`")
+        embed.add_field(name="Discord ID: ", value=f"`{str(self.bot.user.id)}`")
+        embed.add_field(name="Bot created at: ", value=f"`{self.bot.user.created_at.strftime('%Y-%m-%d')}`"),
         embed.set_footer(text=datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')+" UTC")
-        await interaction.response.send_message(embed=embed, ephemeral=True)
+        await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
