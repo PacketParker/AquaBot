@@ -13,20 +13,6 @@ class Info(commands.Cog):
 
 
     @app_commands.command()
-    async def invite(
-        self,
-        interaction: discord.Interaction
-    ):
-        "Get the invite link for the bot"
-        embed = discord.Embed(
-            title = "Invite Me To Your Server!",
-            description = f"Here's the invite for [Aqua Bot]({BOT_INVITE_LINK})",
-            color=BOT_COLOR
-        )
-        await interaction.response.send_message(embed=embed)
-
-
-    @app_commands.command()
     @app_commands.describe(member="Member whose information you want to view")
     async def userinfo(
         self,
