@@ -1,3 +1,20 @@
+<h1 align="center">
+  <br>
+  <img src="AquaBot.png" width="250" alt="Aqua Bot Image"></a>
+  <br>
+  Guava<br>
+</h1>
+
+<h3 align="center">
+    Multipurpse Discord bot made on d.py
+</h3>
+
+<p align="center">
+  <a href="https://github.com/Rapptz/discord.py/">
+     <img src="https://img.shields.io/badge/discord-py-blue.svg" alt="discord.py">
+  </a>
+</p>
+
 # Aqua Bot
 
 Aqua Bot is a great multipurpose Discord bot that is open source and offers all features for free. A list of the features for Aqua Bot can be found below.
@@ -5,11 +22,11 @@ Aqua Bot is a great multipurpose Discord bot that is open source and offers all 
 Aqua Bot is no longer under development and does not run anymore. Attention has been switched to the music only Discord bot, Guava, which can be found [here](https://github.com/packetparker/guava)
 
 ### Features
-1. Music - Play music from YouTube, Spotify, SoundCloud, Deezer, and Bandcamp
-2. Moderation - Kick, ban, mute, tempmute, warn, etc.
-3. Economy - Global leaderboard to show who has the most money, and buy ranks to show off to others
-4. Gambling - Gamble your money at the blackjack table or on the slot machines, or flip a coin
-5. Random - Get crypto price data, information on a users Discord account, etc.
+- Music - Play music from YouTube, Spotify, SoundCloud, Deezer, and Bandcamp
+- Moderation - Kick, ban, mute, tempmute, warn, etc.
+- Economy - Global leaderboard to show who has the most money, and buy ranks to show off to others
+- Gambling - Gamble your money at the blackjack table or on the slot machines, or flip a coin
+- Random - Get crypto price data, information on a users Discord account, etc.
 
 <br>
 
