@@ -2,7 +2,7 @@
   <br>
   <img src="AquaBot.png" width="250" alt="Aqua Bot Image"></a>
   <br>
-  Guava<br>
+  Aqua Bot<br>
 </h1>
 
 <h3 align="center">
